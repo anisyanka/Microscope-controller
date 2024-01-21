@@ -1,4 +1,4 @@
-.PHONY: all clean upload_src
+.PHONY: all clean upload_src submodule_update
 
 TARGET=modbus_converter
 
@@ -15,15 +15,19 @@ endif
 # Shared lib is in /usr/local/lib
 MODBUSLIB=$(shell pkg-config --cflags --libs libmodbus)
 
+JSONLIB_DIR=./jsmn/
+JSONLIB=-I$(JSONLIB_DIR)
+
 CFLAGS=-I./ \
 		$(MODBUSLIB) \
+		$(JSONLIB) \
 		-DMODBUS_CONVERTER_DEBUG=1 \
 
 LDFLAGS='-Wl,-rpath=/usr/local/lib'
 
 SOURCES_PATH=.
 SOURCES_EXTENSION=c
-SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)')
+SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*')
 
 all:
 	$(CC) $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $(TARGET)
@@ -33,3 +37,6 @@ clean:
 
 upload_src:
 	@cd ..; ./upload_converter_scr_to_rpi
+
+submodule_update:
+	@git submodule update --init --recursive
