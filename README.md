@@ -35,6 +35,25 @@ uart-usb преобразватель и пользоваться этой ко�
 * raspi-gpio get
 ```
 Обе команды выводят информацию о текущих настройках пина. В этом случае GPIO<N> - это номер gpio на процессоре. **Не** на 40-ко пиновой гребёнке.
+q
+## Systemd-сервис
+Программа 'modbus_converter' запускается автоматически как только произошло подключение к сети.
+Работает как systemd-сервис.
+
+Команды, чтобы посмотреть статус сервиса:
+```
+sudo systemctl status modbus_converter
+sudo systemctl restart modbus_converter
+sudo systemctl start modbus_converter
+sudo systemctl stop modbus_converter
+
+sudo journalctl -u modbus_converter
+sudo journalctl -u modbus_converter -n 50 -f
+sudo journalctl -u modbus_converter -e
+sudo journalctl --unit=modbus_converter | tail -n 300
+
+sudo systemctl enable modbus_converter
+```
 
 
 ## Конфигурация программы modbus_converter

@@ -121,6 +121,8 @@ static char *_convert_config_file_content_to_string(char *conf_file_name)
     char *buffer = 0;
     FILE *f = NULL;
 
+    logger_dbg_print("[json] config file is \"%s\"\r\n", conf_file_name);
+
     f = fopen(conf_file_name, "rb");
     if (f == NULL) {
         logger_err_print("[json] Failed to open file %s; errno=%d --> %s\r\n", conf_file_name, errno, strerror(errno));

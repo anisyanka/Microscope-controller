@@ -1,0 +1,14 @@
+[Unit]
+Description=Modbus TCP/RTU converter
+After=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/.modbus_converter_service
+ExecStart=/usr/bin/modbus_converter
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

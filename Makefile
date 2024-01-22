@@ -1,4 +1,4 @@
-.PHONY: all clean upload_src submodule_update
+.PHONY: all clean upload_src submodule_update install
 
 TARGET=modbus_converter
 
@@ -42,3 +42,13 @@ upload_src:
 
 submodule_update:
 	@git submodule update --init --recursive
+
+install: all
+	@sudo systemctl stop modbus_converter
+	@mkdir -p ~/.modbus_converter_service
+	@cp modbus_converter_config.json /home/pi/.modbus_converter_service/modbus_converter_config.json
+	@chmod 666 /home/pi/.modbus_converter_service/modbus_converter_config.json 
+	@sudo cp modbus_converter.service /etc/systemd/system/
+	@sudo cp modbus_converter /usr/bin/
+	@sudo systemctl daemon-reload
+	@sudo systemctl enable modbus_converter
