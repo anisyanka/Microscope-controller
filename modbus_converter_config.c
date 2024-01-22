@@ -20,13 +20,15 @@ modbus_converter_config_t *modbus_converter_read_config(void)
     int r = 0;
     const char *json_string = NULL;
     jsmn_parser p = { 0 };
-    jsmntok_t tokens[MODBUS_CONV_CONFIG_JSON_MAX_TOKEN_CNT]; /* We expect no more than 128 tokens */
+    jsmntok_t tokens[MODBUS_CONV_CONFIG_JSON_MAX_TOKEN_CNT];
 
     json_string = _convert_config_file_content_to_string(MODBUS_CONV_CONFIG_JSON_FILE_PATH);
     if (json_string == NULL) {
         logger_err_print("[json] Failed to convert json file to string\r\n");
         return NULL;
     }
+
+    logger_dbg_print("[json] config string = \"%s\"\r\n", json_string);
 
     jsmn_init(&p);
     r = jsmn_parse(&p, json_string, strlen(json_string), tokens, sizeof(tokens)/sizeof(tokens[0]));
@@ -42,8 +44,6 @@ modbus_converter_config_t *modbus_converter_read_config(void)
         free((void *)json_string);
         return NULL;
     }
-
-    logger_dbg_print("[json] string = \"%s\"\r\n", json_string);
 
     /* Loop over all keys of the root object */
     for (i = 1; i < r; i++) {
@@ -123,7 +123,7 @@ static char *_convert_config_file_content_to_string(char *conf_file_name)
 
     logger_dbg_print("[json] config file is \"%s\"\r\n", conf_file_name);
 
-    f = fopen(conf_file_name, "rb");
+    f = fopen(conf_file_name, "r");
     if (f == NULL) {
         logger_err_print("[json] Failed to open file %s; errno=%d --> %s\r\n", conf_file_name, errno, strerror(errno));
         return NULL;
@@ -147,7 +147,7 @@ static char *_convert_config_file_content_to_string(char *conf_file_name)
         return NULL;
     }
 
-    buffer = (char *)malloc(length);
+    buffer = (char *)malloc(length + 1);
     if (buffer == NULL) {
         logger_err_print("[json] can't allocate buffer (%ld bytes) for json string\r\n", length);
         fclose (f);
@@ -157,6 +157,9 @@ static char *_convert_config_file_content_to_string(char *conf_file_name)
     while (cur_read_len < length) {
         cur_read_len += fread(buffer + cur_read_len, sizeof(char), length - cur_read_len, f);
     }
+
+    /* Add null terminator */
+    buffer[cur_read_len] = '\0';
 
     fclose (f);
     return buffer;

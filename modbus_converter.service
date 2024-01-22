@@ -5,10 +5,13 @@ After=network-online.target
 [Service]
 Type=simple
 User=pi
-WorkingDirectory=/home/pi/.modbus_converter_service
-ExecStart=/usr/bin/modbus_converter
+Group=pi
+ExecStart=/home/pi/.modbus_converter/modbus_converter
 Restart=always
 RestartSec=5s
+StandardError=journal
+StandardOutput=journal
+StandardInput=null
 
 [Install]
 WantedBy=multi-user.target

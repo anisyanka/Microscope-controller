@@ -1,3 +1,5 @@
+# Modbus TCP/RTU Converter
+
 ## Пины UART на RPI4:
 https://raspberrypi.stackexchange.com/questions/45570/how-do-i-make-serial-work-on-the-raspberry-pi3-pizerow-pi4-or-later-models/107780#107780
 
@@ -42,17 +44,21 @@ q
 
 Команды, чтобы посмотреть статус сервиса:
 ```
+1. Манипуляции с запуском сервиса
+service modbus_converter status
+service modbus_converter start
+service modbus_converter stop
+service modbus_converter restart
+
+2. Тоже самое, но через systemctl
 sudo systemctl status modbus_converter
-sudo systemctl restart modbus_converter
 sudo systemctl start modbus_converter
 sudo systemctl stop modbus_converter
+sudo systemctl restart modbus_converter
 
-sudo journalctl -u modbus_converter
-sudo journalctl -u modbus_converter -n 50 -f
-sudo journalctl -u modbus_converter -e
-sudo journalctl --unit=modbus_converter | tail -n 300
-
-sudo systemctl enable modbus_converter
+3. Просмотр логов сервиса
+sudo journalctl -a -f -n 50 -u modbus_converter # в режиме tail -f, показав последние 50 строк лога
+sudo journalctl -b -u modbus_converter # с момента последней загрузки системы
 ```
 
 

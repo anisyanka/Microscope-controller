@@ -1,7 +1,7 @@
 {
     "uart_device": "/dev/ttyAMA5",
     "uart_baud": 9600,
-    "uart_parity": "N",
+    "uart_parity": N,
     "uart_data_bit": 8,
     "uart_stop_bit": 1,
 

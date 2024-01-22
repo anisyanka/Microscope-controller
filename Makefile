@@ -1,8 +1,9 @@
-.PHONY: all clean upload_src submodule_update install
+.PHONY: all clean upload_src submodule_update install uninstall
 
 TARGET=modbus_converter
+TARGET_DIR=/home/pi/.modbus_converter
 
-# PREFIX = arm-none-eabi-
+# PREFIX = arm-linux-gnueabihf-
 # The gcc compiler bin path can be either defined in make command via GCC_PATH variable (> make GCC_PATH=xxx)
 # either it can be added to the PATH environment variable.
 ifdef GCC_PATH
@@ -31,6 +32,8 @@ SOURCES_PATH=.
 SOURCES_EXTENSION=c
 SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*')
 
+SCRIPTS_DIR=./scripts
+
 all:
 	$(CC) $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $(TARGET)
 
@@ -38,17 +41,24 @@ clean:
 	rm -rf $(TARGET) *.o
 
 upload_src:
-	@cd ..; ./upload_converter_scr_to_rpi
+	@./$(SCRIPTS_DIR)/upload_converter_scr_to_rpi.sh
 
 submodule_update:
 	@git submodule update --init --recursive
 
 install: all
-	@sudo systemctl stop modbus_converter
-	@mkdir -p ~/.modbus_converter_service
-	@cp modbus_converter_config.json /home/pi/.modbus_converter_service/modbus_converter_config.json
-	@chmod 666 /home/pi/.modbus_converter_service/modbus_converter_config.json 
-	@sudo cp modbus_converter.service /etc/systemd/system/
-	@sudo cp modbus_converter /usr/bin/
-	@sudo systemctl daemon-reload
-	@sudo systemctl enable modbus_converter
+	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
+	mkdir -p $(TARGET_DIR)
+	cp modbus_converter_config.json $(TARGET_DIR)
+	chmod 666 $(TARGET_DIR)/modbus_converter_config.json
+	sudo cp modbus_converter.service /etc/systemd/system/
+	cp $(TARGET) $(TARGET_DIR)
+	sync
+	sudo systemctl daemon-reload
+	sudo systemctl enable $(TARGET)
+	sudo systemctl start modbus_converter
+
+uninstall:
+	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
+	rm -rf $(TARGET_DIR)
+	sudo rm -rf /etc/systemd/system/modbus_converter.service

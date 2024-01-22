@@ -15,6 +15,8 @@ void logger_dbg_print(const char *format, ...)
     va_start(arg, format);
     vprintf(format, arg);
     va_end(arg);
+
+    fflush(stdout);
 #endif
 }
 
@@ -27,6 +29,8 @@ void logger_info_print(const char *format, ...)
     va_start(arg, format);
     vprintf(format, arg);
     va_end(arg);
+
+    fflush(stdout);
 }
 
 void logger_err_print(const char *format, ...)
