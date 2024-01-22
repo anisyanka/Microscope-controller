@@ -175,7 +175,7 @@ modbus_converter_config_t *modbus_converter_apply_default_configuration(void)
     configuration.modbus_port = MODBUS_CONV_PORT_DEFAULT;
     configuration.modbus_number_of_tcp_connections = MODBUS_CONV_NC_DEFAULT;
 
-    size_t uart_name_size = strlen(MODBUS_CONV_UART_DEV_DEFAULT);
+    size_t uart_name_size = strlen(MODBUS_CONV_UART_DEV_DEFAULT) + 1;
     memcpy(configuration.uart_device_name, MODBUS_CONV_UART_DEV_DEFAULT, (uart_name_size > sizeof(configuration.uart_device_name)) ? sizeof(configuration.uart_device_name) : uart_name_size);
 
     return &configuration;
