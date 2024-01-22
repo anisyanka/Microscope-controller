@@ -2,6 +2,7 @@
 #define __MODBUS_CONVERTER_CONFIG_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +21,8 @@ extern "C" {
 #define MODBUS_CONV_UART_DATA_BIT_DEFAULT 8
 #define MODBUS_CONV_UART_STOP_BIT_DEFAULT 1
 #define MODBUS_CONV_HOST_IPV4_DEFAULT "192.168.1.103"
+#define MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT 0x01
+#define MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT 0x02
 
 typedef struct {
     /* Name of the serial port */
@@ -36,6 +39,12 @@ typedef struct {
 
     /* Argument can have one of the following values: 'N' for none, 'E' for even, 'O' for odd */
     char parity;
+
+    /* Slave address of conneted microcontroller to UART */
+    uint8_t micro_slave_addr;
+
+    /* Slave address camera */
+    uint8_t camera_slave_addr;
 
     /* Host IPv4 address to establish tcp connection */
     char host_ipv4_addr[MODBUS_CONV_MAX_HOST_IPV4_ADDR_LEN];

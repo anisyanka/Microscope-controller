@@ -33,12 +33,14 @@ int main(int argc, char *argv[])
         #endif
     }
 
-    logger_info_print("uart device     - %s\r\n", conf->uart_device_name);
-    logger_info_print("uart baud       - %d\r\n", conf->baud);
-    logger_info_print("uart parity     - %c\r\n", conf->parity);
-    logger_info_print("uart data bit   - %d\r\n", conf->data_bit);
-    logger_info_print("uart stop bit   - %d\r\n", conf->stop_bit);
-    logger_info_print("host ipv4       - %s\r\n", conf->host_ipv4_addr);
+    logger_info_print("uart device              - %s\r\n", conf->uart_device_name);
+    logger_info_print("uart baud                - %d\r\n", conf->baud);
+    logger_info_print("uart parity              - %c\r\n", conf->parity);
+    logger_info_print("uart data bit            - %d\r\n", conf->data_bit);
+    logger_info_print("uart stop bit            - %d\r\n", conf->stop_bit);
+    logger_info_print("host ipv4                - %s\r\n", conf->host_ipv4_addr);
+    logger_info_print("modbus mcu slave addr    - %d\r\n", conf->micro_slave_addr);
+    logger_info_print("modbus camera slave addr - %d\r\n", conf->camera_slave_addr);
 
     for (;;) {
         sleep(1);

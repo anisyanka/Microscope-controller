@@ -79,6 +79,18 @@ modbus_converter_config_t *modbus_converter_read_config(void)
             logger_dbg_print("[json] - Host IPv4: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(configuration.host_ipv4_addr, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
             i++;
+        } else if (_jsoneq(json_string, &tokens[i], "modbus_connected_microcontroller_slave_addr") == 0) {
+            char temp[32] = { 0 };
+            logger_dbg_print("[json] - connectd mcu slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+            configuration.micro_slave_addr = atoi((const char *)temp);
+            i++;
+        } else if (_jsoneq(json_string, &tokens[i], "modbus_camera_slave_addr") == 0) {
+            char temp[32] = { 0 };
+            logger_dbg_print("[json] - camera slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+            configuration.camera_slave_addr = atoi((const char *)temp);
+            i++;
         } else {
             logger_dbg_print("[json] Unexpected key: %.*s\n", tokens[i].end - tokens[i].start, json_string + tokens[i].start);
         }
@@ -150,6 +162,8 @@ modbus_converter_config_t *modbus_converter_apply_default_configuration(void)
     configuration.parity = MODBUS_CONV_UART_PARITY_DEFAULT;
     configuration.data_bit = MODBUS_CONV_UART_DATA_BIT_DEFAULT;
     configuration.stop_bit = MODBUS_CONV_UART_STOP_BIT_DEFAULT;
+    configuration.micro_slave_addr = MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT;
+    configuration.camera_slave_addr = MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT;
 
     size_t uart_name_size = strlen(MODBUS_CONV_UART_DEV_DEFAULT);
     size_t host_ipv4_size = strlen(MODBUS_CONV_HOST_IPV4_DEFAULT);
