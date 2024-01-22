@@ -5,8 +5,8 @@
     "uart_data_bit": 8,
     "uart_stop_bit": 1,
 
-    "host_ipv4": "192.168.1.103",
-
+    "modbus_port": 1502,
+    "modbus_number_of_tcp_connections": 1,
     "modbus_connected_microcontroller_slave_addr": 1,
     "modbus_camera_slave_addr": 2
 }

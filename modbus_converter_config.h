@@ -20,7 +20,8 @@ extern "C" {
 #define MODBUS_CONV_UART_PARITY_DEFAULT 'N'
 #define MODBUS_CONV_UART_DATA_BIT_DEFAULT 8
 #define MODBUS_CONV_UART_STOP_BIT_DEFAULT 1
-#define MODBUS_CONV_HOST_IPV4_DEFAULT "192.168.1.103"
+#define MODBUS_CONV_PORT_DEFAULT 1502
+#define MODBUS_CONV_NC_DEFAULT 1
 #define MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT 0x01
 #define MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT 0x02
 
@@ -41,13 +42,16 @@ typedef struct {
     char parity;
 
     /* Slave address of conneted microcontroller to UART */
-    uint8_t micro_slave_addr;
+    uint8_t modbus_micro_slave_addr;
 
     /* Slave address camera */
-    uint8_t camera_slave_addr;
+    uint8_t modbus_camera_slave_addr;
 
-    /* Host IPv4 address to establish tcp connection */
-    char host_ipv4_addr[MODBUS_CONV_MAX_HOST_IPV4_ADDR_LEN];
+    /* Port where TCP socket will be opened */
+    int modbus_port;
+
+    /* How many clients connects to the tcp server */
+    int modbus_number_of_tcp_connections;
 } modbus_converter_config_t;
 
 modbus_converter_config_t *modbus_converter_read_config(void);

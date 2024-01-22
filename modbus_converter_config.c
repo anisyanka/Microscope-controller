@@ -75,21 +75,29 @@ modbus_converter_config_t *modbus_converter_read_config(void)
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
             configuration.stop_bit = atoi((const char *)temp);
             i++;
-        } else if (_jsoneq(json_string, &tokens[i], "host_ipv4") == 0) {
-            logger_dbg_print("[json] - Host IPv4: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
-            memcpy(configuration.host_ipv4_addr, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+        } else if (_jsoneq(json_string, &tokens[i], "modbus_port") == 0) {
+            char temp[32] = { 0 };
+            logger_dbg_print("[json] - Port where open socket: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+            configuration.modbus_port = atoi((const char *)temp);
+            i++;
+        } else if (_jsoneq(json_string, &tokens[i], "modbus_number_of_tcp_connections") == 0) {
+            char temp[32] = { 0 };
+            logger_dbg_print("[json] - number of allowed connections: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+            configuration.modbus_number_of_tcp_connections = atoi((const char *)temp);
             i++;
         } else if (_jsoneq(json_string, &tokens[i], "modbus_connected_microcontroller_slave_addr") == 0) {
             char temp[32] = { 0 };
             logger_dbg_print("[json] - connectd mcu slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
-            configuration.micro_slave_addr = atoi((const char *)temp);
+            configuration.modbus_micro_slave_addr = atoi((const char *)temp);
             i++;
         } else if (_jsoneq(json_string, &tokens[i], "modbus_camera_slave_addr") == 0) {
             char temp[32] = { 0 };
             logger_dbg_print("[json] - camera slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
-            configuration.camera_slave_addr = atoi((const char *)temp);
+            configuration.modbus_camera_slave_addr = atoi((const char *)temp);
             i++;
         } else {
             logger_dbg_print("[json] Unexpected key: %.*s\n", tokens[i].end - tokens[i].start, json_string + tokens[i].start);
@@ -162,14 +170,13 @@ modbus_converter_config_t *modbus_converter_apply_default_configuration(void)
     configuration.parity = MODBUS_CONV_UART_PARITY_DEFAULT;
     configuration.data_bit = MODBUS_CONV_UART_DATA_BIT_DEFAULT;
     configuration.stop_bit = MODBUS_CONV_UART_STOP_BIT_DEFAULT;
-    configuration.micro_slave_addr = MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT;
-    configuration.camera_slave_addr = MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT;
+    configuration.modbus_micro_slave_addr = MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT;
+    configuration.modbus_camera_slave_addr = MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT;
+    configuration.modbus_port = MODBUS_CONV_PORT_DEFAULT;
+    configuration.modbus_number_of_tcp_connections = MODBUS_CONV_NC_DEFAULT;
 
     size_t uart_name_size = strlen(MODBUS_CONV_UART_DEV_DEFAULT);
-    size_t host_ipv4_size = strlen(MODBUS_CONV_HOST_IPV4_DEFAULT);
-
     memcpy(configuration.uart_device_name, MODBUS_CONV_UART_DEV_DEFAULT, (uart_name_size > sizeof(configuration.uart_device_name)) ? sizeof(configuration.uart_device_name) : uart_name_size);
-    memcpy(configuration.host_ipv4_addr, MODBUS_CONV_HOST_IPV4_DEFAULT, (host_ipv4_size > sizeof(configuration.host_ipv4_addr)) ? sizeof(configuration.host_ipv4_addr) : host_ipv4_size);
 
     return &configuration;
 }
