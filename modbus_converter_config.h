@@ -22,6 +22,7 @@ extern "C" {
 #define MODBUS_CONV_UART_STOP_BIT_DEFAULT 1
 #define MODBUS_CONV_PORT_DEFAULT 1502
 #define MODBUS_CONV_NC_DEFAULT 1
+#define MODBUS_CONV_LOSS_OF_CONNECTION_MS_DEFAULT 1000
 #define MODBUS_CONV_CONNECTED_MICROCONTROLLER_SLAVE_ADDR_DEFAULT 0x01
 #define MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT 0x02
 
@@ -52,6 +53,9 @@ typedef struct {
 
     /* How many clients connects to the tcp server */
     int modbus_number_of_tcp_connections;
+
+    /* If serial don'r answer during this time -> loss of connection */
+    int modbus_loss_connection_timeout_ms;
 } modbus_converter_config_t;
 
 modbus_converter_config_t *modbus_converter_read_config(void);

@@ -83,19 +83,25 @@ modbus_converter_config_t *modbus_converter_read_config(void)
             i++;
         } else if (_jsoneq(json_string, &tokens[i], "modbus_number_of_tcp_connections") == 0) {
             char temp[32] = { 0 };
-            logger_dbg_print("[json] - number of allowed connections: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            logger_dbg_print("[json] - Number of allowed connections: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
             configuration.modbus_number_of_tcp_connections = atoi((const char *)temp);
             i++;
+        } else if (_jsoneq(json_string, &tokens[i], "modbus_loss_connection_timeout_ms") == 0) {
+            char temp[32] = { 0 };
+            logger_dbg_print("[json] - Loss of connection timeout ms: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
+            configuration.modbus_loss_connection_timeout_ms = atoi((const char *)temp);
+            i++;
         } else if (_jsoneq(json_string, &tokens[i], "modbus_connected_microcontroller_slave_addr") == 0) {
             char temp[32] = { 0 };
-            logger_dbg_print("[json] - connectd mcu slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            logger_dbg_print("[json] - Connectd mcu slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
             configuration.modbus_micro_slave_addr = atoi((const char *)temp);
             i++;
         } else if (_jsoneq(json_string, &tokens[i], "modbus_camera_slave_addr") == 0) {
             char temp[32] = { 0 };
-            logger_dbg_print("[json] - camera slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
+            logger_dbg_print("[json] - Camera slave addr: %.*s\n", tokens[i + 1].end - tokens[i + 1].start, json_string + tokens[i + 1].start);
             memcpy(temp, json_string + tokens[i + 1].start, tokens[i + 1].end - tokens[i + 1].start);
             configuration.modbus_camera_slave_addr = atoi((const char *)temp);
             i++;
@@ -139,7 +145,7 @@ static char *_convert_config_file_content_to_string(char *conf_file_name)
         return NULL;
     }
 
-    buffer = malloc(length);
+    buffer = (char *)malloc(length);
     if (buffer == NULL) {
         logger_err_print("[json] can't allocate buffer (%ld bytes) for json string\r\n", length);
         fclose (f);
@@ -174,6 +180,7 @@ modbus_converter_config_t *modbus_converter_apply_default_configuration(void)
     configuration.modbus_camera_slave_addr = MODBUS_CONV_CAMERA_SLAVE_ADDR_DEFAULT;
     configuration.modbus_port = MODBUS_CONV_PORT_DEFAULT;
     configuration.modbus_number_of_tcp_connections = MODBUS_CONV_NC_DEFAULT;
+    configuration.modbus_loss_connection_timeout_ms = MODBUS_CONV_LOSS_OF_CONNECTION_MS_DEFAULT;
 
     size_t uart_name_size = strlen(MODBUS_CONV_UART_DEV_DEFAULT) + 1;
     memcpy(configuration.uart_device_name, MODBUS_CONV_UART_DEV_DEFAULT, (uart_name_size > sizeof(configuration.uart_device_name)) ? sizeof(configuration.uart_device_name) : uart_name_size);
