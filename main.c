@@ -27,7 +27,6 @@ static void _free_tcp_ctx(void);
 static void _free_serial_ctx(void);
 static void _setup_serial_connection(void);
 static void _setup_tcp_connection(void);
-static void _reply_tcp_exeptions(uint8_t *q);
 
 /* Global device struct describing all states */
 typedef struct {
@@ -46,8 +45,6 @@ static modbus_converter_dev_t modbus_converter_dev = { 0 };
 
 int main(int argc, char *argv[])
 {
-    int rc = 0;
-
     /* Log starting time */
     _hello_print(argv[0]);
 
@@ -103,36 +100,70 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    int rc = 0;
+    uint8_t tcp_query[MODBUS_TCP_MAX_ADU_LENGTH];
+    uint8_t uart_rsp[MODBUS_RTU_MAX_ADU_LENGTH];
+
+    uint8_t rtu_slave_addr = 0;
+    uint8_t rtu_start_pos = 0;
+    uint16_t rtu_length = 0;
+    int mbar_header_len = 0;
+
     /* Main loop */
     for (;;) {
-        uint8_t query[MODBUS_TCP_MAX_ADU_LENGTH];
-        uint8_t rsp[MODBUS_TCP_MAX_ADU_LENGTH];
-
-        rc = modbus_receive(modbus_converter_dev.tcp_ctx, query);
+        rc = modbus_receive(modbus_converter_dev.tcp_ctx, tcp_query);
         if (rc > 0) {
-            logger_dbg_print("Rx addr=%d\r\n", query[0]);
-            logger_dbg_print("Rx func=%d\r\n", query[1]);
-            logger_dbg_print("Rx header len=%d\r\n", modbus_get_header_length(modbus_converter_dev.tcp_ctx));
+            /* Parse input TCP modbus message */
+            mbar_header_len = modbus_get_header_length(modbus_converter_dev.tcp_ctx);
+            if (mbar_header_len < 7) { /* MBAP always = 7 bytes for TCP Modbus */
+                logger_err_print("Unable to get MBAR tcp header len\r\n");
+                continue;
+            }
 
-            if (query[0] == modbus_converter_dev.config->modbus_camera_slave_addr) {
+            rtu_slave_addr = tcp_query[mbar_header_len - 1];
+            rtu_start_pos = mbar_header_len - 1;
+            rtu_length = (((uint16_t)(tcp_query[mbar_header_len - 3] << 8)) | (tcp_query[mbar_header_len - 2]));
+
+            logger_dbg_print("Rx common len=%d\r\n", rc);
+            logger_dbg_print("RTU slave addr=%d\r\n", rtu_slave_addr);
+            logger_dbg_print("RTU PDU start pos=%d\r\n", rtu_start_pos);
+            logger_dbg_print("RTU PDU length=%d\r\n", rtu_length);
+
+            if (rtu_slave_addr == modbus_converter_dev.config->modbus_camera_slave_addr) {
                 /* Parse and execute camera comands */
             } else {
                 /* Send data to serial device */
-                //modbus_send_raw_request();
-                //modbus_receive_confirmation(modbus_converter_dev.uart_ctx, rsp);
+                rc = modbus_send_raw_request(modbus_converter_dev.uart_ctx, &tcp_query[rtu_start_pos], rtu_length);
+                if (rc < 0) {
+                    logger_err_print("Unable to send raw request to uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    continue;
+                }
 
-                /* Send the responce to TCP client */
-                //modbus_send_raw_request();
+                rc = modbus_receive_confirmation(modbus_converter_dev.uart_ctx, uart_rsp);
+                #if (MODBUS_CONVERTER_DEBUG == 1)
+                    fflush(stdout); /* to make available libmodbus log in journalctl */
+                #endif
+                if (rc < 0) {
+                    logger_err_print("Unable to receive confirmation from uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    continue;
+                } else {
+                    logger_dbg_print("Uart slave responce len = %d\r\n", rc);
+
+                    /* Send the responce to TCP client */
+                    //modbus_send_raw_request();
+                }
             }
 
-            modbus_reply(modbus_converter_dev.tcp_ctx, query, rc, modbus_converter_dev.mb_mapping);
-        } else if ((rc == -1) && (errno != EMBBADCRC)) {
-            logger_err_print("TCP connection closed by the client or error: %s. Try again..\r\n", modbus_strerror(errno));
-            _free_tcp_ctx();
-            _setup_tcp_connection();
+            modbus_reply(modbus_converter_dev.tcp_ctx, tcp_query, rc, modbus_converter_dev.mb_mapping);
         } else {
-            /* The connection is not closed on errors which require on reply such as bad CRC in RTU. */
-            _reply_tcp_exeptions(query);
+            if (errno == ECONNRESET) { /* Host has closed tcp connection */
+                logger_err_print("TCP connection closed by the client or error: errno=%d --> %s. Try again...\r\n", errno, modbus_strerror(errno));
+                _free_tcp_ctx();
+                _setup_tcp_connection();
+            } else { /* Error has occured during tcp receiving */
+                logger_err_print("Error has occured during TCP receiving: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                continue;
+            }
         }
     }
 }
@@ -213,8 +244,18 @@ static void _free_serial_ctx(void)
 static void _setup_serial_connection(void)
 {
     int rc = 0;
+    uint32_t timeout_s = 0;
+    uint32_t timeout_us = 0;
 
     logger_dbg_print("Start setup serial connection...\r\n");
+
+    if (modbus_converter_dev.config->modbus_loss_connection_timeout_ms >= 1000) {
+        timeout_s = modbus_converter_dev.config->modbus_loss_connection_timeout_ms / 1000;
+        timeout_us = (modbus_converter_dev.config->modbus_loss_connection_timeout_ms % 1000) * 1000;
+    } else {
+        timeout_s = 0;
+        timeout_us = modbus_converter_dev.config->modbus_loss_connection_timeout_ms * 1000;
+    }
 
     /*
      * CREATE and SETUP context for SERIAL device.
@@ -235,11 +276,9 @@ static void _setup_serial_connection(void)
         exit(EXIT_FAILURE);
     }
 
-    uint32_t timeout_s = 0;
-    uint32_t timeout_us = modbus_converter_dev.config->modbus_loss_connection_timeout_ms * 1000;
-    rc = modbus_get_response_timeout(modbus_converter_dev.uart_ctx, &timeout_s, &timeout_us);
+    rc = modbus_set_response_timeout(modbus_converter_dev.uart_ctx, timeout_s, timeout_us);
     if (rc < 0) {
-        logger_err_print("Unable to setup response timeout: %s\r\n", modbus_strerror(errno));
+        logger_err_print("Unable to setup response timeout for serial device: %s\r\n", modbus_strerror(errno));
         _free_serial_ctx();
         exit(EXIT_FAILURE);
     }
@@ -247,7 +286,7 @@ static void _setup_serial_connection(void)
     rc = modbus_set_slave(modbus_converter_dev.uart_ctx,
                           modbus_converter_dev.config->modbus_micro_slave_addr);
     if (rc < 0) {
-        logger_err_print("Invalid slave ID (%d). %s\r\n", modbus_converter_dev.config->modbus_micro_slave_addr, modbus_strerror(errno));
+        logger_err_print("Invalid slave ID (%d) for serial device. %s\r\n", modbus_converter_dev.config->modbus_micro_slave_addr, modbus_strerror(errno));
         _free_serial_ctx();
         exit(EXIT_FAILURE);
     }
@@ -332,40 +371,4 @@ static void _setup_tcp_connection(void)
     }
 
     logger_info_print("TCP connection has been established successfully; Host IPv4 addr=%s\r\n", modbus_converter_dev.host_ip);
-}
-
-static void _reply_tcp_exeptions(uint8_t *q)
-{
-    int rc = 0;
-    unsigned int exception_code = 0;
-
-    if (errno == EMBXILFUN) {
-        exception_code = MODBUS_EXCEPTION_ILLEGAL_FUNCTION;
-    } else if (errno == EMBXILADD) {
-        exception_code = MODBUS_EXCEPTION_ILLEGAL_DATA_ADDRESS;
-    } else if (errno == EMBXILVAL) {
-        exception_code = MODBUS_EXCEPTION_ILLEGAL_DATA_VALUE;
-    } else if (errno == EMBXSFAIL) {
-        exception_code = MODBUS_EXCEPTION_SLAVE_OR_SERVER_FAILURE;
-    } else if (errno == EMBXACK) {
-        exception_code = MODBUS_EXCEPTION_ACKNOWLEDGE;
-    } else if (errno == EMBXSBUSY) {
-        exception_code = MODBUS_EXCEPTION_SLAVE_OR_SERVER_BUSY;
-    } else if (errno == EMBXNACK) {
-        exception_code = MODBUS_EXCEPTION_NEGATIVE_ACKNOWLEDGE;
-    } else if (errno == EMBXMEMPAR) {
-        exception_code = MODBUS_EXCEPTION_MEMORY_PARITY;
-    } else if (errno == EMBXGPATH) {
-        exception_code = MODBUS_EXCEPTION_GATEWAY_PATH;
-    } else if (errno == EMBXGTAR) {
-        exception_code = MODBUS_EXCEPTION_GATEWAY_TARGET;
-    } else {
-        exception_code = MODBUS_EXCEPTION_NOT_DEFINED;
-    }
-    
-    logger_dbg_print("Exeption #%d has been raised\r\n", exception_code);
-    rc = modbus_reply_exception(modbus_converter_dev.tcp_ctx, q, exception_code);
-    if (rc < 0) {
-        logger_err_print("Failed to reply exeption: %s.\r\n", modbus_strerror(errno));
-    }
 }
