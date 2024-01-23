@@ -123,6 +123,45 @@ int main(int argc, char *argv[])
 
             if (rtu_slave_addr == modbus_converter_dev.config->modbus_camera_slave_addr) {
                 /* Parse and execute camera comands */
+                rc = camera_api_parse_and_execute_cmd(&tcp_query[rtu_start_pos]);
+                if (rc < 0) {
+                    unsigned int exception_code = 0;
+
+                    switch (rc) {
+                    case CAMERA_API_ERROR_ILLEGAL_FUNCTION:
+                        exception_code = MODBUS_EXCEPTION_ILLEGAL_FUNCTION;
+                        break;
+                    case CAMERA_API_ERROR_ILLEGAL_DATA_ADDRESS:
+                        exception_code = MODBUS_EXCEPTION_ILLEGAL_DATA_ADDRESS;
+                        break;
+                    case CAMERA_API_ERROR_ILLEGAL_DATA_VALUE:
+                        exception_code = MODBUS_EXCEPTION_ILLEGAL_DATA_VALUE;
+                        break;
+                    default:
+                        exception_code = MODBUS_EXCEPTION_NOT_DEFINED;
+                        break;
+                    }
+
+                    rc = modbus_reply_exception(modbus_converter_dev.tcp_ctx, tcp_query, exception_code);
+                    if (rc < 0) {
+                        logger_err_print("Unably to reply TCP modbus exeption\r\n");
+                    }
+                } else {
+                    rc = modbus_send_raw_request(modbus_converter_dev.tcp_ctx,
+                                                &tcp_query[rtu_start_pos],
+                                                rtu_length,
+                                                (int)(((uint16_t)(tcp_query[0]) << 8) | tcp_query[1]));
+                    if (rc < 0) {
+                        logger_err_print("Unable to send raw request to TCP connection: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    }
+                    rc = modbus_flush(modbus_converter_dev.tcp_ctx);
+                    if (rc < 0) {
+                        logger_err_print("Unable to flush TCP socket: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    }
+                    #if (MODBUS_CONVERTER_DEBUG == 1)
+                        fflush(stdout); /* to make available libmodbus log in journalctl */
+                    #endif
+                }
             } else {
                 /* Send data to serial device */
                 rc = modbus_send_raw_request(modbus_converter_dev.uart_ctx, &tcp_query[rtu_start_pos], rtu_length, 0);
