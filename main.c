@@ -33,7 +33,6 @@ typedef struct {
     modbus_converter_config_t *config;
     modbus_t *uart_ctx;
     modbus_t *tcp_ctx;
-    modbus_mapping_t *mb_mapping;
     int modbus_socket;
     int listen_socket;
     char my_ip[INET_ADDRSTRLEN];
@@ -93,13 +92,6 @@ int main(int argc, char *argv[])
     modbus_set_debug(modbus_converter_dev.tcp_ctx, 1);
 #endif
 
-    modbus_converter_dev.mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, 0, MODBUS_MAX_READ_REGISTERS, 0);
-    if (modbus_converter_dev.mb_mapping == NULL) {
-        logger_err_print("Failed to allocate the mapping: %s\n", modbus_strerror(errno));
-        _free_serial_ctx();
-        exit(EXIT_FAILURE);
-    }
-
     int rc = 0;
     uint8_t tcp_query[MODBUS_TCP_MAX_ADU_LENGTH];
     uint8_t uart_rsp[MODBUS_RTU_MAX_ADU_LENGTH];
@@ -126,35 +118,56 @@ int main(int argc, char *argv[])
 
             logger_dbg_print("Rx common len=%d\r\n", rc);
             logger_dbg_print("RTU slave addr=%d\r\n", rtu_slave_addr);
-            logger_dbg_print("RTU PDU start pos=%d\r\n", rtu_start_pos);
-            logger_dbg_print("RTU PDU length=%d\r\n", rtu_length);
+            logger_dbg_print("RTU start pos=%d\r\n", rtu_start_pos);
+            logger_dbg_print("RTU length=%d\r\n", rtu_length);
 
             if (rtu_slave_addr == modbus_converter_dev.config->modbus_camera_slave_addr) {
                 /* Parse and execute camera comands */
             } else {
                 /* Send data to serial device */
-                rc = modbus_send_raw_request(modbus_converter_dev.uart_ctx, &tcp_query[rtu_start_pos], rtu_length);
+                rc = modbus_send_raw_request(modbus_converter_dev.uart_ctx, &tcp_query[rtu_start_pos], rtu_length, 0);
+                #if (MODBUS_CONVERTER_DEBUG == 1)
+                    fflush(stdout); /* to make available libmodbus log in journalctl */
+                #endif
                 if (rc < 0) {
                     logger_err_print("Unable to send raw request to uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
                     continue;
+                }
+
+                rc = modbus_flush(modbus_converter_dev.uart_ctx);
+                #if (MODBUS_CONVERTER_DEBUG == 1)
+                    fflush(stdout); /* to make available libmodbus log in journalctl */
+                #endif
+                if (rc < 0) {
+                    logger_err_print("Unable to flush to uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
                 }
 
                 rc = modbus_receive_confirmation(modbus_converter_dev.uart_ctx, uart_rsp);
                 #if (MODBUS_CONVERTER_DEBUG == 1)
                     fflush(stdout); /* to make available libmodbus log in journalctl */
                 #endif
-                if (rc < 0) {
-                    logger_err_print("Unable to receive confirmation from uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
-                    continue;
-                } else {
+                if (rc > 0) {
                     logger_dbg_print("Uart slave responce len = %d\r\n", rc);
 
                     /* Send the responce to TCP client */
-                    //modbus_send_raw_request();
+                    rc = modbus_send_raw_request(modbus_converter_dev.tcp_ctx, uart_rsp, rc, (int)(((uint16_t)(tcp_query[0]) << 8) | tcp_query[1]));
+                    if (rc < 0) {
+                        logger_err_print("Unable to send raw request to TCP connection: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    }
+
+                    rc = modbus_flush(modbus_converter_dev.tcp_ctx);
+                    if (rc < 0) {
+                        logger_err_print("Unable to flush TCP socket: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    }
+
+                    #if (MODBUS_CONVERTER_DEBUG == 1)
+                        fflush(stdout); /* to make available libmodbus log in journalctl */
+                    #endif
+                } else {
+                    logger_err_print("Unable to receive confirmation from uart device: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
+                    continue;
                 }
             }
-
-            modbus_reply(modbus_converter_dev.tcp_ctx, tcp_query, rc, modbus_converter_dev.mb_mapping);
         } else {
             if (errno == ECONNRESET) { /* Host has closed tcp connection */
                 logger_err_print("TCP connection closed by the client or error: errno=%d --> %s. Try again...\r\n", errno, modbus_strerror(errno));
@@ -236,7 +249,6 @@ static void _free_tcp_ctx(void)
 
 static void _free_serial_ctx(void)
 {
-    modbus_mapping_free(modbus_converter_dev.mb_mapping);
     modbus_close(modbus_converter_dev.uart_ctx);
     modbus_free(modbus_converter_dev.uart_ctx);
 }
