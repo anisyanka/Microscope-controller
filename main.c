@@ -17,6 +17,8 @@
 #include "modbus_converter_config.h"
 #include "logger.h"
 
+#include "camera_api.h"
+
 /* Prototypes */
 static void _hello_print(const char *software_name);
 static void _obtain_and_copy_my_ip_to_dev_struct(void);
@@ -33,9 +35,11 @@ typedef struct {
     modbus_t *uart_ctx;
     modbus_t *tcp_ctx;
     modbus_mapping_t *mb_mapping;
-    int server_socket;
-    char my_ip[16];
-    int is_ip_obtained;
+    int modbus_socket;
+    int listen_socket;
+    char my_ip[INET_ADDRSTRLEN];
+    char host_ip[INET_ADDRSTRLEN];
+    int is_my_ip_obtained;
 } modbus_converter_dev_t;
 
 static modbus_converter_dev_t modbus_converter_dev = { 0 };
@@ -46,6 +50,9 @@ int main(int argc, char *argv[])
 
     /* Log starting time */
     _hello_print(argv[0]);
+
+    modbus_converter_dev.listen_socket = -1;
+    modbus_converter_dev.modbus_socket = -1;
 
     /* Obtain converter configuration */
     modbus_converter_dev.config = modbus_converter_read_config();
@@ -144,10 +151,9 @@ static void _obtain_and_copy_my_ip_to_dev_struct(void)
     int ret = 0;
     struct ifreq ifr = { 0 };
     char *ip = NULL;
-    size_t ip_len = 0;
 
     memcmp(modbus_converter_dev.my_ip, "00.00.00.00", 12);
-    modbus_converter_dev.is_ip_obtained = 0;
+    modbus_converter_dev.is_my_ip_obtained = 0;
 
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0) {
@@ -168,15 +174,13 @@ static void _obtain_and_copy_my_ip_to_dev_struct(void)
 
     ip = inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
     if (ip == NULL) {
-        logger_err_print("Failed to convert IP to sctring\r\n");
+        logger_err_print("Failed to convert rpi ip to sctring\r\n");
         return;
     }
 
-    ip_len = strlen(ip) + 1;
-    logger_dbg_print("my ip = %s\r\n", ip);
-
-    memcpy(modbus_converter_dev.my_ip, ip, (ip_len > sizeof(modbus_converter_dev.my_ip)) ? sizeof(modbus_converter_dev.my_ip) : ip_len);
-    modbus_converter_dev.is_ip_obtained = 1;
+    (void)strncpy(modbus_converter_dev.my_ip, ip, sizeof(modbus_converter_dev.my_ip));
+    logger_dbg_print("RPI IPv4 addr=%s\r\n", modbus_converter_dev.my_ip);
+    modbus_converter_dev.is_my_ip_obtained = 1;
 }
 
 static void _free_all_ctx(void)
@@ -187,8 +191,12 @@ static void _free_all_ctx(void)
 
 static void _free_tcp_ctx(void)
 {
-    if (modbus_converter_dev.server_socket != -1) {
-        close(modbus_converter_dev.server_socket);
+    if (modbus_converter_dev.listen_socket != -1) {
+        close(modbus_converter_dev.listen_socket);
+    }
+
+    if (modbus_converter_dev.modbus_socket != -1) {
+        close(modbus_converter_dev.modbus_socket);
     }
 
     modbus_close(modbus_converter_dev.tcp_ctx);
@@ -205,6 +213,8 @@ static void _free_serial_ctx(void)
 static void _setup_serial_connection(void)
 {
     int rc = 0;
+
+    logger_dbg_print("Start setup serial connection...\r\n");
 
     /*
      * CREATE and SETUP context for SERIAL device.
@@ -224,6 +234,7 @@ static void _setup_serial_connection(void)
         logger_err_print("Unable to create the libmodbus context for uard device %d. %s\r\n", modbus_converter_dev.config->uart_device_name, modbus_strerror(errno));
         exit(EXIT_FAILURE);
     }
+
     uint32_t timeout_s = 0;
     uint32_t timeout_us = modbus_converter_dev.config->modbus_loss_connection_timeout_ms * 1000;
     rc = modbus_get_response_timeout(modbus_converter_dev.uart_ctx, &timeout_s, &timeout_us);
@@ -232,6 +243,7 @@ static void _setup_serial_connection(void)
         _free_serial_ctx();
         exit(EXIT_FAILURE);
     }
+
     rc = modbus_set_slave(modbus_converter_dev.uart_ctx,
                           modbus_converter_dev.config->modbus_micro_slave_addr);
     if (rc < 0) {
@@ -239,6 +251,7 @@ static void _setup_serial_connection(void)
         _free_serial_ctx();
         exit(EXIT_FAILURE);
     }
+
     rc = modbus_connect(modbus_converter_dev.uart_ctx);
     if (rc < 0) {
         logger_err_print("Connection to serial device %s failed: %s\r\n", modbus_converter_dev.config->uart_device_name, modbus_strerror(errno));
@@ -252,26 +265,32 @@ static void _setup_serial_connection(void)
 static void _setup_tcp_connection(void)
 {
     int rc = 0;
+    char *ip = NULL;
+
+    logger_dbg_print("Wait for host TCP connection request...\r\n");
 
     /*
      * CREATE and SETUP context for TCP server device(slave).
      * In case of TCP we are a slave device.
      * Modbus poll will connect to us and send queries.
      */
-    modbus_converter_dev.tcp_ctx = modbus_new_tcp((modbus_converter_dev.is_ip_obtained) ? modbus_converter_dev.my_ip : NULL,
+    modbus_converter_dev.tcp_ctx = modbus_new_tcp((modbus_converter_dev.is_my_ip_obtained) ? modbus_converter_dev.my_ip : NULL,
                                                   modbus_converter_dev.config->modbus_port);
     if (modbus_converter_dev.tcp_ctx == NULL) {
         logger_err_print("Unable to create the libmodbus context for TCP connection %s:%d. %s\r\n", modbus_converter_dev.my_ip, modbus_converter_dev.config->modbus_port, modbus_strerror(errno));
         _free_serial_ctx();
         exit(EXIT_FAILURE);
     }
+
     modbus_set_indication_timeout(modbus_converter_dev.tcp_ctx, 0, 0); /* wait for connection or indication forever */
+
     rc = modbus_set_slave(modbus_converter_dev.tcp_ctx, MODBUS_TCP_SLAVE);
     if (rc < 0) {
         logger_err_print("Unable to set TCP slave. %s\r\n", modbus_strerror(errno));
         _free_all_ctx();
         exit(EXIT_FAILURE);
     }
+
     rc = modbus_tcp_listen(modbus_converter_dev.tcp_ctx,
                            modbus_converter_dev.config->modbus_number_of_tcp_connections);
     if (rc < 0) {
@@ -279,16 +298,40 @@ static void _setup_tcp_connection(void)
         _free_all_ctx();
         exit(EXIT_FAILURE);
     }
-    logger_dbg_print("TCP socket=%d\r\n", rc);
-    modbus_converter_dev.server_socket = rc;
-    rc = modbus_tcp_accept(modbus_converter_dev.tcp_ctx, &modbus_converter_dev.server_socket);
+
+    modbus_converter_dev.listen_socket = rc;
+    logger_dbg_print("TCP listen socket=%d\r\n", modbus_converter_dev.listen_socket);
+
+    rc = modbus_tcp_accept(modbus_converter_dev.tcp_ctx, &modbus_converter_dev.listen_socket);
     if (rc < 0) {
         logger_err_print("Unable to accept TCP connection: %s\r\n",  modbus_strerror(errno));
         _free_all_ctx();
         exit(EXIT_FAILURE);
     }
 
-    logger_info_print("TCP connection has been established successfully\r\n");
+    struct sockaddr_in addr = { 0 };
+    socklen_t addr_size = sizeof(struct sockaddr_in);
+
+    modbus_converter_dev.modbus_socket = rc;
+    logger_dbg_print("TCP modbus socket=%d\r\n", modbus_converter_dev.modbus_socket);
+
+    rc = getpeername(modbus_converter_dev.modbus_socket, (struct sockaddr *)&addr, &addr_size);
+    if (rc < 0) {
+        logger_err_print("Failed to get connected peer name; errno=%d --> %s\r\n", errno, strerror(errno));
+    } else {
+        ip = inet_ntoa(addr.sin_addr);
+        if (ip == NULL) {
+            logger_err_print("Failed to convert host ip to sctring\r\n");
+        } else {
+            (void)strncpy(modbus_converter_dev.host_ip, ip, sizeof(modbus_converter_dev.host_ip));
+
+            #if (MODBUS_CONVERTER_SUPPORT_CAMERA_COMMAND == 1)
+                camera_api_setup_host_ip_config(modbus_converter_dev.host_ip);
+            #endif
+        }
+    }
+
+    logger_info_print("TCP connection has been established successfully; Host IPv4 addr=%s\r\n", modbus_converter_dev.host_ip);
 }
 
 static void _reply_tcp_exeptions(uint8_t *q)

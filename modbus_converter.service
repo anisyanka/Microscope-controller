@@ -7,6 +7,7 @@ Type=simple
 User=pi
 Group=pi
 ExecStart=/home/pi/.modbus_converter/modbus_converter
+WorkingDirectory=/home/pi/.modbus_converter
 Restart=always
 RestartSec=5s
 StandardError=journal

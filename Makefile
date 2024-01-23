@@ -24,7 +24,8 @@ CFLAGS=-I./ \
 		$(JSONLIB) \
 		-DMODBUS_CONVERTER_DEBUG=1 \
 		-DMODBUS_USE_DEFAULT_CONFIG_IN_CASE_OF_JSON_ERROR=1 \
-		-DMODBUS_SUPPORT_MORE_THAN_1_TCP_CONNECTION=0
+		-DMODBUS_SUPPORT_MORE_THAN_1_TCP_CONNECTION=0 \
+		-DMODBUS_CONVERTER_SUPPORT_CAMERA_COMMAND=1
 
 LDFLAGS='-Wl,-rpath=/usr/local/lib'
 
@@ -47,10 +48,13 @@ submodule_update:
 	@git submodule update --init --recursive
 
 install: all
-	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
+	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
 	mkdir -p $(TARGET_DIR)
-	cp modbus_converter_config.json $(TARGET_DIR)
-	chmod 666 $(TARGET_DIR)/modbus_converter_config.json
+	cp $(SCRIPTS_DIR)/update_host_ip_for_video_streaming.sh $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/update_host_ip_for_video_streaming.sh
+	cp modbus_converter.conf $(TARGET_DIR)
+	chmod 666 $(TARGET_DIR)/modbus_converter.conf
+	touch $(TARGET_DIR)/host_ip.conf
 	sudo cp modbus_converter.service /etc/systemd/system/
 	cp $(TARGET) $(TARGET_DIR)
 	sync

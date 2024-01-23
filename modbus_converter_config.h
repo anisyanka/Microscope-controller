@@ -11,7 +11,7 @@ extern "C" {
 #define MODBUS_CONV_MAX_UART_DEV_NAME_LEN  (64U)
 #define MODBUS_CONV_MAX_HOST_IPV4_ADDR_LEN (16U)
 
-#define MODBUS_CONV_CONFIG_JSON_FILE_PATH "/home/pi/.modbus_converter/modbus_converter_config.json"
+#define MODBUS_CONV_CONFIG_JSON_FILE_PATH "/home/pi/.modbus_converter/modbus_converter.conf"
 #define MODBUS_CONV_CONFIG_JSON_MAX_TOKEN_CNT (128U)
 #define MODBUS_CONV_CONFIG_JSON_MAX_FILE_SIZE_BYTES (2048U)
 

@@ -7,19 +7,28 @@ rpi_ip=192.168.1.55
 cd ..
 ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $modbus_src_dir; mkdir -p $modbus_src_dir/jsmn; mkdir -p $modbus_src_dir/scripts"
 
+# Send sources
 scp $modbus_src_dir/main.c \
     $modbus_src_dir/modbus_converter_config.c \
     $modbus_src_dir/modbus_converter_config.h \
     $modbus_src_dir/logger.c \
     $modbus_src_dir/logger.h \
-    $modbus_src_dir/modbus_converter_config.json \
+    $modbus_src_dir/modbus_converter.conf \
     $modbus_src_dir/Makefile \
     $modbus_src_dir/modbus_converter.service \
+    $modbus_src_dir/camera_api.c \
+    $modbus_src_dir/camera_api.h \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir
 
 scp $modbus_src_dir/jsmn/jsmn.h \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/jsmn
 
+# Send scripts for make install/uninstall targets
 scp $modbus_src_dir/scripts/stop_modbus_converter_service_if_running.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
 ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/stop_modbus_converter_service_if_running.sh"
+
+# Send scripts to execute during runtime
+scp $modbus_src_dir/scripts/update_host_ip_for_video_streaming.sh \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/update_host_ip_for_video_streaming.sh"
