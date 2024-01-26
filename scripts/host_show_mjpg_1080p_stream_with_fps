@@ -1,0 +1,1 @@
+gst-launch-1.0 udpsrc port=5602 ! application/x-rtp,encoding-name=JPEG,width=1920,height=1080,clock-rate=90000,payload=96 ! rtpjpegdepay ! decodebin ! fpsdisplaysink text-overlay=true sync=false

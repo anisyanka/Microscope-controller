@@ -1,0 +1,1 @@
+gst-launch-1.0 -v udpsrc port=5602 ! "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! decodebin ! videoconvert ! fpsdisplaysink text-overlay=true sync=false
