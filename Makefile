@@ -51,6 +51,8 @@ install: all
 	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/rpi_stop_video_stream.sh
 	mkdir -p $(TARGET_DIR)
+	cp $(SCRIPTS_DIR)/linux_launch_1080p_test_stream.sh $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/linux_launch_1080p_test_stream.sh
 	cp $(SCRIPTS_DIR)/update_host_ip_for_video_streaming.sh $(TARGET_DIR)
 	chmod +x $(TARGET_DIR)/update_host_ip_for_video_streaming.sh
 	cp $(SCRIPTS_DIR)/rpi_stop_video_stream.sh $(TARGET_DIR)
@@ -67,7 +69,7 @@ install: all
 	sync
 	sudo systemctl daemon-reload
 	sudo systemctl enable $(TARGET)
-	sudo systemctl start modbus_converter
+	sudo systemctl start $(TARGET)
 
 uninstall:
 	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
