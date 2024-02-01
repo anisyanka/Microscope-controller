@@ -216,6 +216,8 @@ $ raspi-gpio get
 ```
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
+alias ll="ls -l"
+alias myip='curl ipinfo.io/ip; echo'
 ```
 
  * Далее были доустановлены в образ следующие программы:
