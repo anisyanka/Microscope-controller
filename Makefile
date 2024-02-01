@@ -15,6 +15,7 @@ endif
 # Headers are in /usr/local/include/modbus
 # Shared lib is in /usr/local/lib
 MODBUSLIB=$(shell pkg-config --cflags --libs libmodbus)
+MODBUSLIB_SUBMODULE_DIR=./libmodbus/
 
 JSONLIB_DIR=./jsmn/
 JSONLIB=-I$(JSONLIB_DIR)
@@ -31,7 +32,7 @@ LDFLAGS='-Wl,-rpath=/usr/local/lib'
 
 SOURCES_PATH=.
 SOURCES_EXTENSION=c
-SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*')
+SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*' -not -path '$(MODBUSLIB_SUBMODULE_DIR)*')
 
 SCRIPTS_DIR=./scripts
 
