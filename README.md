@@ -89,6 +89,8 @@ typedef enum {
     CAMERA_API_LAUNCH_VIDEO_STOP_VALUE = 0x02,
     CAMERA_API_LAUNCH_VIDEO_TEST_VALUE = 0x03,
     CAMERA_API_LAUNCH_VIDEO_1080P_WEB_STREAMING_VALUE = 0x04,
+    CAMERA_API_LAUNCH_VIDEO_4K_WEB_STREAMING_VALUE = 0x05,
+    CAMERA_API_LAUNCH_VIDEO_TEST_WEB_STREAMING_VALUE = 0x06,
 } camera_api_supported_cmd_values_t;
 ```
 Примеры Modbus-команд для камеры:
@@ -128,6 +130,8 @@ typedef enum {
 
 Это нужно делать руками только лишь потому, что стримы посылаются в разных кодировках.
 Для 4к используется H264. Для 1080p - MJPG. Поэтому на хосте требуется запускать разные декодеры.
+
+vlc tcp://192.168.1.55:7001
 
 ## Полезные команды сервиса `modbus_converter` <a name="usefulcmd"></a>
 ```

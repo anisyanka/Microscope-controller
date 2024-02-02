@@ -5,7 +5,7 @@ rpi_ip=192.168.1.55
 
 # Create environment on RPI before copying
 cd ..
-ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $modbus_src_dir; mkdir -p $modbus_src_dir/jsmn; mkdir -p $modbus_src_dir/scripts"
+ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $modbus_src_dir; mkdir -p $modbus_src_dir/jsmn; mkdir -p $modbus_src_dir/scripts; mkdir -p $modbus_src_dir/html_viewer;" 
 
 # Send sources
 scp $modbus_src_dir/main.c \
@@ -49,6 +49,18 @@ scp $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
 ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh"
 
-scp $modbus_src_dir/scripts/rpi_launch_tcp_1080p_mjpg.sh \
+# Send scripts for http-server
+scp $modbus_src_dir/scripts/rpi_launch_web_1080p_mjpg.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
-ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_tcp_1080p_mjpg.sh"
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_web_1080p_mjpg.sh"
+
+scp $modbus_src_dir/scripts/rpi_launch_web_4k_soft_h264.sh \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_web_4k_soft_h264.sh"
+
+scp $modbus_src_dir/scripts/linux_launch_web_1080p_test_stream.sh \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/linux_launch_web_1080p_test_stream.sh"
+
+scp $modbus_src_dir/html_viewer/index.html \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/html_viewer

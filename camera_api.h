@@ -13,7 +13,9 @@ extern "C" {
 #define CAMERA_API_LAUNCH_1080P_VIDEO_SCRIPT "./rpi_launch_udp_1080p_mjpg.sh"
 #define CAMERA_API_LAUNCH_STOP_VIDEO_SCRIPT "./rpi_stop_video_stream.sh"
 #define CAMERA_API_LAUNCH_TEST_VIDEO_SCRIPT "./linux_launch_udp_1080p_test_stream.sh"
-#define CAMERA_API_LAUNCH_1080P_WEB_STREAMING_VIDEO_SCRIPT "./rpi_launch_tcp_1080p_mjpg.sh"
+#define CAMERA_API_LAUNCH_1080P_WEB_STREAMING_VIDEO_SCRIPT "./rpi_launch_web_1080p_mjpg.sh"
+#define CAMERA_API_LAUNCH_4K_WEB_STREAMING_VIDEO_SCRIPT "./rpi_launch_web_4k_soft_h264.sh"
+#define CAMERA_API_LAUNCH_TEST_WEB_STREAMING_VIDEO_SCRIPT "./linux_launch_web_1080p_test_stream.sh"
 
 #define CAMERA_API_REACT_TO_FC (MODBUS_FC_WRITE_SINGLE_REGISTER)
 
@@ -34,6 +36,8 @@ typedef enum {
     CAMERA_API_LAUNCH_VIDEO_STOP_VALUE = 0x02,
     CAMERA_API_LAUNCH_VIDEO_TEST_VALUE = 0x03,
     CAMERA_API_LAUNCH_VIDEO_1080P_WEB_STREAMING_VALUE = 0x04,
+    CAMERA_API_LAUNCH_VIDEO_4K_WEB_STREAMING_VALUE = 0x05,
+    CAMERA_API_LAUNCH_VIDEO_TEST_WEB_STREAMING_VALUE = 0x06,
 } camera_api_supported_cmd_values_t;
 
 void camera_api_setup_host_ip_config(const char *host_ip);
