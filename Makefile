@@ -52,16 +52,16 @@ install: all
 	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/rpi_stop_video_stream.sh
 	mkdir -p $(TARGET_DIR)
-	cp $(SCRIPTS_DIR)/linux_launch_1080p_test_stream.sh $(TARGET_DIR)
-	chmod +x $(TARGET_DIR)/linux_launch_1080p_test_stream.sh
+	cp $(SCRIPTS_DIR)/linux_launch_udp_1080p_test_stream.sh $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/linux_launch_udp_1080p_test_stream.sh
 	cp $(SCRIPTS_DIR)/update_host_ip_for_video_streaming.sh $(TARGET_DIR)
 	chmod +x $(TARGET_DIR)/update_host_ip_for_video_streaming.sh
 	cp $(SCRIPTS_DIR)/rpi_stop_video_stream.sh $(TARGET_DIR)
 	chmod +x $(TARGET_DIR)/rpi_stop_video_stream.sh
-	cp $(SCRIPTS_DIR)/rpi_launch_4k_soft_h264.sh $(TARGET_DIR)
-	chmod +x $(TARGET_DIR)/rpi_launch_4k_soft_h264.sh
-	cp $(SCRIPTS_DIR)/rpi_launch_1080p_mjpg.sh $(TARGET_DIR)
-	chmod +x $(TARGET_DIR)/rpi_launch_1080p_mjpg.sh
+	cp $(SCRIPTS_DIR)/rpi_launch_udp_4k_soft_h264.sh $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/rpi_launch_udp_4k_soft_h264.sh
+	cp $(SCRIPTS_DIR)/rpi_launch_udp_1080p_mjpg.sh $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/rpi_launch_udp_1080p_mjpg.sh
 	cp modbus_converter.conf $(TARGET_DIR)
 	chmod 666 $(TARGET_DIR)/modbus_converter.conf
 	touch $(TARGET_DIR)/host_ip.conf

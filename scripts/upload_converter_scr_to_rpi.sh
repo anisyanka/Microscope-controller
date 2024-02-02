@@ -33,18 +33,18 @@ scp $modbus_src_dir/scripts/update_host_ip_for_video_streaming.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
 ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/update_host_ip_for_video_streaming.sh"
 
-scp $modbus_src_dir/scripts/rpi_launch_4k_soft_h264.sh \
+scp $modbus_src_dir/scripts/rpi_launch_udp_4k_soft_h264.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
-ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_4k_soft_h264.sh"
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_udp_4k_soft_h264.sh"
 
-scp $modbus_src_dir/scripts/rpi_launch_1080p_mjpg.sh \
+scp $modbus_src_dir/scripts/rpi_launch_udp_1080p_mjpg.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
-ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_1080p_mjpg.sh"
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_udp_1080p_mjpg.sh"
 
 scp $modbus_src_dir/scripts/rpi_stop_video_stream.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
 ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_stop_video_stream.sh"
 
-scp $modbus_src_dir/scripts/linux_launch_1080p_test_stream.sh \
+scp $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
-ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/linux_launch_1080p_test_stream.sh"
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh"

@@ -88,13 +88,15 @@ typedef enum {
     CAMERA_API_LAUNCH_VIDEO_1080P_VALUE = 0x01,
     CAMERA_API_LAUNCH_VIDEO_STOP_VALUE = 0x02,
     CAMERA_API_LAUNCH_VIDEO_TEST_VALUE = 0x03,
+    CAMERA_API_LAUNCH_VIDEO_1080P_WEB_STREAMING_VALUE = 0x04,
 } camera_api_supported_cmd_values_t;
 ```
 Примеры Modbus-команд для камеры:
 ```
-0x02 0x06 0x00 0x01 0x00 0x00 <crc16> - запустить 4к видео стрим.
-0x02 0x06 0x00 0x01 0x00 0x01 <crc16> - запустить 1080p видео стрим.
+0x02 0x06 0x00 0x01 0x00 0x00 <crc16> - запустить 4к видео стрим на ip адресс хоста.
+0x02 0x06 0x00 0x01 0x00 0x01 <crc16> - запустить 1080p видео стрим на ip адресс хоста.
 0x02 0x06 0x00 0x01 0x00 0x02 <crc16> - остановить вообще видеопоток. (Использовалось для отладки).
+0x02 0x06 0x00 0x01 0x00 0x04 <crc16> - запустить 1080p видео стрим на web-ресурс доступный по IP-адресу платы 192.168.XX.XX
 ```
 
 **Если камера получила неподдерживаемые значения fucntion code, регистра или значений регистров, то сервис modbus_converter вернёт соответствующие коды ошибок вышестоящей программе, приславшей неверную команду.**
@@ -230,6 +232,14 @@ sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgst
 **Программы для компиляции библиотек и конвертера**
 ```
 sudo apt-get install git autoconf libtool
+```
+
+**http сервер**
+```
+sudo apt-get install apache2 -y
+
+Это создаст systemd-сервис с apache, который будет обрабатывать http-запросы.
+/lib/systemd/system/apache2.service
 ```
 
 **libmodbus**
