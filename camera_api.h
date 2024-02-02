@@ -13,6 +13,7 @@ extern "C" {
 #define CAMERA_API_LAUNCH_1080P_VIDEO_SCRIPT "./rpi_launch_udp_1080p_mjpg.sh"
 #define CAMERA_API_LAUNCH_STOP_VIDEO_SCRIPT "./rpi_stop_video_stream.sh"
 #define CAMERA_API_LAUNCH_TEST_VIDEO_SCRIPT "./linux_launch_udp_1080p_test_stream.sh"
+#define CAMERA_API_LAUNCH_1080P_WEB_STREAMING_VIDEO_SCRIPT "./rpi_launch_tcp_1080p_mjpg.sh"
 
 #define CAMERA_API_REACT_TO_FC (MODBUS_FC_WRITE_SINGLE_REGISTER)
 

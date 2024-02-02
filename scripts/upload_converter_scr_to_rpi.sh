@@ -48,3 +48,7 @@ ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_stop_video_stream.sh
 scp $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
 ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/linux_launch_udp_1080p_test_stream.sh"
+
+scp $modbus_src_dir/scripts/rpi_launch_tcp_1080p_mjpg.sh \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/scripts
+ssh $rpi_user@$rpi_ip "chmod +x $modbus_src_dir/scripts/rpi_launch_tcp_1080p_mjpg.sh"
