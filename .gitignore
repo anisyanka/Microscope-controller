@@ -68,3 +68,4 @@ dkms.conf
 # build
 build/
 logs/
+modbus_converter
