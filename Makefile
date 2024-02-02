@@ -35,6 +35,7 @@ SOURCES_EXTENSION=c
 SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*' -not -path '$(MODBUSLIB_SUBMODULE_DIR)*')
 
 SCRIPTS_DIR=./scripts
+HTML_DIR=./html_viewer
 
 all:
 	$(CC) $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $(TARGET)
@@ -67,6 +68,7 @@ install: all
 	touch $(TARGET_DIR)/host_ip.conf
 	sudo cp modbus_converter.service /etc/systemd/system/
 	cp $(TARGET) $(TARGET_DIR)
+	sudo cp $(HTML_DIR)/index.html /var/www/html
 	sync
 	sudo systemctl daemon-reload
 	sudo systemctl enable $(TARGET)
