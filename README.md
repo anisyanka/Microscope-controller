@@ -1,4 +1,4 @@
-# Modbus TCP/RTU Converter для управления видеостримом с платы RPI и получения данных с подключенного к плате микроконтроллера.
+# Modbus TCP/RTU конвертер и web-интерфейс для управления микроскопом на базе Raspberry Pi.
 
 # Содержание
 1. [Первое включение и установка wi-fi соединения](#firststart)
@@ -33,7 +33,7 @@ sudo reboot
 
 Главный конфигурационный файл, который должен редактировать пользователь  - это `/home/pi/.modbus_converter/modbus_converter.conf`.
 Формат файла - JSON. Дефолтный конфиг выглядит так:
-```
+```json
 {
     "uart_device": "/dev/ttyAMA5",
     "uart_baud": 9600,
@@ -82,7 +82,7 @@ sudo reboot
 На данный момент поддерживается только один регистр у этой команды - `CAMERA_API_LAUNCH_VIDEO_REG_ADDR=0x01`
 Этот регистр отвечает за состояние видеопотока.
 Значения этого регистра могут быть следующие:
-```
+```C
 typedef enum {
     CAMERA_API_LAUNCH_VIDEO_4K_VALUE = 0x00,
     CAMERA_API_LAUNCH_VIDEO_1080P_VALUE = 0x01,
@@ -94,7 +94,7 @@ typedef enum {
 } camera_api_supported_cmd_values_t;
 ```
 Примеры Modbus-команд для камеры:
-```
+```h
 0x02 0x06 0x00 0x01 0x00 0x00 <crc16> - запустить 4к видео стрим на ip адресс хоста.
 0x02 0x06 0x00 0x01 0x00 0x01 <crc16> - запустить 1080p видео стрим на ip адресс хоста.
 0x02 0x06 0x00 0x01 0x00 0x02 <crc16> - остановить вообще видеопоток. (Использовалось для отладки).
@@ -134,23 +134,23 @@ typedef enum {
 vlc tcp://192.168.1.55:7001
 
 ## Полезные команды сервиса `modbus_converter` <a name="usefulcmd"></a>
-```
-- Манипуляции с запуском сервиса
+```bash
+# Манипуляции с запуском сервиса
 service modbus_converter status
 service modbus_converter start
 service modbus_converter stop
 service modbus_converter restart
 
-- Тоже самое, но через systemctl
+# Тоже самое, но через systemctl
 sudo systemctl status modbus_converter
 sudo systemctl start modbus_converter
 sudo systemctl stop modbus_converter
 sudo systemctl restart modbus_converter
 
-- Просмотр логов сервиса в режиме tail -f, показав последние 50 строк лога
+# Просмотр логов сервиса в режиме tail -f, показав последние 50 строк лога
 sudo journalctl -a -f -n 50 -u modbus_converter # 
 
-- Просмотр логов сервиса с момента последней загрузки системы
+# Просмотр логов сервиса с момента последней загрузки системы
 sudo journalctl -b -u modbus_converter
 ```
 По дефолту сервис скомпилирован с параметром `MODBUS_CONVERTER_DEBUG=0` (см. Makefile), поэтому логов будет не очень много.
@@ -163,16 +163,16 @@ https://raspberrypi.stackexchange.com/questions/45570/how-do-i-make-serial-work-
 
 В образе включены 3 разных uart, которые можно использовать для подключения к ним uart от нижестоящего микроконтроллера.
 Здесь пины - это номер пина на 40-ко пиновой гребёнке.
-```
-* /dev/ttyAMA3 - UART3.
+```bash
+# /dev/ttyAMA3 - UART3.
   PIN7 - TX
   PIN29 - RX
 
-* /dev/ttyAMA4 - UART4.
+# /dev/ttyAMA4 - UART4.
   PIN24 - TX
   PIN21 - RX
 
-* /dev/ttyAMA5 - UART5. <--- дефолт
+# /dev/ttyAMA5 - UART5. <--- дефолт
   PIN32 - TX
   PIN33 - RX
 ```
@@ -182,7 +182,7 @@ https://raspberrypi.stackexchange.com/questions/45570/how-do-i-make-serial-work-
 Чтобы применить изменения на стороне заказчика необходимо сделать следующее:
 
 Залогиниться по ssh на RPI и далее:
-```
+```bash
 1. rm -rf ~/Modbus-TCP-RTU-Converter <-- эту команду нужно выполнить один раз, так как в переданном образе в этой директории лежат исходники, но без git-а.
 2. git clone https://github.com/anisyanka/Modbus-TCP-RTU-Converter.git
 3. cd Modbus-TCP-RTU-Converter
@@ -196,7 +196,7 @@ https://raspberrypi.stackexchange.com/questions/45570/how-do-i-make-serial-work-
 ## Что было установлено в образе? <a name="image"></a>
 Сам образ представляет из себя дефолтный образ для RPI4 без графического интерфейса.
  * Далее были включены девайсы последовательных портов. Для этого в device tree были добавлены overlays. Они включены с помощью записи следующих строк в файл `/boot/config.txt`
-```
+```bash
 enable_uart=1
 dtoverlay=uart3
 dtoverlay=uart4
@@ -209,17 +209,17 @@ uart-usb преобразватель и пользоваться этим uart,
 без подключения платы к wifi и без SSH.
 
 Посмотреть текущую конфигурацию пинов можно с помощью следующих команд:
-```
+```bash
 $ pinctrl
 ```
 либо
-```
+```bash
 $ raspi-gpio get
 ```
 Обе команды выводят информацию о текущих настройках пина. В этом случае в выводе каоманд GPIO-N - это номер gpio на процессоре. То есть **НЕ** на 40-ко пиновой гребёнке.
 
  * В файл `~/.bashrc` добавлены эти строки:
-```
+```bash
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 alias ll="ls -l"
@@ -229,25 +229,17 @@ alias myip='curl ipinfo.io/ip; echo'
  * Далее были доустановлены в образ следующие программы:
 
 **gstreamer**
-```
+```bash
 sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 ```
 
 **Программы для компиляции библиотек и конвертера**
-```
+```bash
 sudo apt-get install git autoconf libtool
 ```
 
-**http сервер**
-```
-sudo apt-get install apache2 -y
-
-Это создаст systemd-сервис с apache, который будет обрабатывать http-запросы.
-/lib/systemd/system/apache2.service
-```
-
 **libmodbus**
-```
+```bash
 git clone https://github.com/stephane/libmodbus.git
 cd ~/Modbus-TCP-RTU-Converter/patches
 scp * pi@192.168.1.55:/home/pi/libmodbus/
@@ -258,4 +250,12 @@ sudo ./autogen.sh
 sudo ./configure --prefix=/usr/local/
 sudo make
 sudo make install
+```
+
+**Flask**
+```bash
+cd ~
+python3 -m venv .venv
+. .venv/bin/activate
+pip install Flask
 ```
