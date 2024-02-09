@@ -1,4 +1,4 @@
-.PHONY: all clean upload_src submodule_update install uninstall
+.PHONY: all clean upload_src submodule_update install uninstall upload_web install_converter install_web_server
 
 TARGET=modbus_converter
 TARGET_DIR=/home/pi/.modbus_converter
@@ -35,7 +35,7 @@ SOURCES_EXTENSION=c
 SOURCES=$(shell find $(SOURCES_PATH) -name '*.$(SOURCES_EXTENSION)' -not -path '$(JSONLIB_DIR)*' -not -path '$(MODBUSLIB_SUBMODULE_DIR)*')
 
 SCRIPTS_DIR=./scripts
-HTML_DIR=./html_viewer
+WEB_DIR=./web_viewer
 
 all:
 	$(CC) $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $(TARGET)
@@ -46,10 +46,13 @@ clean:
 upload_src:
 	@./$(SCRIPTS_DIR)/upload_converter_scr_to_rpi.sh
 
+upload_web:
+	@./$(SCRIPTS_DIR)/upload_converter_web_viewer_to_rpi.sh
+
 submodule_update:
 	@git submodule update --init --recursive
 
-install: all
+install_converter:
 	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/rpi_stop_video_stream.sh
 	mkdir -p $(TARGET_DIR)
@@ -74,11 +77,15 @@ install: all
 	touch $(TARGET_DIR)/host_ip.conf
 	sudo cp modbus_converter.service /etc/systemd/system/
 	cp $(TARGET) $(TARGET_DIR)
-	sudo cp $(HTML_DIR)/index.html /var/www/html
 	sync
 	sudo systemctl daemon-reload
 	sudo systemctl enable $(TARGET)
 	sudo systemctl start $(TARGET)
+
+install_web_server:
+	cp -r $(WEB_DIR) $(TARGET_DIR)
+
+install: all install_converter install_web_server
 
 uninstall:
 	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)

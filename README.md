@@ -254,8 +254,16 @@ sudo make install
 
 **Flask**
 ```bash
+# Install Flask itself
 cd ~
 python3 -m venv .venv
 . .venv/bin/activate
 pip install Flask
+
+# Install dependencies for server
+cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer
+pip install -r requirements.txt
+
+# Run server at ip:5000
+flask run --host=0.0.0.0 --debug
 ```
