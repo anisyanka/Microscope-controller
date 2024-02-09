@@ -1,3 +1,4 @@
+#!/bin/sh
 PID_TO_KILL=`pgrep gst-launch-1.0`
 
 if [ ! -z "${PID_TO_KILL}" ]; then
