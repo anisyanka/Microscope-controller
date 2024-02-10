@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
 from flask import Flask, redirect, render_template, request, session, jsonify
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 from helpers import helper_get_my_ip, helper_update_host_ip_config
-from stream_control import stream_helper_stop_stream
+from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
 
 app = Flask(__name__)
 test_bat_level = 0
@@ -28,6 +30,9 @@ def resolution_switch_request():
     print("Obtained request to change stream resolution to " + request.args.get("new_res"))
 
     stream_helper_stop_stream()
+    stream_helper_set_resolution(request.args.get("new_res"))
+    stream_helper_run(request.args.get("new_res"))
+
     return jsonify("OK")
 
 
@@ -91,3 +96,6 @@ def errorhandler(e):
 
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)

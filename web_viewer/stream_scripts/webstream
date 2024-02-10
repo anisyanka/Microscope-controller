@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+import subprocess # for piping
+from http.server import HTTPServer, BaseHTTPRequestHandler
+ 
+class RequestHandler(BaseHTTPRequestHandler):
+    def _writeheaders(self):
+        self.send_response(200) # 200 OK http response
+        self.send_header('Content-type', 'video/ogg')
+        self.end_headers()
+ 
+    def do_HEAD(self):
+        self._writeheaders()
+ 
+    def do_GET(self):
+        self._writeheaders()
+ 
+        DataChunkSize = 10000
+ 
+        command = 'gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! filesink location=/dev/stdout'
+        print("running command: %s" % (command, ))
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=-1, shell=True)
+ 
+        print("starting polling loop.")
+        while(p.poll() is None):
+            stdoutdata = p.stdout.read(DataChunkSize)
+            self.wfile.write(stdoutdata)
+ 
+        print("Done Looping")
+ 
+        print("dumping last data, if any")
+        stdoutdata = p.stdout.read(DataChunkSize)
+        self.wfile.write(stdoutdata)
+ 
+if __name__ == '__main__':
+    serveraddr = ('', 5602) # connect to port 8765
+    srvr = HTTPServer(serveraddr, RequestHandler)
+    srvr.serve_forever()

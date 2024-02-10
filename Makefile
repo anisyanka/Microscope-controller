@@ -84,6 +84,10 @@ install_converter:
 
 install_web_server:
 	cp -r $(WEB_DIR) $(TARGET_DIR)
+	chmod +x $(TARGET_DIR)/web_viewer/stream_scripts/camera_set_resolution_4k.sh
+	chmod +x $(TARGET_DIR)/web_viewer/stream_scripts/camera_set_resolution_1920x1080.sh
+	chmod +x $(TARGET_DIR)/web_viewer/stream_scripts/camera_stop_webstream_server.sh
+	chmod +x $(TARGET_DIR)/web_viewer/stream_scripts/webstream
 
 install: all install_converter install_web_server
 
