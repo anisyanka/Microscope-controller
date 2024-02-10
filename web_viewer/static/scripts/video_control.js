@@ -4,18 +4,15 @@ function video_switch_resolution(new_res) {
     request.onload = function() {
         if (request.response == "OK") {
             if (new_res == "1080p") {
-                console.log("Stream resolution has been changed to 1080p")
-                //document.getElementById("floor-lamp-image").src = "/static/images/floor-lamp-on.jpg"
-                //document.getElementById("floor-lamp-card-text").innerHTML = "Status: <b>on</b>"
+                console.log("Stream resolution has been changed to 1080p");
+                document.querySelector(".video-stream-mode-text").innerHTML = "Video: <span style=\"color:DodgerBlue\">1080p</span>";
             } else if (new_res == "4k") {
-                console.log("Stream resolution has been changed to 4k")
-                //document.getElementById("floor-lamp-image").src = "/static/images/floor-lamp-off.jpg"
-                //document.getElementById("floor-lamp-card-text").innerHTML = "Status: <b>off</b>"
+                console.log("Stream resolution has been changed to 4k");
+                document.querySelector(".video-stream-mode-text").innerHTML = "Video: <span style=\"color:DodgerBlue\">4k</span>";
             }
         } else {
-            console.log("Stream resolution changing HTTP response != OK")
-            //document.getElementById("floor-lamp-image").src = "..."
-            //document.getElementById("floor-lamp-card-text").innerHTML = "Status: <b>error</b>"
+            console.log("Stream resolution changing HTTP response != OK");
+            document.querySelector(".video-stream-mode-text").innerHTML = "Video: <span style=\"color:Tomato\">unavailable</span>";
         }
     }
 
