@@ -19,7 +19,7 @@ scp $modbus_src_dir/web_viewer/static/images/favicon.ico \
 
 # Send scripts
 scp $modbus_src_dir/web_viewer/static/scripts/video_control.js \
-    $modbus_src_dir/web_viewer/static/scripts/focus_control.js \
+    $modbus_src_dir/web_viewer/static/scripts/buttons_control.js \
     $modbus_src_dir/web_viewer/static/scripts/get_battery_level.js \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/web_viewer/static/scripts
 
