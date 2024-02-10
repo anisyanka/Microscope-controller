@@ -51,6 +51,16 @@ def light_control_request():
     return jsonify("OK")
 
 
+# AJAX: Up/left/right/down + STOP/HOME control via Modbus #
+###########################################################
+@app.route("/motor_control", methods=["GET", "POST"])
+def motor_control_request():
+    print("Obtained request to move motors to " + request.args.get("position"))
+
+    # Call Modbus TCP/RTU converter to send position cmd and wait for reply
+    return jsonify("OK")
+
+
 # AJAX: Get battery level via Modbus #
 #################################
 @app.route("/get_battery_level", methods=["GET", "POST"])
