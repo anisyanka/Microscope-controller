@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="root-container">
+  <br><br>
+  <div class="video-stream">
+    <video id="gstreamer-video" autoplay controls width="800" height="600" src="http://{{ board_ip }}:5602">
+      Your browser does not support HTML video.
+    </video>
+  </div>
+  <br>
+
+  <!---------------------------------------------------------->
+  <!--------------VIDEO BUTTONS STARTS HERE------------------->
+  <!---------------------------------------------------------->
+  <br>
+  <div class="stream-controls-container" style="text-align:center">
+    <div class="stream-controls-label">
+      <i class="fas fa-video"></i><span> Управление камерой</span>
+      <br>
+    </div>
+
+    <div class="stream-controls-btns">
+      <!-- PLUS -->
+      <button id="focus-plus-btn"
+        type="button"
+        class="fas fa-plus btn btn-outline-info"
+        onpointerup="focus_control_stop()"
+        onpointerdown="focus_control_change_repeatedly('upper')">
+      </button>
+
+      <!-- 1080P ENABLE -->
+      <button id="video-1080p-btn"
+        type="button"
+        class="btn btn-outline-info"
+        onclick="video_switch_resolution('1080p')">
+        1080p
+      </button>
+
+      <!-- 4K ENABLE -->
+      <button id="video-4k-btn"
+        type="button"
+        class="btn btn-outline-info"
+        onclick="video_switch_resolution('4k')">
+        4k
+      </button>
+
+      <!-- MINUS -->
+      <button id="focus-minus-btn"
+        type="button"
+        class="fas fa-minus btn btn-outline-info"
+        onpointerup="focus_control_stop()"
+        onpointerdown="focus_control_change_repeatedly('lower')">
+      </button>
+    </div>
+  </div>
+
+  <!---------------------------------------------------------->
+  <!--------------MAIN STEPPER BUTTONS STARTS HERE------------>
+  <!---------------------------------------------------------->
+  <br>
+  <div class="main-controls-container" style="text-align:center">
+    <div class="main-controls-label">
+      <i class="fas fa-microscope"></i><span> Управление столом</span>
+      <br>
+    </div>
+
+    <div class="main-controls-container-layout">
+      <div class="battery-status">
+        <div class="battery-level">
+          <div class="battery-fill"></div>
+          <span class="battery-percentage">0%</span>
+        </div>
+      </div>
+
+      <div class="main-controls-btns">
+        <table class="main-contol-btns-table">
+          <tr>
+            <td></td>
+              <td>
+                <button id="arrow-up-btn" 
+                  type="button"
+                  class="fas fa-arrow-up btn btn-outline-primary">
+                </button>
+              </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <button id="arrow-left-btn"
+                type="button"
+                class="fas fa-arrow-left btn btn-outline-primary">
+              </button>
+            </td>
+            <td>
+              <button id="home-btn"
+                type="button"
+                class="fas fa-home btn btn-outline-primary">
+              </button>
+            </td>
+            <td>
+              <button id="arrow-right-btn"
+                type="button"
+                class="fas fa-arrow-right btn btn-outline-primary">
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button id="arrow-down-btn"
+                type="button" 
+                class="fas fa-arrow-down btn btn-outline-primary">
+              </button>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="main-controls-alarm-btn">
+        <button id="alarm-btn"
+          type="button"
+          class="btn btn-outline-danger">
+          СТОП
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!---------------------------------------------------------->
+  <!--------------LIGHT BUTTONS STARTS HERE------------------->
+  <!---------------------------------------------------------->
+  <br>
+  <div class="light-controls-container" style="text-align:center">
+    <div class="light-controls-label">
+      <i class="fas fa-lightbulb"></i><span> Свет</span>
+      <br>
+    </div>
+
+    <div class="light-controls-btns">
+      <!--LIGHT PLUS-->
+      <button id="light-plus-btn"
+        type="button"
+        class="fas fa-plus btn btn-outline-primary">
+      </button>
+
+      <!--LIGHT MINUS-->
+      <button id="light-minus-btn"
+        type="button"
+        class="fas fa-minus btn btn-outline-primary">
+      </button>
+    </div>
+  </div>
+  <br>
+  <hr>
+</div>
+
+{% endblock %}

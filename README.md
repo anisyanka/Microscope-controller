@@ -85,10 +85,10 @@ sudo reboot
 ```C
 typedef enum {
     CAMERA_API_LAUNCH_VIDEO_4K_VALUE = 0x00,
-    CAMERA_API_LAUNCH_VIDEO_1080P_VALUE = 0x01,
+    CAMERA_API_LAUNCH_video_1080p_btn_VALUE = 0x01,
     CAMERA_API_LAUNCH_VIDEO_STOP_VALUE = 0x02,
     CAMERA_API_LAUNCH_VIDEO_TEST_VALUE = 0x03,
-    CAMERA_API_LAUNCH_VIDEO_1080P_WEB_STREAMING_VALUE = 0x04,
+    CAMERA_API_LAUNCH_video_1080p_btn_WEB_STREAMING_VALUE = 0x04,
     CAMERA_API_LAUNCH_VIDEO_4K_WEB_STREAMING_VALUE = 0x05,
     CAMERA_API_LAUNCH_VIDEO_TEST_WEB_STREAMING_VALUE = 0x06,
 } camera_api_supported_cmd_values_t;
@@ -263,7 +263,10 @@ pip install Flask
 # Install dependencies for server
 cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer
 pip install -r requirements.txt
+deactivate
 
-# Run server at ip:5000
+# Run server at <ip>:5000
+. .venv/bin/activate
+cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer
 flask run --host=0.0.0.0 --debug
 ```
