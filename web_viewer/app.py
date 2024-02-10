@@ -41,6 +41,16 @@ def focus_control_request():
     return jsonify("OK")
 
 
+# AJAX: Light control via Modbus #
+##################################
+@app.route("/light_control", methods=["GET", "POST"])
+def light_control_request():
+    print("Obtained request to make light " + request.args.get("level"))
+
+    # Call Modbus TCP/RTU converter to send light cmd and wait for reply
+    return jsonify("OK")
+
+
 # AJAX: Get battery level via Modbus #
 #################################
 @app.route("/get_battery_level", methods=["GET", "POST"])

@@ -31,12 +31,10 @@ function button_control(req, variable, value) {
     var request = new XMLHttpRequest();
 
     request.onload = function() {
-        if (req == "focus_control") {
-            if (request.response == "OK") {
-                console.log("Focus: changed to step " + value);
-            } else {
-                console.log("Focus: Unable to change focus --> HTTP request error");
-            }
+        if (request.response == "OK") {
+            console.log("Request <" + req + "> OK! Parameter <" + variable + "> became " + value);
+        } else {
+            console.log("HTTP request answer internal server error");
         }
     }
 

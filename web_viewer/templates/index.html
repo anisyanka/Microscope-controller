@@ -154,13 +154,29 @@
       <!--LIGHT PLUS-->
       <button id="light-plus-btn"
         type="button"
-        class="fas fa-plus btn btn-outline-primary">
+        class="fas fa-plus btn btn-outline-primary"
+        onclick="button_control('light_control', 'level', 'upper')"
+        onmousedown="button_control_pressed('light_control', 'level', 'upper')"
+        ontouchstart="button_control_pressed('light_control', 'level', 'upper')"
+        onmouseup="button_control_released()"
+        ontouchend="button_control_released()"
+        onmouseleave="button_control_stop()"
+        ontouchmove="button_control_stop()"
+        ontouchcancel="button_control_stop()">
       </button>
 
       <!--LIGHT MINUS-->
       <button id="light-minus-btn"
         type="button"
-        class="fas fa-minus btn btn-outline-primary">
+        class="fas fa-minus btn btn-outline-primary"
+        onclick="button_control('light_control', 'level', 'lower')"
+        onmousedown="button_control_pressed('light_control', 'level', 'lower')"
+        ontouchstart="button_control_pressed('light_control', 'level', 'lower')"
+        onmouseup="button_control_released()"
+        ontouchend="button_control_released()"
+        onmouseleave="button_control_stop()"
+        ontouchmove="button_control_stop()"
+        ontouchcancel="button_control_stop()">
       </button>
     </div>
   </div>
