@@ -415,7 +415,7 @@ static void _setup_tcp_connection(void)
         } else {
             (void)strncpy(modbus_converter_dev.host_ip, ip, sizeof(modbus_converter_dev.host_ip));
 
-            #if (MODBUS_CONVERTER_SUPPORT_CAMERA_COMMAND == 1)
+            #if (MODBUS_CONVERTER_UPDATE_HOST_IP_CONFIG == 1)
                 camera_api_setup_host_ip_config(modbus_converter_dev.host_ip);
             #endif
         }
