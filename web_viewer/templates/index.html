@@ -6,15 +6,14 @@
     <video id="stream" autoplay controls src="http://{{ board_ip }}:5602">
       Your browser does not support HTML video.
     </video>
-    <span class="video-stream-mode-text">Video: <span style="color:Tomato">unavailable</span></span>
+    <span class="video-stream-mode-text" hidden>Video: <span style="color:Tomato">unavailable</span></span>
   </div>
-  <br>
 
   <!---------------------------------------------------------->
   <!--------------VIDEO BUTTONS STARTS HERE------------------->
   <!---------------------------------------------------------->
   <div class="stream-controls-container" style="text-align:center">
-    <div class="stream-controls-label">
+    <div class="stream-controls-label" hidden>
       <i class="fas fa-video"></i><span> Управление камерой</span>
       <br>
     </div>
@@ -69,9 +68,8 @@
   <!---------------------------------------------------------->
   <!--------------MAIN STEPPER BUTTONS STARTS HERE------------>
   <!---------------------------------------------------------->
-  <br>
   <div class="main-controls-container" style="text-align:center">
-    <div class="main-controls-label">
+    <div class="main-controls-label" hidden>
       <i class="fas fa-microscope"></i><span> Управление столом</span>
       <br>
     </div>
@@ -176,9 +174,8 @@
   <!---------------------------------------------------------->
   <!--------------LIGHT BUTTONS STARTS HERE------------------->
   <!---------------------------------------------------------->
-  <br>
   <div class="light-controls-container" style="text-align:center">
-    <div class="light-controls-label">
+    <div class="light-controls-label" hidden>
       <i class="fas fa-lightbulb"></i><span> Свет</span>
       <br>
     </div>
@@ -214,7 +211,7 @@
     </div>
   </div>
   <br>
-  <hr>
+  <hr hidden>
 </div>
 
 {% endblock %}

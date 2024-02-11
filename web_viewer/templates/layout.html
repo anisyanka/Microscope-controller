@@ -31,7 +31,7 @@
 
                 /* Set stream window size */
                 document.getElementById("stream").width = window.innerWidth;
-                document.getElementById("stream").height = (window.innerHeight * 2) / 3;
+                document.getElementById("stream").height = (window.innerHeight * 0.65);
 
                 console.log("Video size = " + document.getElementById("stream").width + "x" + document.getElementById("stream").height);
 
@@ -73,7 +73,7 @@
         <main>
             {% block main %}{% endblock %}
         </main>
-        <footer>
+        <footer hidden>
             <i>
                 &copy; 2024
                 Microscope Modbus controller
