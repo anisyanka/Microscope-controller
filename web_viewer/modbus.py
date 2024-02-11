@@ -1,5 +1,6 @@
 from pymodbus.client import ModbusTcpClient
 from pymodbus.exceptions import ModbusException
+from time import sleep
 
 from helpers import helper_get_my_ip
 from config_reader import config_reader_get_modbus_tcp_rtu_converter_port, config_reader_get_modbus_slave_id, config_reader_get_modbus_slave_timeout
@@ -21,12 +22,7 @@ def modbus_connect_to_tcp_rtu_converter():
 
 def modbus_get_battery_level():
     c.connect()
-
-    try:
-        response = c.read_holding_registers(17, 1, slave=slave_addr)
-    except ModbusException as exc:
-        print(f"ERROR: exception in pymodbus {exc}")
-
+    response = c.read_holding_registers(17, 1, slave=slave_addr)
     c.close()
 
     if response.isError():
@@ -43,7 +39,7 @@ def modbus_focus_motor_control(level):
     if level == "upper":
         c.write_register(12, 1, slave=slave_addr)
     elif level == "lower":
-        c.write_register(12, -1, slave=slave_addr)
+        c.write_register(12, 32769, slave=slave_addr)
 
     c.close()
 
@@ -60,6 +56,7 @@ def modbus_light_control(level):
 
 
 def modbus_main_motors_control(position):
+
     c.connect()
 
     # Swap up and left AND right and down?
@@ -71,7 +68,7 @@ def modbus_main_motors_control(position):
 
     if position == "up":
         if swap == "yes":
-            c.write_register(4, -1, slave=slave_addr)
+            c.write_register(4, 32769, slave=slave_addr)
         else:
             c.write_register(2, 1, slave=slave_addr)
 
@@ -79,17 +76,17 @@ def modbus_main_motors_control(position):
         if swap == "yes":
             c.write_register(4, 1, slave=slave_addr)
         else:
-            c.write_register(2, -1, slave=slave_addr)
+            c.write_register(2, 32769, slave=slave_addr)
 
     elif position == "left":
         if swap == "yes":
-            c.write_register(2, -1, slave=slave_addr)
+            c.write_register(2, 1, slave=slave_addr)
         else:
-            c.write_register(4, -1, slave=slave_addr)
+            c.write_register(4, 32769, slave=slave_addr)
 
     elif position == "right":
         if swap == "yes":
-            c.write_register(2, -1, slave=slave_addr)
+            c.write_register(2, 32769, slave=slave_addr)
         else:
             c.write_register(4, 1, slave=slave_addr)
 
@@ -102,11 +99,13 @@ def modbus_main_motors_control(position):
             c.write_register(4, updown_def_steps, slave=slave_addr)
         else:
             c.write_register(2, updown_def_steps, slave=slave_addr)
+        sleep(0.05)
     
         if swap == "yes":
             c.write_register(2, leftright_def_steps, slave=slave_addr)
         else:
             c.write_register(4, leftright_def_steps, slave=slave_addr)
+        sleep(0.05)
 
         c.write_register(12, focus_def_steps, slave=slave_addr)
 
@@ -121,18 +120,23 @@ def modbus_main_motors_control(position):
         if focus_sign == "+":
             c.write_register(12, 32767, slave=slave_addr)
         else:
-            c.write_register(12, -32767, slave=slave_addr)
+            c.write_register(12, 65535, slave=slave_addr)
+        sleep(0.05)
 
         if updown_sign == "+":
             c.write_register(2, 32767, slave=slave_addr)
         else:
-            c.write_register(2, -32767, slave=slave_addr)
+            c.write_register(2, 65535, slave=slave_addr)
+        sleep(0.05)
 
         if leftright_sign == "+":
             c.write_register(4, 32767, slave=slave_addr)
         else:
-            c.write_register(4, -32767, slave=slave_addr)
+            c.write_register(4, 65535, slave=slave_addr)
+
     else:
         print("[ERR] Wrong arg fr motors")
+
+    sleep(0.05)
 
     c.close()
