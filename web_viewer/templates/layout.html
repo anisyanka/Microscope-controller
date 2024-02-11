@@ -25,29 +25,28 @@
         <!-- Resize script for different devices and window sizes -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                
+
                 /* Start to obtain microscope battery level status from server */
                 get_battery_level_start();
 
+                /* Set stream window size */
+                document.getElementById("stream").width = window.innerWidth;
+                document.getElementById("stream").height = (window.innerHeight * 2) / 3;
+
+                console.log("Video size = " + document.getElementById("stream").width + "x" + document.getElementById("stream").height);
+
                 /* RESIZE ELEMENTS */
-                let stream = document.getElementById("gstreamer-video");
                 window.addEventListener('resize', function() {
                     if (window.innerWidth < 1000) {
                         document.querySelector("#focus-plus-btn").classList.add("btn-sm");
                         document.querySelector("#focus-minus-btn").classList.add("btn-sm");
                         document.querySelector("#video-1080p-btn").classList.add("btn-sm");
                         document.querySelector("#video-4k-btn").classList.add("btn-sm");
-
-                        stream.width = 320;
-                        stream.height = 240;
                     } else {
                         document.querySelector("#focus-plus-btn").classList.remove("btn-sm");
                         document.querySelector("#focus-minus-btn").classList.remove("btn-sm");
                         document.querySelector("#video-1080p-btn").classList.remove("btn-sm");
                         document.querySelector("#video-4k-btn").classList.remove("btn-sm");
-
-                        stream.width = 640;
-                        stream.height = 480;
                     }
                 });
 
@@ -58,17 +57,11 @@
                     document.querySelector("#focus-minus-btn").classList.add("btn-sm");
                     document.querySelector("#video-1080p-btn").classList.add("btn-sm");
                     document.querySelector("#video-4k-btn").classList.add("btn-sm");
-
-                    stream.width = 320;
-                    stream.height = 240;
                 } else {
                     document.querySelector("#focus-plus-btn").classList.remove("btn-sm");
                     document.querySelector("#focus-minus-btn").classList.remove("btn-sm");
                     document.querySelector("#video-1080p-btn").classList.remove("btn-sm");
                     document.querySelector("#video-4k-btn").classList.remove("btn-sm");
-
-                    stream.width = 640;
-                    stream.height = 480;
                 }
             });
         </script>

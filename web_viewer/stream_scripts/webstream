@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 import subprocess # for piping
 from http.server import HTTPServer, BaseHTTPRequestHandler
- 
+import logging
+from signal import signal, SIGPIPE, SIG_DFL, SIGCHLD, SIG_IGN
+
+STOP_STREAM_SCRIPT="/home/pi/.modbus_converter/rpi_stop_video_stream.sh"
+
 class RequestHandler(BaseHTTPRequestHandler):
     def _writeheaders(self):
         self.send_response(200) # 200 OK http response
@@ -14,24 +18,44 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self._writeheaders()
  
-        DataChunkSize = 10000
- 
-        command = 'gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! filesink location=/dev/stdout'
+        DataChunkSize = 1000
+
+        # command = 'gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! filesink location=/dev/stdout'
+        # command = 'gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! jpegdec ! videoconvert ! videoscale ! theoraenc ! oggmux ! filesink location=/dev/stdout'
+        # command = 'gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! mp4mux ! filesink location=/dev/stdout'
+        # command = "gst-launch-1.0 v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=1920,height=1080,type=video,framerate=30/1 ! v4l2jpegdec ! v4l2h264enc ! 'video/x-h264,level=(string)4' ! h264parse ! mp4mux ! filesink location=/dev/stdout"
+        # command = "gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=4 ! image/jpeg,width=320,height=240,type=video,framerate=30/1 ! jpegdec ! videoconvert ! x264enc tune=zerolatency ! mp4mux ! filesink location=/dev/stdout"
+        command = "gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! videoscale ! video/x-raw,width=1920,height=1080 ! theoraenc ! oggmux ! tcpserversink host=0.0.0.0 port=5602"
         print("running command: %s" % (command, ))
         p = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=-1, shell=True)
  
         print("starting polling loop.")
         while(p.poll() is None):
+            print("loop")
             stdoutdata = p.stdout.read(DataChunkSize)
             self.wfile.write(stdoutdata)
  
         print("Done Looping")
+        subprocess.call(STOP_STREAM_SCRIPT)
  
         print("dumping last data, if any")
         stdoutdata = p.stdout.read(DataChunkSize)
         self.wfile.write(stdoutdata)
- 
+
 if __name__ == '__main__':
-    serveraddr = ('', 5602) # connect to port 8765
-    srvr = HTTPServer(serveraddr, RequestHandler)
-    srvr.serve_forever()
+    # Ignore SIGCHLD to avoid zombie threads
+    signal(SIGCHLD,SIG_IGN);
+    # signal(SIGPIPE, SIG_DFL)
+
+    # Enable logging
+    logging.basicConfig(level=logging.DEBUG)
+
+    logging.info('Starting httpd...\n')
+    server_address = ('', 5602)
+    httpd = HTTPServer(server_address, RequestHandler)
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
+    logging.info('Stopping httpd...\n')

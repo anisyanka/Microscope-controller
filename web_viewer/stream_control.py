@@ -22,5 +22,4 @@ def stream_helper_set_resolution(resolution):
         subprocess.call(SET_RES_4k_SCRIPT)
 
 def stream_helper_run(resolution):
-    if resolution == "1080p":
-        subprocess.Popen(["python", RUN_1080P_WEB_STREAM_SCRIPT])
+    subprocess.Popen(["python", RUN_1080P_WEB_STREAM_SCRIPT, resolution])

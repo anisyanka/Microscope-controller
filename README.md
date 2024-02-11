@@ -258,7 +258,6 @@ sudo make install
 cd ~
 python3 -m venv .venv
 . .venv/bin/activate
-pip install Flask
 
 # Install dependencies for server
 cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-
-from flask import Flask, redirect, render_template, request, session, jsonify
+from flask import Flask, redirect, render_template, request, jsonify
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 from helpers import helper_get_my_ip, helper_update_host_ip_config
@@ -31,7 +30,7 @@ def resolution_switch_request():
 
     stream_helper_stop_stream()
     stream_helper_set_resolution(request.args.get("new_res"))
-    stream_helper_run(request.args.get("new_res"))
+    #stream_helper_run(request.args.get("new_res"))
 
     return jsonify("OK")
 

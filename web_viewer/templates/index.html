@@ -2,9 +2,8 @@
 
 {% block main %}
 <div class="root-container">
-  <br><br>
   <div class="video-stream">
-    <video id="gstreamer-video" autoplay controls width="800" height="600" src="http://{{ board_ip }}:5602">
+    <video id="stream" autoplay controls src="http://{{ board_ip }}:5602">
       Your browser does not support HTML video.
     </video>
     <span class="video-stream-mode-text">Video: <span style="color:Tomato">unavailable</span></span>
