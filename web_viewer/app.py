@@ -2,11 +2,14 @@
 from flask import Flask, redirect, render_template, request, jsonify
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
+from config_reader import config_reader_retrieve_all_data
 from helpers import helper_get_my_ip, helper_update_host_ip_config
+from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level
 from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
 
 app = Flask(__name__)
-test_bat_level = 0
+config_reader_retrieve_all_data()
+modbus_connect_to_tcp_rtu_converter()
 
 # Load main page #
 ##################
@@ -72,15 +75,8 @@ def get_battery_level_request():
     print("Obtained request to retrieve battery level")
 
     # Call Modbus TCP/RTU converter and wait for reply
-    global test_bat_level
-    test_bat_level += 1
-    if test_bat_level > 100:
-        test_bat_level = 0
-    
-    json = {
-        "level": str(test_bat_level)
-    }
-    return jsonify(json)
+    level = modbus_get_battery_level()
+    return jsonify({ "level": level })
 
 
 # Cathing internal sever error #
