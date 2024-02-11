@@ -37,5 +37,7 @@ scp $modbus_src_dir/web_viewer/templates/index.html \
 scp $modbus_src_dir/web_viewer/app.py \
     $modbus_src_dir/web_viewer/helpers.py \
     $modbus_src_dir/web_viewer/stream_control.py \
+    $modbus_src_dir/web_viewer/config_reader.py \
+    $modbus_src_dir/web_viewer/modbus.py \
     $modbus_src_dir/web_viewer/requirements.txt \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/web_viewer/
