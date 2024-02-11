@@ -12,87 +12,107 @@
   <!---------------------------------------------------------->
   <!--------------VIDEO BUTTONS STARTS HERE------------------->
   <!---------------------------------------------------------->
-  <div class="stream-controls-container" style="text-align:center">
-    <div class="stream-controls-label" hidden>
-      <i class="fas fa-video"></i><span> Управление камерой</span>
-      <br>
-    </div>
-
-    <div class="stream-controls-btns">
-      <!-- PLUS -->
-      <button id="focus-plus-btn"
-        type="button"
-        class="fas fa-plus btn btn-outline-info"
-        onclick="button_control('focus_control', 'sign', 'upper')"
-        onmousedown="button_control_pressed('focus_control', 'sign', 'upper')"
-        ontouchstart="button_control_pressed('focus_control', 'sign', 'upper')"
-        onmouseup="button_control_released()"
-        ontouchend="button_control_released()"
-        onmouseleave="button_control_stop()"
-        ontouchmove="button_control_stop()"
-        ontouchcancel="button_control_stop()">
-      </button>
-
-      <!-- 1080P ENABLE -->
-      <button id="video-1080p-btn"
-        type="button"
-        class="btn btn-outline-info"
-        onclick="video_switch_resolution('1080p')">
-        1080p
-      </button>
-
-      <!-- 4K ENABLE -->
-      <button id="video-4k-btn"
-        type="button"
-        class="btn btn-outline-info"
-        onclick="video_switch_resolution('4k')">
-        4k
-      </button>
-
-      <!-- MINUS -->
-      <button id="focus-minus-btn"
-        type="button"
-        class="fas fa-minus btn btn-outline-info"
-        onclick="button_control('focus_control', 'sign', 'lower')"
-        onmousedown="button_control_pressed('focus_control', 'sign', 'lower')"
-        ontouchstart="button_control_pressed('focus_control', 'sign', 'lower')"
-        onmouseup="button_control_released()"
-        ontouchend="button_control_released()"
-        onmouseleave="button_control_stop()"
-        ontouchmove="button_control_stop()"
-        ontouchcancel="button_control_stop()">
-      </button>
-    </div>
-  </div>
-
-  <!---------------------------------------------------------->
-  <!--------------MAIN STEPPER BUTTONS STARTS HERE------------>
-  <!---------------------------------------------------------->
-  <div class="main-controls-container" style="text-align:center">
-    <div class="main-controls-label" hidden>
-      <i class="fas fa-microscope"></i><span> Управление столом</span>
-      <br>
-    </div>
-
-    <div class="main-controls-container-layout">
-      <div class="battery-status">
-        <div class="battery-level">
-          <div class="battery-fill"></div>
-          <span class="battery-percentage">0%</span>
-        </div>
+  <div class="main-common-container">
+    <div class="stream-controls-container" style="text-align:center">
+      <div class="stream-controls-label" hidden>
+        <i class="fas fa-video"></i><span> Управление камерой</span>
+        <br>
       </div>
 
-      <div class="main-controls-btns">
-        <table class="main-contol-btns-table">
-          <tr>
-            <td></td>
+      <div class="stream-controls-btns">
+        <!-- PLUS -->
+        <button id="focus-plus-btn"
+          type="button"
+          class="fas fa-plus btn btn-outline-info btn-lg"
+          onclick="button_control('focus_control', 'sign', 'upper')"
+          onmousedown="button_control_pressed('focus_control', 'sign', 'upper')"
+          ontouchstart="button_control_pressed('focus_control', 'sign', 'upper')"
+          onmouseup="button_control_released()"
+          ontouchend="button_control_released()"
+          onmouseleave="button_control_stop()"
+          ontouchmove="button_control_stop()"
+          ontouchcancel="button_control_stop()">
+        </button>
+
+        <div class="video-resilution-btn">
+          <!-- 1080P ENABLE -->
+          <button id="video-1080p-btn"
+            type="button"
+            class="btn btn-outline-info btn-sm"
+            onclick="video_switch_resolution('1080p')">
+            1080p
+          </button>
+
+          <!-- 4K ENABLE -->
+          <button id="video-4k-btn"
+            type="button"
+            class="btn btn-outline-info btn-sm"
+            onclick="video_switch_resolution('4k')">
+            4k
+          </button>
+        </div>
+
+        <!-- MINUS -->
+        <button id="focus-minus-btn"
+          type="button"
+          class="fas fa-minus btn btn-outline-info btn-lg"
+          onclick="button_control('focus_control', 'sign', 'lower')"
+          onmousedown="button_control_pressed('focus_control', 'sign', 'lower')"
+          ontouchstart="button_control_pressed('focus_control', 'sign', 'lower')"
+          onmouseup="button_control_released()"
+          ontouchend="button_control_released()"
+          onmouseleave="button_control_stop()"
+          ontouchmove="button_control_stop()"
+          ontouchcancel="button_control_stop()">
+        </button>
+      </div>
+    </div>
+
+    <!---------------------------------------------------------->
+    <!--------------MAIN STEPPER BUTTONS STARTS HERE------------>
+    <!---------------------------------------------------------->
+    <div class="main-controls-container" style="text-align:center">
+      <div class="main-controls-label" hidden>
+        <i class="fas fa-microscope"></i><span> Управление столом</span>
+        <br>
+      </div>
+
+      <div class="main-controls-container-layout">
+        <div class="battery-status">
+          <div class="battery-level">
+            <div class="battery-fill"></div>
+            <span class="battery-percentage">0%</span>
+          </div>
+        </div>
+
+        <div class="main-controls-btns">
+          <table class="main-contol-btns-table">
+            <tr>
+              <td></td>
+                <td>
+                  <button id="arrow-up-btn" 
+                    type="button"
+                    class="fas fa-arrow-up btn btn-outline-primary"
+                    onclick="button_control('motor_control', 'position', 'up')"
+                    onmousedown="button_control_pressed('motor_control', 'position', 'up')"
+                    ontouchstart="button_control_pressed('motor_control', 'position', 'up')"
+                    onmouseup="button_control_released()"
+                    ontouchend="button_control_released()"
+                    onmouseleave="button_control_stop()"
+                    ontouchmove="button_control_stop()"
+                    ontouchcancel="button_control_stop()">
+                  </button>
+                </td>
+              <td></td>
+            </tr>
+            <tr>
               <td>
-                <button id="arrow-up-btn" 
+                <button id="arrow-left-btn"
                   type="button"
-                  class="fas fa-arrow-up btn btn-outline-primary"
-                  onclick="button_control('motor_control', 'position', 'up')"
-                  onmousedown="button_control_pressed('motor_control', 'position', 'up')"
-                  ontouchstart="button_control_pressed('motor_control', 'position', 'up')"
+                  class="fas fa-arrow-left btn btn-outline-primary"
+                  onclick="button_control('motor_control', 'position', 'left')"
+                  onmousedown="button_control_pressed('motor_control', 'position', 'left')"
+                  ontouchstart="button_control_pressed('motor_control', 'position', 'left')"
                   onmouseup="button_control_released()"
                   ontouchend="button_control_released()"
                   onmouseleave="button_control_stop()"
@@ -100,117 +120,114 @@
                   ontouchcancel="button_control_stop()">
                 </button>
               </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>
-              <button id="arrow-left-btn"
-                type="button"
-                class="fas fa-arrow-left btn btn-outline-primary"
-                onclick="button_control('motor_control', 'position', 'left')"
-                onmousedown="button_control_pressed('motor_control', 'position', 'left')"
-                ontouchstart="button_control_pressed('motor_control', 'position', 'left')"
-                onmouseup="button_control_released()"
-                ontouchend="button_control_released()"
-                onmouseleave="button_control_stop()"
-                ontouchmove="button_control_stop()"
-                ontouchcancel="button_control_stop()">
-              </button>
-            </td>
-            <td>
-              <button id="home-btn"
-                type="button"
-                class="fas fa-home btn btn-outline-primary"
-                onclick="button_control('motor_control', 'position', 'HOME')">
-              </button>
-            </td>
-            <td>
-              <button id="arrow-right-btn"
-                type="button"
-                class="fas fa-arrow-right btn btn-outline-primary"
-                onclick="button_control('motor_control', 'position', 'right')"
-                onmousedown="button_control_pressed('motor_control', 'position', 'right')"
-                ontouchstart="button_control_pressed('motor_control', 'position', 'right')"
-                onmouseup="button_control_released()"
-                ontouchend="button_control_released()"
-                onmouseleave="button_control_stop()"
-                ontouchmove="button_control_stop()"
-                ontouchcancel="button_control_stop()">
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>
-              <button id="arrow-down-btn"
-                type="button" 
-                class="fas fa-arrow-down btn btn-outline-primary"
-                onclick="button_control('motor_control', 'position', 'down')"
-                onmousedown="button_control_pressed('motor_control', 'position', 'down')"
-                ontouchstart="button_control_pressed('motor_control', 'position', 'down')"
-                onmouseup="button_control_released()"
-                ontouchend="button_control_released()"
-                onmouseleave="button_control_stop()"
-                ontouchmove="button_control_stop()"
-                ontouchcancel="button_control_stop()">
-              </button>
-            </td>
-            <td></td>
-          </tr>
-        </table>
+              <td>
+                <button id="home-btn"
+                  type="button"
+                  class="fas fa-home btn btn-outline-primary"
+                  onclick="button_control('motor_control', 'position', 'HOME')">
+                </button>
+              </td>
+              <td>
+                <button id="arrow-right-btn"
+                  type="button"
+                  class="fas fa-arrow-right btn btn-outline-primary"
+                  onclick="button_control('motor_control', 'position', 'right')"
+                  onmousedown="button_control_pressed('motor_control', 'position', 'right')"
+                  ontouchstart="button_control_pressed('motor_control', 'position', 'right')"
+                  onmouseup="button_control_released()"
+                  ontouchend="button_control_released()"
+                  onmouseleave="button_control_stop()"
+                  ontouchmove="button_control_stop()"
+                  ontouchcancel="button_control_stop()">
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <button id="arrow-down-btn"
+                  type="button" 
+                  class="fas fa-arrow-down btn btn-outline-primary"
+                  onclick="button_control('motor_control', 'position', 'down')"
+                  onmousedown="button_control_pressed('motor_control', 'position', 'down')"
+                  ontouchstart="button_control_pressed('motor_control', 'position', 'down')"
+                  onmouseup="button_control_released()"
+                  ontouchend="button_control_released()"
+                  onmouseleave="button_control_stop()"
+                  ontouchmove="button_control_stop()"
+                  ontouchcancel="button_control_stop()">
+                </button>
+              </td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="main-controls-work-btn">
+          <button id="work-btn"
+            type="button"
+            class="btn btn-outline-primary"
+            onclick="button_control('motor_control', 'position', 'WORK')">
+            W
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="light-alarm-container">
+    <!---------------------------------------------------------->
+    <!--------------LIGHT BUTTONS STARTS HERE------------------->
+    <!---------------------------------------------------------->
+    <div class="light-controls-container" style="text-align:center">
+      <div class="light-controls-label" hidden>
+        <i class="fas fa-lightbulb"></i><span> Свет</span>
+        <br>
       </div>
 
-      <div class="main-controls-alarm-btn">
-        <button id="alarm-btn"
+      <div class="light-controls-btns">
+        <!--LIGHT PLUS-->
+        <button id="light-plus-btn"
           type="button"
-          class="btn btn-outline-danger"
-          onclick="button_control('motor_control', 'position', 'STOP')">
-          СТОП
+          class="fas fa-plus btn btn-outline-primary"
+          onclick="button_control('light_control', 'level', 'upper')"
+          onmousedown="button_control_pressed('light_control', 'level', 'upper')"
+          ontouchstart="button_control_pressed('light_control', 'level', 'upper')"
+          onmouseup="button_control_released()"
+          ontouchend="button_control_released()"
+          onmouseleave="button_control_stop()"
+          ontouchmove="button_control_stop()"
+          ontouchcancel="button_control_stop()">
+        </button>
+
+        <!--LIGHT MINUS-->
+        <button id="light-minus-btn"
+          type="button"
+          class="fas fa-minus btn btn-outline-primary"
+          onclick="button_control('light_control', 'level', 'lower')"
+          onmousedown="button_control_pressed('light_control', 'level', 'lower')"
+          ontouchstart="button_control_pressed('light_control', 'level', 'lower')"
+          onmouseup="button_control_released()"
+          ontouchend="button_control_released()"
+          onmouseleave="button_control_stop()"
+          ontouchmove="button_control_stop()"
+          ontouchcancel="button_control_stop()">
         </button>
       </div>
     </div>
-  </div>
 
-  <!---------------------------------------------------------->
-  <!--------------LIGHT BUTTONS STARTS HERE------------------->
-  <!---------------------------------------------------------->
-  <div class="light-controls-container" style="text-align:center">
-    <div class="light-controls-label" hidden>
-      <i class="fas fa-lightbulb"></i><span> Свет</span>
-      <br>
-    </div>
-
-    <div class="light-controls-btns">
-      <!--LIGHT PLUS-->
-      <button id="light-plus-btn"
+    <!---------------------------------------------------------->
+    <!--------------ALARM BUTTONS STARTS HERE------------------->
+    <!---------------------------------------------------------->
+    <div class="alarm-controls-btn">
+      <button id="alarm-btn"
         type="button"
-        class="fas fa-plus btn btn-outline-primary"
-        onclick="button_control('light_control', 'level', 'upper')"
-        onmousedown="button_control_pressed('light_control', 'level', 'upper')"
-        ontouchstart="button_control_pressed('light_control', 'level', 'upper')"
-        onmouseup="button_control_released()"
-        ontouchend="button_control_released()"
-        onmouseleave="button_control_stop()"
-        ontouchmove="button_control_stop()"
-        ontouchcancel="button_control_stop()">
-      </button>
-
-      <!--LIGHT MINUS-->
-      <button id="light-minus-btn"
-        type="button"
-        class="fas fa-minus btn btn-outline-primary"
-        onclick="button_control('light_control', 'level', 'lower')"
-        onmousedown="button_control_pressed('light_control', 'level', 'lower')"
-        ontouchstart="button_control_pressed('light_control', 'level', 'lower')"
-        onmouseup="button_control_released()"
-        ontouchend="button_control_released()"
-        onmouseleave="button_control_stop()"
-        ontouchmove="button_control_stop()"
-        ontouchcancel="button_control_stop()">
+        class="btn btn-outline-danger btn-sm"
+        onclick="button_control('motor_control', 'position', 'STOP')">
+        Stop
       </button>
     </div>
   </div>
-  <br>
   <hr hidden>
 </div>
 

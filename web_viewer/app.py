@@ -60,7 +60,7 @@ def light_control_request():
     return jsonify("OK")
 
 
-# AJAX: up/left/right/down + STOP/HOME control via Modbus #
+# AJAX: up/left/right/down + WORK/STOP/HOME control via Modbus #
 ###########################################################
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():

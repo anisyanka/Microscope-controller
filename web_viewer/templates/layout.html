@@ -35,33 +35,10 @@
 
                 console.log("Video size = " + document.getElementById("stream").width + "x" + document.getElementById("stream").height);
 
-                /* RESIZE ELEMENTS */
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth < 1000) {
-                        document.querySelector("#focus-plus-btn").classList.add("btn-sm");
-                        document.querySelector("#focus-minus-btn").classList.add("btn-sm");
-                        document.querySelector("#video-1080p-btn").classList.add("btn-sm");
-                        document.querySelector("#video-4k-btn").classList.add("btn-sm");
-                    } else {
-                        document.querySelector("#focus-plus-btn").classList.remove("btn-sm");
-                        document.querySelector("#focus-minus-btn").classList.remove("btn-sm");
-                        document.querySelector("#video-1080p-btn").classList.remove("btn-sm");
-                        document.querySelector("#video-4k-btn").classList.remove("btn-sm");
-                    }
-                });
-
                 /* Mobile devices don't fire "resize" event,
                 therefore we have to dublicate the same code here */
-                if (window.innerWidth < 1000) {
-                    document.querySelector("#focus-plus-btn").classList.add("btn-sm");
-                    document.querySelector("#focus-minus-btn").classList.add("btn-sm");
-                    document.querySelector("#video-1080p-btn").classList.add("btn-sm");
-                    document.querySelector("#video-4k-btn").classList.add("btn-sm");
-                } else {
-                    document.querySelector("#focus-plus-btn").classList.remove("btn-sm");
-                    document.querySelector("#focus-minus-btn").classList.remove("btn-sm");
-                    document.querySelector("#video-1080p-btn").classList.remove("btn-sm");
-                    document.querySelector("#video-4k-btn").classList.remove("btn-sm");
+                if (window.innerWidth > 800) {
+                    document.querySelector(".main-common-container").style.width = window.innerWidth / 4
                 }
             });
         </script>

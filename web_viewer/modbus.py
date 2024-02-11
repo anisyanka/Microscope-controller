@@ -60,6 +60,8 @@ def modbus_main_motors_control(position):
     #     c.write_register()
     # elif position == "right":
     #     c.write_register()
+    # elif position == "WORK":
+    #     c.write_register()
     # elif position == "STOP":
     #     c.write_register()
     # elif position == "HOME":
