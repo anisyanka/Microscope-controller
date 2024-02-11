@@ -24,3 +24,46 @@ def modbus_get_battery_level():
 
     print(response.registers)
     return response.registers
+
+def modbus_focus_motor_control(level):
+    c.connect()
+
+    # if level == "upper":
+    #     c.write_register()
+    # elif level == "lower":
+    #     c.write_register()
+
+    c.close()
+    print()
+
+
+def modbus_light_control(level):
+    c.connect()
+
+    # if level == "upper":
+    #     c.write_register()
+    # elif level == "lower":
+    #     c.write_register()
+
+    c.close()
+    print()
+
+
+def modbus_main_motors_control(position):
+    c.connect()
+
+    # if position == "up":
+    #     c.write_register()
+    # elif position == "down":
+    #     c.write_register()
+    # elif position == "left":
+    #     c.write_register()
+    # elif position == "right":
+    #     c.write_register()
+    # elif position == "STOP":
+    #     c.write_register()
+    # elif position == "HOME":
+    #     c.write_register()
+
+    c.close()
+    print()

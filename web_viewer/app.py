@@ -4,7 +4,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 
 from config_reader import config_reader_retrieve_all_data
 from helpers import helper_get_my_ip, helper_update_host_ip_config
-from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level
+from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level, modbus_focus_motor_control, modbus_light_control, modbus_main_motors_control
 from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
 
 app = Flask(__name__)
@@ -45,6 +45,7 @@ def focus_control_request():
     print("Obtained request to focus " + request.args.get("sign"))
 
     # Call Modbus TCP/RTU converter to send focus cmd and wait for reply
+    modbus_focus_motor_control(request.args.get("sign"))
     return jsonify("OK")
 
 
@@ -55,16 +56,18 @@ def light_control_request():
     print("Obtained request to make light " + request.args.get("level"))
 
     # Call Modbus TCP/RTU converter to send light cmd and wait for reply
+    modbus_light_control(request.args.get("level"))
     return jsonify("OK")
 
 
-# AJAX: Up/left/right/down + STOP/HOME control via Modbus #
+# AJAX: up/left/right/down + STOP/HOME control via Modbus #
 ###########################################################
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():
     print("Obtained request to move motors to " + request.args.get("position"))
 
     # Call Modbus TCP/RTU converter to send position cmd and wait for reply
+    modbus_main_motors_control(request.args.get("position"))
     return jsonify("OK")
 
 

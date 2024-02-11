@@ -34,7 +34,7 @@ function button_control(req, variable, value) {
         if (request.response == "OK") {
             console.log("Request <" + req + "> OK! Parameter <" + variable + "> became " + value);
         } else {
-            console.log("HTTP request answer internal server error");
+            console.log("[ERR] HTTP request answer internal server error");
         }
     }
 

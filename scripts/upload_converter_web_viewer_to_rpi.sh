@@ -41,3 +41,7 @@ scp $modbus_src_dir/web_viewer/app.py \
     $modbus_src_dir/web_viewer/modbus.py \
     $modbus_src_dir/web_viewer/requirements.txt \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/web_viewer/
+
+# Send config
+scp $modbus_src_dir/web_viewer/microscope_cmd.conf \
+        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/web_viewer/

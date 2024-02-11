@@ -11,7 +11,7 @@ function video_switch_resolution(new_res) {
                 document.querySelector(".video-stream-mode-text").innerHTML = "Video: <span style=\"color:DodgerBlue\">4k</span>";
             }
         } else {
-            console.log("Stream resolution changing HTTP response != OK");
+            console.log("[ERR] stream resolution changing HTTP response != OK");
             document.querySelector(".video-stream-mode-text").innerHTML = "Video: <span style=\"color:Tomato\">unavailable</span>";
         }
     }

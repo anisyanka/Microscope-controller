@@ -9,7 +9,7 @@ function get_battery_level() {
             battery_fill.style.width = request.response["level"] + "%";
             battery_percentage.innerHTML = request.response["level"] + "%";
         } else {
-            console.log("Obtain battery status failed");
+            console.log("[ERR] obtainning battery status failed");
         }
     }
 
