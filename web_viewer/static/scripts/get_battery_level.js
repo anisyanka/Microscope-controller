@@ -19,7 +19,7 @@ function get_battery_level() {
     request.send();
 }
 
-function get_battery_level_start() {
-    window.setInterval(function() {get_battery_level(); }, 10000);
+function get_battery_level_start(bat_polling_period_ms) {
+    window.setInterval(function() {get_battery_level(); }, bat_polling_period_ms);
     console.log("Obtaining battery level repeadatly started")
 }

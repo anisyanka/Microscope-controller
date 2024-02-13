@@ -121,10 +121,11 @@
                 </button>
               </td>
               <td>
-                <button id="home-btn"
+                <button id="work-btn"
                   type="button"
-                  class="fas fa-home btn btn-outline-primary"
-                  onclick="button_control('motor_control', 'position', 'HOME')">
+                  class="btn btn-outline-primary"
+                  onclick="button_control('motor_control', 'position', 'WORK')">
+                  W
                 </button>
               </td>
               <td>
@@ -163,12 +164,11 @@
           </table>
         </div>
 
-        <div class="main-controls-work-btn">
-          <button id="work-btn"
-            type="button"
-            class="btn btn-outline-primary"
-            onclick="button_control('motor_control', 'position', 'WORK')">
-            W
+        <div class="main-controls-home-btn">
+            <button id="home-btn"
+              type="button"
+              class="fas fa-home btn btn-outline-primary"
+              onclick="button_control('motor_control', 'position', 'HOME')">
           </button>
         </div>
       </div>
@@ -215,6 +215,7 @@
     </div>
   </div>
   <hr hidden>
+  <br>
 </div>
 
 {% endblock %}

@@ -29,14 +29,14 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: top;
-    gap: 10px;
+    gap: 20px;
 }
 
 .main-controls-container-layout {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
     background-color: #ffffff;
 }
 
@@ -126,7 +126,7 @@ th, td {
 
 #video-4k-btn {
     width: 70px;
-    margin-right: 16px
+    margin-right: 16px;
 }
 
 #video-1080p-btn {
@@ -163,11 +163,12 @@ th, td {
 }
 
 #home-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    text-align: center;
-    align-items: center;
+    width: 40px;
+    height: 30px;
+    font-size: 18px;
+    margin-right: 5px;
+    padding: 0px;
+    line-height: 0px;
 }
 
 #focus-plus-btn {
@@ -189,10 +190,11 @@ th, td {
 }
 
 #work-btn {
-    width: 40px;
-    height: 30px;
-    font-size: 18px;
-    margin-right: 5px;
-    padding: 0px;
-    line-height: 0px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    text-align: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
 }

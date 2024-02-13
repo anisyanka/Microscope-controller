@@ -26,20 +26,85 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                /* Start to obtain microscope battery level status from server */
-                get_battery_level_start();
-
                 /* Set stream window size */
                 document.getElementById("stream").width = window.innerWidth;
-                document.getElementById("stream").height = (window.innerHeight * 0.65);
+                document.getElementById("stream").height = (window.innerHeight * 0.62);
 
                 console.log("Video size = " + document.getElementById("stream").width + "x" + document.getElementById("stream").height);
 
-                /* Mobile devices don't fire "resize" event,
-                therefore we have to dublicate the same code here */
+                /* RESIZE ELEMENTS */
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 800) {
+                        document.querySelector(".stream-controls-btns").style.justifyContent = "center"
+                        document.querySelector(".main-controls-container-layout").style.justifyContent = "center"
+                        document.querySelector(".light-alarm-container").style.justifyContent = "center"
+                        document.querySelector(".light-controls-container").style.marginRight = "50px"
+                        document.querySelector(".alarm-controls-btn").style.marginLeft = "50px"
+                        document.querySelector("focus-plus-btn").style.marginRight = "50px"
+                        document.querySelector("focus-minus-btn").style.marginLeft = "50px"
+                    } else {
+                        document.querySelector(".stream-controls-btns").style.justifyContent = "space-between"
+                        document.querySelector(".main-controls-container-layout").style.justifyContent = "space-between"
+                        document.querySelector(".light-alarm-container").style.justifyContent = "space-between"
+                        document.querySelector(".light-controls-container").style.marginRight = "0px"
+                        document.querySelector(".alarm-controls-btn").style.marginLeft = "0px"
+                        document.querySelector("focus-plus-btn").style.marginRight = "0px"
+                        document.querySelector("focus-minus-btn").style.marginLeft = "0px"
+                    }
+                });
+
                 if (window.innerWidth > 800) {
-                    document.querySelector(".main-common-container").style.width = window.innerWidth / 4
+                    document.querySelector(".stream-controls-btns").style.justifyContent = "center"
+                    document.querySelector(".main-controls-container-layout").style.justifyContent = "center"
+                    document.querySelector(".light-alarm-container").style.justifyContent = "center"
+                    document.querySelector(".light-controls-container").style.marginRight = "50px"
+                    document.querySelector(".alarm-controls-btn").style.marginLeft = "50px"
+                    document.getElementById("focus-plus-btn").style.marginRight = "50px"
+                    document.getElementById("focus-minus-btn").style.marginLeft = "50px"
+                } else {
+                    document.querySelector(".stream-controls-btns").style.justifyContent = "space-between"
+                    document.querySelector(".main-controls-container-layout").style.justifyContent = "space-between"
+                    document.querySelector(".light-alarm-container").style.justifyContent = "space-between"
+                    document.querySelector(".light-controls-container").style.marginRight = "0px"
+                    document.querySelector(".alarm-controls-btn").style.marginLeft = "0px"
+                    document.getElementById("focus-plus-btn").style.marginRight = "0px"
+                    document.getElementById("focus-minus-btn").style.marginLeft = "0px"
                 }
+
+                // Get config from server
+                var request = new XMLHttpRequest()
+                request.onload = function() {
+                    console.log("SOC pol time = " + request.response["modbus_soc_polling_period_ms"] + "ms");
+                    console.log("Repeat Modbus cmd time = " + request.response["modbus_repeat_cmd_period_ms"] + "ms");
+                    console.log("Initial bat level = " + request.response["initial_bat_level"] + "%");
+
+                    // SOC POLLING TIME
+                    if (request.response["modbus_soc_polling_period_ms"]) {
+                        get_battery_level_start(Number(request.response["modbus_soc_polling_period_ms"]));
+                    } else {
+                        console.log("[ERR] obtainning battery polling period ms");
+                    }
+
+                    // MODBUS REPEAT SEND PERIOD TIME
+                    if (request.response["modbus_repeat_cmd_period_ms"]) {
+                        button_control_set_poll_time(Number(request.response["modbus_repeat_cmd_period_ms"]));
+                    } else {
+                        console.log("[ERR] obtainning battery polling period ms");
+                    }
+
+                    // INITIAL BATTERY LEVEL
+                    if (request.response["initial_bat_level"]) {
+                        document.querySelector(".battery-fill").style.height = request.response["initial_bat_level"] + "%";
+                        document.querySelector(".battery-percentage").innerHTML = request.response["initial_bat_level"] + "%";
+                    } else {
+                        console.log("[ERR] obtainning battery status failed");
+                    }
+                }
+
+                // Send a request
+                request.responseType = 'json';
+                request.open("GET", "/get_conf", true);
+                request.send();
             });
         </script>
     </head>

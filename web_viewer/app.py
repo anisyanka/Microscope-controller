@@ -2,13 +2,12 @@
 from flask import Flask, redirect, render_template, request, jsonify
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
-from config_reader import config_reader_retrieve_all_data
 from helpers import helper_get_my_ip, helper_update_host_ip_config
 from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level, modbus_focus_motor_control, modbus_light_control, modbus_main_motors_control
 from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
+import config_reader as conf_reader
 
 app = Flask(__name__)
-config_reader_retrieve_all_data()
 modbus_connect_to_tcp_rtu_converter()
 
 # Load main page #
@@ -72,7 +71,7 @@ def motor_control_request():
 
 
 # AJAX: Get battery level via Modbus #
-#################################
+######################################
 @app.route("/get_battery_level", methods=["GET", "POST"])
 def get_battery_level_request():
     print("Obtained request to retrieve battery level")
@@ -80,6 +79,19 @@ def get_battery_level_request():
     # Call Modbus TCP/RTU converter and wait for reply
     level = modbus_get_battery_level()
     return jsonify({ "level": level })
+
+
+# AJAX: Get config #
+####################
+@app.route("/get_conf", methods=["GET", "POST"])
+def send_config_data_to_client():
+    soc_pol_time = conf_reader.get_soc_polling_period_ms()
+    repeat_cmds = conf_reader.get_repeat_cmd_perid_ms()
+    initial_bat_level = modbus_get_battery_level()
+
+    return jsonify({ "modbus_soc_polling_period_ms":  soc_pol_time,
+                     "modbus_repeat_cmd_period_ms": repeat_cmds,
+                      "initial_bat_level": initial_bat_level })
 
 
 # Cathing internal sever error #

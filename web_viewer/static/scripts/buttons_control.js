@@ -2,6 +2,11 @@ var interval_id = 0;
 var timeout_id = 0;
 var was_btn_released = 0;
 
+var polling_time_ms = 0;
+function button_control_set_poll_time(poltime) {
+    polling_time_ms = poltime;
+}
+
 function button_control_pressed(req, variable, value) {
     was_btn_released = 0;
 
@@ -14,7 +19,7 @@ function button_control_released() {
     was_btn_released = 1;
     button_control_stop();
 
-    if (timeout_id) {
+    if (timeout_id != 0) {
         clearTimeout(timeout_id);
         timeout_id = 0;
     }
@@ -46,7 +51,11 @@ function button_control(req, variable, value) {
 
 function button_control_change_repeatedly(req, variable, value) {
     if (interval_id == 0) {
-        interval_id = window.setInterval(function() {button_control(req, variable, value);}, 100);
+        if (polling_time_ms == 0) {
+            interval_id = window.setInterval(function() {button_control(req, variable, value);}, 100);
+        } else {
+            interval_id = window.setInterval(function() {button_control(req, variable, value);}, polling_time_ms);
+        }
         console.log("Repeat proccess started");
     }
 }
