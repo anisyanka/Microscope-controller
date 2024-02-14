@@ -1,6 +1,6 @@
-[submodule "jsmn"]
-	path = jsmn
+[submodule "modbus_tcp_rtu_converter/jsmn"]
+	path = modbus_tcp_rtu_converter/jsmn
 	url = https://github.com/zserge/jsmn
-[submodule "libmodbus"]
-	path = libmodbus
+[submodule "modbus_tcp_rtu_converter/libmodbus"]
+	path = modbus_tcp_rtu_converter/libmodbus
 	url = https://github.com/stephane/libmodbus.git

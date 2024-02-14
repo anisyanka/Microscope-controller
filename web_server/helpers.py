@@ -1,7 +1,7 @@
 import os
 import socket
 
-HOST_IP_CONFIG="/home/pi/.modbus_converter/host_ip.conf"
+HOST_IP_CONFIG="/home/pi/.microscope/host_ip.conf"
 
 def helper_get_my_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

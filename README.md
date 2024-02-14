@@ -1,4 +1,4 @@
-# Modbus TCP/RTU конвертер и web-интерфейс для управления микроскопом на базе Raspberry Pi.
+# Программа управления микроскопом: Modbus TCP/RTU конвертер и web-интерфейс на базе Raspberry Pi.
 
 # Содержание
 1. [Первое включение и установка wi-fi соединения](#firststart)
@@ -29,9 +29,9 @@ sudo reboot
 ## Настройка сервиса modbus_converter  <a name="setup"></a>
 Как только плата стала "онлайн", на ней автоматически запускается systemd-сервис, реализующий основную логику преобразования протоколов Modbus.
 Сервис называется `modbus_converter`.
-Все полезные скрипты, исполняемый файл сервиса и конфиги лежат в каталоге `/home/pi/.modbus_converter` (обратите внимание, что в названии есть точка).
+Все полезные скрипты, исполняемый файл сервиса и конфиги лежат в каталоге `/home/pi/.microscope` (обратите внимание, что в названии есть точка).
 
-Главный конфигурационный файл, который должен редактировать пользователь  - это `/home/pi/.modbus_converter/modbus_converter.conf`.
+Главный конфигурационный файл, который должен редактировать пользователь  - это `/home/pi/.microscope/modbus_converter.conf`.
 Формат файла - JSON. Дефолтный конфиг выглядит так:
 ```json
 {
@@ -85,12 +85,8 @@ sudo reboot
 ```C
 typedef enum {
     CAMERA_API_LAUNCH_VIDEO_4K_VALUE = 0x00,
-    CAMERA_API_LAUNCH_video_1080p_btn_VALUE = 0x01,
+    CAMERA_API_LAUNCH_VIDEO_1080P_VALUE = 0x01,
     CAMERA_API_LAUNCH_VIDEO_STOP_VALUE = 0x02,
-    CAMERA_API_LAUNCH_VIDEO_TEST_VALUE = 0x03,
-    CAMERA_API_LAUNCH_video_1080p_btn_WEB_STREAMING_VALUE = 0x04,
-    CAMERA_API_LAUNCH_VIDEO_4K_WEB_STREAMING_VALUE = 0x05,
-    CAMERA_API_LAUNCH_VIDEO_TEST_WEB_STREAMING_VALUE = 0x06,
 } camera_api_supported_cmd_values_t;
 ```
 Примеры Modbus-команд для камеры:
@@ -98,7 +94,6 @@ typedef enum {
 0x02 0x06 0x00 0x01 0x00 0x00 <crc16> - запустить 4к видео стрим на ip адресс хоста.
 0x02 0x06 0x00 0x01 0x00 0x01 <crc16> - запустить 1080p видео стрим на ip адресс хоста.
 0x02 0x06 0x00 0x01 0x00 0x02 <crc16> - остановить вообще видеопоток. (Использовалось для отладки).
-0x02 0x06 0x00 0x01 0x00 0x04 <crc16> - запустить 1080p видео стрим на web-ресурс доступный по IP-адресу платы 192.168.XX.XX
 ```
 
 **Если камера получила неподдерживаемые значения fucntion code, регистра или значений регистров, то сервис modbus_converter вернёт соответствующие коды ошибок вышестоящей программе, приславшей неверную команду.**
@@ -183,9 +178,9 @@ https://raspberrypi.stackexchange.com/questions/45570/how-do-i-make-serial-work-
 
 Залогиниться по ssh на RPI и далее:
 ```bash
-1. rm -rf ~/Modbus-TCP-RTU-Converter <-- эту команду нужно выполнить один раз, так как в переданном образе в этой директории лежат исходники, но без git-а.
-2. git clone https://github.com/anisyanka/Modbus-TCP-RTU-Converter.git
-3. cd Modbus-TCP-RTU-Converter
+1. rm -rf ~/Microscope-controller <-- эту команду нужно выполнить один раз, так как в переданном образе в этой директории лежат исходники, но без git-а.
+2. git clone https://github.com/anisyanka/Microscope-controller.git
+3. cd Microscope-controller
 4. make submodule_update
 5. make uninstall
 6. make install
@@ -241,7 +236,7 @@ sudo apt-get install git autoconf libtool
 **libmodbus**
 ```bash
 git clone https://github.com/stephane/libmodbus.git
-cd ~/Modbus-TCP-RTU-Converter/patches
+cd ~/Microscope-controller/modbus_tcp_rtu_converter/patches
 scp * pi@192.168.1.55:/home/pi/libmodbus/
 cd ~/libmodbus
 git apply libmodbus_tid.patch
@@ -260,12 +255,12 @@ python3 -m venv .venv
 . .venv/bin/activate
 
 # Install dependencies for server
-cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer
+cd /home/pi/Microscope-controller/web_server
 pip install -r requirements.txt
 deactivate
 
 # Run server at <ip>:5000
 . .venv/bin/activate
-cd /home/pi/Modbus-TCP-RTU-Converter/web_viewer
+cd /home/pi/Microscope-controller/web_server
 flask run --host=0.0.0.0 --debug
 ```

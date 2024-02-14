@@ -1,7 +1,7 @@
 import json
 
-modbus_converter_conf="/home/pi/.modbus_converter/modbus_converter.conf"
-microscope_cmd_conf="/home/pi/.modbus_converter/web_viewer/microscope_cmd.conf"
+modbus_converter_conf="/home/pi/.microscope/modbus_converter.conf"
+microscope_cmd_conf="/home/pi/.microscope/microscope_server.conf"
 
 def get_modbus_tcp_rtu_converter_port():
     with open(modbus_converter_conf, 'r') as j:

@@ -1,5 +1,5 @@
 #!/bin/sh
-HOST=`awk -F' ' '{print $(1)}' /home/pi/.modbus_converter/host_ip.conf`
+HOST=`awk -F' ' '{print $(1)}' /home/pi/.microscope/host_ip.conf`
 
 PID_TO_KILL=`pgrep gst-launch-1.0`
 

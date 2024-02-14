@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "$1" > /home/pi/.modbus_converter/host_ip.conf
+echo "$1" > /home/pi/.microscope/host_ip.conf

@@ -81,18 +81,6 @@ static int _exec_cmd(uint16_t cmd)
     case CAMERA_API_LAUNCH_VIDEO_STOP_VALUE:
         strcpy(command, CAMERA_API_LAUNCH_STOP_VIDEO_SCRIPT);
         break;
-    case CAMERA_API_LAUNCH_VIDEO_TEST_VALUE:
-        strcpy(command, CAMERA_API_LAUNCH_TEST_VIDEO_SCRIPT);
-        break;
-    case CAMERA_API_LAUNCH_VIDEO_1080P_WEB_STREAMING_VALUE:
-        strcpy(command, CAMERA_API_LAUNCH_1080P_WEB_STREAMING_VIDEO_SCRIPT);
-        break;
-    case CAMERA_API_LAUNCH_VIDEO_4K_WEB_STREAMING_VALUE:
-        strcpy(command, CAMERA_API_LAUNCH_4K_WEB_STREAMING_VIDEO_SCRIPT);
-        break;
-    case CAMERA_API_LAUNCH_VIDEO_TEST_WEB_STREAMING_VALUE:
-        strcpy(command, CAMERA_API_LAUNCH_TEST_WEB_STREAMING_VIDEO_SCRIPT);
-        break;
     default:
         return CAMERA_API_ERROR_ILLEGAL_DATA_VALUE;
     }
