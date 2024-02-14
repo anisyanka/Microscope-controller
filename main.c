@@ -14,6 +14,8 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 
+#include <signal.h>
+
 #include "modbus_converter_config.h"
 #include "logger.h"
 
@@ -44,6 +46,8 @@ static modbus_converter_dev_t modbus_converter_dev = { 0 };
 
 int main(int argc, char *argv[])
 {
+    signal(SIGCHLD, SIG_IGN);
+
     /* Log starting time */
     _hello_print(argv[0]);
 

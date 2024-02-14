@@ -6,9 +6,11 @@ from helpers import helper_get_my_ip, helper_update_host_ip_config
 from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level, modbus_focus_motor_control, modbus_light_control, modbus_main_motors_control
 from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
 import config_reader as conf_reader
+import signal
 
-app = Flask(__name__)
+signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 modbus_connect_to_tcp_rtu_converter()
+app = Flask(__name__)
 
 # Load main page #
 ##################
