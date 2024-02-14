@@ -198,3 +198,7 @@ th, td {
     font-size: 20px;
     font-weight: bold;
 }
+
+#stream {
+    object-fit: cover;
+}

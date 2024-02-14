@@ -1,10 +1,34 @@
 #!/usr/bin/env python
-from flask import Flask, redirect, render_template, request, jsonify
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-
-from helpers import helper_get_my_ip, helper_update_host_ip_config
-from modbus import modbus_connect_to_tcp_rtu_converter, modbus_get_battery_level, modbus_focus_motor_control, modbus_light_control, modbus_main_motors_control
-from stream_control import stream_helper_stop_stream, stream_helper_set_resolution, stream_helper_run
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    jsonify,
+    Response
+)
+from werkzeug.exceptions import (
+    default_exceptions,
+    HTTPException,
+    InternalServerError
+)
+from helpers import (
+    helper_get_my_ip,
+    helper_update_host_ip_config
+)
+from modbus import (
+    modbus_connect_to_tcp_rtu_converter,
+    modbus_get_battery_level,
+    modbus_focus_motor_control,
+    modbus_light_control,
+    modbus_main_motors_control
+)
+from stream_control import (
+    stream_helper_stop_stream,
+    stream_helper_set_resolution,
+    stream_helper_capture_image,
+    stream_helper_get_img_path
+)
 import config_reader as conf_reader
 import signal
 
@@ -21,6 +45,10 @@ def index():
     print("Board ip=" + ip)
     print("Client ip=" + request.remote_addr)
 
+    # Defaults
+    stream_helper_stop_stream()
+    stream_helper_set_resolution("1080p")
+
     # Gstream launch scripts will use this file to define host IP address to send stream
     helper_update_host_ip_config(request.remote_addr)
     return render_template('index.html', board_ip=ip)
@@ -34,9 +62,24 @@ def resolution_switch_request():
 
     stream_helper_stop_stream()
     stream_helper_set_resolution(request.args.get("new_res"))
-    #stream_helper_run(request.args.get("new_res"))
 
     return jsonify("OK")
+
+
+# STREAM: send jpeg frame #
+###########################
+def get_camera_frame():
+    while True:
+        stream_helper_capture_image()
+        with open(stream_helper_get_img_path(), 'rb') as f:
+            frame = f.read()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(get_camera_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 # AJAX: Focus change via Modbus #

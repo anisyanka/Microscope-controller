@@ -3,9 +3,10 @@
 {% block main %}
 <div class="root-container">
   <div class="video-stream">
-    <video id="stream" autoplay controls src="http://{{ board_ip }}:5602">
+    <!-- <video id="stream" autoplay controls src="http://{{ board_ip }}:5602">
       Your browser does not support HTML video.
-    </video>
+    </video> -->
+    <img id="stream" src="{{ url_for('video_feed') }}">
     <span class="video-stream-mode-text" hidden>Video: <span style="color:Tomato">unavailable</span></span>
   </div>
 

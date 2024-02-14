@@ -26,8 +26,7 @@ scp $modbus_src_dir/web_viewer/static/scripts/video_control.js \
 # Send stream scripts
 scp $modbus_src_dir/web_viewer/stream_scripts/camera_set_resolution_4k.sh \
     $modbus_src_dir/web_viewer/stream_scripts/camera_set_resolution_1920x1080.sh \
-    $modbus_src_dir/web_viewer/stream_scripts/webstream \
-    $modbus_src_dir/web_viewer/stream_scripts/camera_stop_webstream_server.sh \
+    $modbus_src_dir/web_viewer/stream_scripts/camera_capture_image.sh \
         $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/web_viewer/stream_scripts
 
 # Send Flask web-server
