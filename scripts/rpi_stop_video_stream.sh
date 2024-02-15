@@ -4,14 +4,14 @@ PID2=`pgrep v4l2-ctl`
 
 if [ ! -z "${PID1}" ]; then
     echo "kill pid=$PID1"
-    kill $PID1 > /dev/null
+    sudo kill $PID1 > /dev/null
 else
     echo "gstreamer process doesn't exist"
 fi
 
 if [ ! -z "${PID2}" ]; then
     echo "kill pid=$PID2"
-    kill $PID2 > /dev/null
+    sudo killall v4l2-ctl > /dev/null
 else
     echo "v4l2-ctl process doesn't exist"
 fi

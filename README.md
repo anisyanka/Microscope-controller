@@ -221,6 +221,11 @@ alias ll="ls -l"
 alias myip='curl ipinfo.io/ip; echo'
 ```
 
+ * Пользоваьель pi добавлен в sudouser
+```bash
+sudo adduser pi sudo
+```
+
  * Далее были доустановлены в образ следующие программы:
 
 **gstreamer**
