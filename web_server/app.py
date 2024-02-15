@@ -23,12 +23,7 @@ from modbus import (
     modbus_light_control,
     modbus_main_motors_control
 )
-from stream_control import (
-    stream_helper_stop_stream,
-    stream_helper_set_resolution,
-    stream_helper_capture_image,
-    stream_helper_get_img_path
-)
+import stream_control as stream
 import config_reader as conf_reader
 import signal
 
@@ -46,8 +41,8 @@ def index():
     print("Client ip=" + request.remote_addr)
 
     # Defaults
-    stream_helper_stop_stream()
-    stream_helper_set_resolution("1080p")
+    stream.stop_stream()
+    stream.set_resolution("1080p")
 
     # Gstream launch scripts will use this file to define host IP address to send stream
     helper_update_host_ip_config(request.remote_addr)
@@ -60,8 +55,8 @@ def index():
 def resolution_switch_request():
     print("Obtained request to change stream resolution to " + request.args.get("new_res"))
 
-    stream_helper_stop_stream()
-    stream_helper_set_resolution(request.args.get("new_res"))
+    stream.stop_stream()
+    stream.set_resolution(request.args.get("new_res"))
 
     return jsonify("OK")
 
@@ -70,8 +65,8 @@ def resolution_switch_request():
 ###########################
 def get_camera_frame():
     while True:
-        stream_helper_capture_image()
-        with open(stream_helper_get_img_path(), 'rb') as f:
+        stream.capture_image()
+        with open(stream.get_img_path(), 'rb') as f:
             frame = f.read()
 
         yield (b'--frame\r\n'
