@@ -74,7 +74,7 @@ def modbus_light_control(level):
     c.connect()
 
     if level == "upper":
-        c.write_register(14, 1, slave=slave_addr)
+        c.write_register(14, 100, slave=slave_addr)
     elif level == "lower":
         c.write_register(14, 0, slave=slave_addr)
 
