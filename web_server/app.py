@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 from flask import (
     Flask,
     redirect,
@@ -39,6 +40,10 @@ def index():
 
     print("Board ip=" + ip)
     print("Client ip=" + request.remote_addr)
+
+    if not os.path.exists(stream.get_img_path()):
+        with open(stream.get_img_path(), 'w'):
+            pass
 
     # Defaults
     stream.stop_stream()
