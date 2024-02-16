@@ -48,3 +48,6 @@ scp $web_dir/app.py \
 # Send config
 scp $web_dir/microscope_server.conf \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/
+
+ssh $rpi_user@$rpi_ip "chmod +x $web_dir/uscope_srv.sh"
+ssh $rpi_user@$rpi_ip "chmod +x $web_dir/app.py"

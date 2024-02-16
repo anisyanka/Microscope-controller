@@ -31,6 +31,12 @@ import signal
 
 app = Flask(__name__)
 
+global video_control_req
+global allow_to_chang_res
+
+allow_to_chang_res = 0
+video_control_req = 0
+
 # Load main page #
 ##################
 @app.route("/", methods=["GET"])
@@ -53,9 +59,20 @@ def index():
 def resolution_switch_request():
     print("Obtained request to change stream resolution to " + request.args.get("new_res"))
 
+    global video_control_req
+    global allow_to_chang_res
+
+    # Wait for sending frame will be finished
+    video_control_req = 1
+    while allow_to_chang_res == 0:
+        pass
+
     stream.stop_stream()
     stream.set_resolution(request.args.get("new_res"))
     sys.stdout.flush()
+
+    # Start sending frames again
+    video_control_req = 0
 
     return jsonify("OK")
 
@@ -63,13 +80,18 @@ def resolution_switch_request():
 # STREAM: send jpeg frame #
 ###########################
 def get_camera_frame():
-    while True:
-        # stream.capture_image()
-        with open(stream.get_img_path(), 'rb') as f:
-            frame = f.read()
+    global video_control_req
+    global allow_to_chang_res
 
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    while True:
+        if video_control_req == 0:
+            allow_to_chang_res = 0
+            stream.capture_image()
+            with open(stream.get_img_path(), 'rb') as f:
+                frame = f.read()
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        else:
+            allow_to_chang_res = 1
 
 @app.route('/video_feed')
 def video_feed():
