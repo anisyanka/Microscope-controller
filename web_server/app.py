@@ -28,8 +28,6 @@ import stream_control as stream
 import config_reader as conf_reader
 import signal
 
-signal.signal(signal.SIGCHLD, signal.SIG_IGN)
-modbus_connect_to_tcp_rtu_converter()
 app = Flask(__name__)
 
 # Load main page #
@@ -40,14 +38,6 @@ def index():
 
     print("Board ip=" + ip)
     print("Client ip=" + request.remote_addr)
-
-    if not os.path.exists(stream.get_img_path()):
-        with open(stream.get_img_path(), 'w'):
-            pass
-
-    # Defaults
-    stream.stop_stream()
-    stream.set_resolution("1080p")
 
     # Gstream launch scripts will use this file to define host IP address to send stream
     helper_update_host_ip_config(request.remote_addr)
@@ -70,7 +60,7 @@ def resolution_switch_request():
 ###########################
 def get_camera_frame():
     while True:
-        stream.capture_image()
+        # stream.capture_image()
         with open(stream.get_img_path(), 'rb') as f:
             frame = f.read()
 
@@ -141,16 +131,38 @@ def send_config_data_to_client():
 
 # Cathing internal sever error #
 ################################
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # pass through HTTP errors
+    if isinstance(e, HTTPException):
+        return e
 
     print(e)
     return redirect("/")
 
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    # Ignore SIGCHLD to avoid zombi-proccesses
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
+    # Enable debug mode?
+    if conf_reader.is_debug_enabled() == "On":
+        print("Debug mode ENABLED")
+        debug_mode = True
+    else:
+        print("Debug mode DISABLED")
+        debug_mode = False
+
+    # Connect to modbus TCP/RTU deamon
+    modbus_connect_to_tcp_rtu_converter(debug_mode)
+
+    # Temp file to save one frame
+    if not os.path.exists(stream.get_img_path()):
+        with open(stream.get_img_path(), 'w'):
+            pass
+
+    # Disable previously enabled settings
+    stream.stop_stream()
+    stream.set_resolution("1080p")
+
+    # run server
+    app.run(host='0.0.0.0', debug=debug_mode)

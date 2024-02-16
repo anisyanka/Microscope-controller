@@ -17,17 +17,22 @@ def __set_bit(value, bit):
 def __clear_bit(value, bit):
     return value & ~(1<<bit)
 
-def modbus_connect_to_tcp_rtu_converter():
+def modbus_connect_to_tcp_rtu_converter(debug_mode):
     ip = helper_get_my_ip()
     port = conf_reader.get_modbus_tcp_rtu_converter_port()
+    timeout = conf_reader.get_modbus_slave_timeout()
+
     global slave_addr
     slave_addr = conf_reader.get_modbus_slave_id()
-    timeout = conf_reader.get_modbus_slave_timeout()
+
+    global pwm_duty
+    pwm_duty = 0
 
     print('Modbus TCP/RTU converter is running on {}:{}, slave addr={}, timeout={}s'.format(ip, port, slave_addr, timeout))
 
     # activate debugging
-    # pymodbus_apply_logging_config("ERROR")
+    if debug_mode == True:
+        pymodbus_apply_logging_config("DEBUG")
 
     global c
     c = ModbusClient.ModbusTcpClient(
@@ -73,10 +78,21 @@ def modbus_focus_motor_control(level):
 def modbus_light_control(level):
     c.connect()
 
+    global pwm_duty
+    max_pwm_duty = conf_reader.get_led_pwm_max_power()
+
     if level == "upper":
-        c.write_register(14, 20, slave=slave_addr)
+        pwm_duty += 1
+        if pwm_duty > max_pwm_duty:
+            print("Led MAX power already ENABLED")
+            pwm_duty = max_pwm_duty
+        c.write_register(14, pwm_duty, slave=slave_addr)
     elif level == "lower":
-        c.write_register(14, 0, slave=slave_addr)
+        if pwm_duty > 0:
+            pwm_duty -= 1
+        else:
+            print("Led MIN power already ENABLED")
+        c.write_register(14, pwm_duty, slave=slave_addr)
 
     c.close()
 

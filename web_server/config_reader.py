@@ -62,3 +62,13 @@ def get_soc_polling_period_ms():
     with open(microscope_cmd_conf, 'r') as m:
         microscope_data = json.loads(m.read())
     return microscope_data['modbus_soc_polling_period_ms']
+
+def is_debug_enabled():
+    with open(microscope_cmd_conf, 'r') as m:
+        microscope_data = json.loads(m.read())
+    return microscope_data['debug_mode']
+
+def get_led_pwm_max_power():
+    with open(microscope_cmd_conf, 'r') as m:
+        microscope_data = json.loads(m.read())
+    return int(microscope_data['modbus_led_max_pwm_percentage'])
