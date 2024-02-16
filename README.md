@@ -270,6 +270,8 @@ sudo supervisorctl start uscope_srv
 sudo supervisorctl restart uscope_srv
 
 sudo supervisorctl tail -f uscope_srv stdout
+
+sudo lsof -iTCP -sTCP:LISTEN
 ```
 
 **Flask**
