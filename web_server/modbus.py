@@ -5,6 +5,7 @@ from pymodbus import (
     ModbusException,
     pymodbus_apply_logging_config,
 )
+from pymodbus.framer.socket_framer import ModbusSocketFramer
 
 from time import sleep
 
@@ -38,9 +39,9 @@ def modbus_connect_to_tcp_rtu_converter(debug_mode):
     c = ModbusClient.ModbusTcpClient(
                     host=ip,
                     port=port,
-                    framer=Framer.SOCKET,
+                    framer=ModbusSocketFramer,
                     timeout=timeout)
-        
+
 
 def modbus_get_battery_level():
     c.connect()
