@@ -121,13 +121,13 @@ def modbus_main_motors_control(position):
             c.write_register(12, 32767, slave=slave_addr)
         else:
             c.write_register(12, 65535, slave=slave_addr)
-        sleep(0.05)
+        sleep(0.02)
 
         if updown_sign == "+":
             c.write_register(2, 32767, slave=slave_addr)
         else:
             c.write_register(2, 65535, slave=slave_addr)
-        sleep(0.05)
+        sleep(0.02)
 
         if leftright_sign == "+":
             c.write_register(4, 32767, slave=slave_addr)
@@ -166,9 +166,9 @@ def modbus_main_motors_control(position):
                     focus_def_steps = __set_bit(focus_def_steps, 15)
 
                 c.write_register(2, updown_def_steps, slave=slave_addr)
-                sleep(0.05)
+                sleep(0.02)
                 c.write_register(4, leftright_def_steps, slave=slave_addr)
-                sleep(0.05)
+                sleep(0.02)
                 c.write_register(12, focus_def_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
@@ -203,14 +203,14 @@ def modbus_main_motors_control(position):
                     focus_def_steps = __set_bit(focus_def_steps, 15)
 
                 c.write_register(4, updown_def_steps, slave=slave_addr)
-                sleep(0.05)
+                sleep(0.02)
                 c.write_register(2, leftright_def_steps, slave=slave_addr)
-                sleep(0.05)
+                sleep(0.02)
                 c.write_register(12, focus_def_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
         else:
             print("[ERR] Unknown swap value in config file")
 
-    sleep(0.05)
+    sleep(0.02)
     c.close()

@@ -83,16 +83,27 @@ install_scripts:
 install_web_server:
 	mkdir -p $(TARGET_DIR)
 	cp -r $(WEB_DIR) $(TARGET_DIR)
+	cp $(WEB_DIR)/microscope_server.conf $(TARGET_DIR)
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_4k.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_1920x1080.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_image.sh
-	cp $(WEB_DIR)/microscope_server.conf $(TARGET_DIR)
 	chmod 666 $(TARGET_DIR)/microscope_server.conf
+	chmod +x $(TARGET_DIR)/web_server/uscope_srv.sh
+	chmod +x $(TARGET_DIR)/web_server/app.py
+	chmod 666 $(TARGET_DIR)/web_server/uscope_srv.conf
+	sudo cp $(TARGET_DIR)/web_server/uscope_srv.conf /etc/supervisor/conf.d/
+	sudo chown pi:pi /etc/supervisor/conf.d/uscope_srv.conf
+	sudo supervisorctl reread
+	sudo supervisorctl update
+	sudo supervisorctl restart uscope_srv
 
 upload_all: upload_src upload_scripts upload_web
 install: all install_converter install_scripts install_web_server
 
 uninstall:
 	@$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
-	rm -rf $(TARGET_DIR)
 	sudo rm -rf /etc/systemd/system/modbus_converter.service
+	sudo rm -rf $(TARGET_DIR)
+	sudo rm -rf /etc/supervisor/conf.d/uscope_srv.conf
+	sudo supervisorctl reread
+	sudo supervisorctl update

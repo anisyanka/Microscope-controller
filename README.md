@@ -252,6 +252,26 @@ sudo make
 sudo make install
 ```
 
+**lsof**
+```bash
+sudo apt-get install lsof
+```
+
+**supervisor**
+```bash
+sudo apt install supervisor
+
+# Usefull commands
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status uscope_srv
+sudo supervisorctl stop uscope_srv
+sudo supervisorctl start uscope_srv
+sudo supervisorctl restart uscope_srv
+
+sudo supervisorctl tail -f uscope_srv stdout
+```
+
 **Flask**
 ```bash
 # Install Flask itself
@@ -259,7 +279,6 @@ cd ~
 python3 -m venv .venv
 . .venv/bin/activate
 
-# Install dependencies for server
 cd /home/pi/Microscope-controller/web_server
 pip install -r requirements.txt
 deactivate

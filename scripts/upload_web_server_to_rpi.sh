@@ -41,6 +41,8 @@ scp $web_dir/app.py \
     $web_dir/config_reader.py \
     $web_dir/modbus.py \
     $web_dir/requirements.txt \
+    $web_dir/uscope_srv.sh \
+    $web_dir/uscope_srv.conf \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/
 
 # Send config

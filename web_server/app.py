@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 from flask import (
     Flask,
     redirect,
@@ -41,6 +42,8 @@ def index():
 
     # Gstream launch scripts will use this file to define host IP address to send stream
     helper_update_host_ip_config(request.remote_addr)
+    sys.stdout.flush()
+
     return render_template('index.html', board_ip=ip)
 
 
@@ -52,6 +55,7 @@ def resolution_switch_request():
 
     stream.stop_stream()
     stream.set_resolution(request.args.get("new_res"))
+    sys.stdout.flush()
 
     return jsonify("OK")
 
@@ -80,6 +84,8 @@ def focus_control_request():
 
     # Call Modbus TCP/RTU converter to send focus cmd and wait for reply
     modbus_focus_motor_control(request.args.get("sign"))
+    sys.stdout.flush()
+
     return jsonify("OK")
 
 
@@ -91,6 +97,8 @@ def light_control_request():
 
     # Call Modbus TCP/RTU converter to send light cmd and wait for reply
     modbus_light_control(request.args.get("level"))
+    sys.stdout.flush()
+
     return jsonify("OK")
 
 
@@ -102,6 +110,8 @@ def motor_control_request():
 
     # Call Modbus TCP/RTU converter to send position cmd and wait for reply
     modbus_main_motors_control(request.args.get("position"))
+    sys.stdout.flush()
+
     return jsonify("OK")
 
 
@@ -113,6 +123,8 @@ def get_battery_level_request():
 
     # Call Modbus TCP/RTU converter and wait for reply
     level = modbus_get_battery_level()
+    sys.stdout.flush()
+
     return jsonify({ "level": level })
 
 
@@ -123,6 +135,7 @@ def send_config_data_to_client():
     soc_pol_time = conf_reader.get_soc_polling_period_ms()
     repeat_cmds = conf_reader.get_repeat_cmd_perid_ms()
     initial_bat_level = modbus_get_battery_level()
+    sys.stdout.flush()
 
     return jsonify({ "modbus_soc_polling_period_ms":  soc_pol_time,
                      "modbus_repeat_cmd_period_ms": repeat_cmds,
@@ -163,6 +176,7 @@ if __name__ == '__main__':
     # Disable previously enabled settings
     stream.stop_stream()
     stream.set_resolution("1080p")
+    sys.stdout.flush()
 
     # run server
     app.run(host='0.0.0.0', debug=debug_mode)
