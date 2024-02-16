@@ -46,6 +46,8 @@ def index():
     print("Board ip=" + ip)
     print("Client ip=" + request.remote_addr)
 
+    conf_reader.read_all_configs()
+
     # Gstream launch scripts will use this file to define host IP address to send stream
     helper_update_host_ip_config(request.remote_addr)
     sys.stdout.flush()
@@ -178,6 +180,9 @@ def handle_exception(e):
 if __name__ == '__main__':
     # Ignore SIGCHLD to avoid zombi-proccesses
     signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
+    # Obtain all initial config data
+    conf_reader.read_all_configs()
 
     # Enable debug mode?
     if conf_reader.is_debug_enabled() == "On":
