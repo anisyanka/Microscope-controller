@@ -21,8 +21,11 @@ def set_resolution(resolution):
     elif resolution == "4k":
         subprocess.call(SET_RES_4k_SCRIPT)
 
-def capture_image():
+def capture_image_frame():
     subprocess.call([GET_JPEG_FRAME_IMG_SCRIPT, TEMP_IMG_FILE])
+    with open(TEMP_IMG_FILE, 'rb') as f:
+        frame = f.read()
+    return frame
 
 def get_img_path():
     return TEMP_IMG_FILE

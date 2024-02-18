@@ -33,26 +33,35 @@ app = Flask(__name__)
 
 global video_control_req
 global allow_to_chang_res
+global is_video_stream_started
 
 allow_to_chang_res = 0
 video_control_req = 0
+is_video_stream_started = 0
 
 # Load main page #
 ##################
 @app.route("/", methods=["GET"])
 def index():
-    ip = helper_get_my_ip()
-
-    print("Board ip=" + ip)
-    print("Client ip=" + request.remote_addr)
+    global video_control_req
+    global allow_to_chang_res
+    global is_video_stream_started
 
     conf_reader.read_all_configs()
-
-    # Gstream launch scripts will use this file to define host IP address to send stream
+    print("Board ip=" + helper_get_my_ip())
+    print("Client ip=" + request.remote_addr)
     helper_update_host_ip_config(request.remote_addr)
-    sys.stdout.flush()
 
-    return render_template('index.html', board_ip=ip)
+    if is_video_stream_started == 1:
+        is_video_stream_started = 0
+        video_control_req = 1 # Wait for sending frame will be finished
+        while allow_to_chang_res == 0:
+            pass
+        stream.stop_stream()
+        video_control_req = 0 # Start sending frames again
+
+    sys.stdout.flush()
+    return render_template('index.html')
 
 
 # AJAX: Handle video buttons #
@@ -84,19 +93,24 @@ def resolution_switch_request():
 def get_camera_frame():
     global video_control_req
     global allow_to_chang_res
+    global is_video_stream_started
 
     while True:
         if video_control_req == 0:
             allow_to_chang_res = 0
-            stream.capture_image()
-            with open(stream.get_img_path(), 'rb') as f:
-                frame = f.read()
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + stream.capture_image_frame() + b'\r\n')
         else:
             allow_to_chang_res = 1
+            if is_video_stream_started == 0:
+                print("STOP VIDEO STREAM")
+                break
 
 @app.route('/video_feed')
 def video_feed():
+    global is_video_stream_started
+    is_video_stream_started = 1
+
+    print("START VIDEO STREAM")
     return Response(get_camera_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
@@ -184,16 +198,24 @@ if __name__ == '__main__':
     # Obtain all initial config data
     conf_reader.read_all_configs()
 
-    # Enable debug mode?
-    if conf_reader.is_debug_enabled() == "On":
-        print("Debug mode ENABLED")
-        debug_mode = True
+    # Server debug mode enabled?
+    if conf_reader.is_server_debug_enabled() == "On":
+        print("Server debug mode ENABLED")
+        server_debug_mode = True
     else:
-        print("Debug mode DISABLED")
-        debug_mode = False
+        print("Server debug mode DISABLED")
+        server_debug_mode = False
+
+    # Modbus library debug mode enabled?
+    if conf_reader.is_modbus_debug_enabled() == "On":
+        print("Modbus lib debug mode ENABLED")
+        modbus_debug_mode = True
+    else:
+        print("Modbus lib debug mode DISABLED")
+        modbus_debug_mode = False
 
     # Connect to modbus TCP/RTU deamon
-    modbus_connect_to_tcp_rtu_converter(debug_mode)
+    modbus_connect_to_tcp_rtu_converter(modbus_debug_mode)
 
     # Temp file to save one frame
     if not os.path.exists(stream.get_img_path()):
@@ -206,4 +228,4 @@ if __name__ == '__main__':
     sys.stdout.flush()
 
     # run server
-    app.run(host='0.0.0.0', debug=debug_mode)
+    app.run(host='0.0.0.0', debug=server_debug_mode)

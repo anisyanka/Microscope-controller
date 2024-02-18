@@ -91,11 +91,11 @@ install_web_server:
 	chmod +x $(TARGET_DIR)/web_server/uscope_srv.sh
 	chmod +x $(TARGET_DIR)/web_server/app.py
 	chmod 666 $(TARGET_DIR)/web_server/uscope_srv.conf
-	sudo cp $(TARGET_DIR)/web_server/uscope_srv.conf /etc/supervisor/conf.d/
-	sudo chown pi:pi /etc/supervisor/conf.d/uscope_srv.conf
-	sudo supervisorctl reread
-	sudo supervisorctl update
-	sudo supervisorctl restart uscope_srv
+	# sudo cp $(TARGET_DIR)/web_server/uscope_srv.conf /etc/supervisor/conf.d/
+	# sudo chown pi:pi /etc/supervisor/conf.d/uscope_srv.conf
+	# sudo supervisorctl reread
+	# sudo supervisorctl update
+	# sudo supervisorctl restart uscope_srv
 
 upload_all: upload_src upload_scripts upload_web
 install: all install_converter install_scripts install_web_server

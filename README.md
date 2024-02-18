@@ -290,3 +290,8 @@ deactivate
 cd /home/pi/Microscope-controller/web_server
 flask run --host=0.0.0.0 --debug
 ```
+
+sudo supervisorctl stop uscope_srv
+sudo lsof -iTCP -sTCP:LISTEN
+sudo kill <first PID with port 5000>
+sudo supervisorctl start uscope_srv
