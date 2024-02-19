@@ -34,6 +34,10 @@
 
                 /* RESIZE ELEMENTS */
                 window.addEventListener('resize', function() {
+                    /* Set stream window size */
+                    document.getElementById("stream").width = window.innerWidth;
+                    document.getElementById("stream").height = (window.innerHeight * 0.62);
+
                     if (window.innerWidth > 800) {
                         document.querySelector(".stream-controls-btns").style.justifyContent = "center"
                         document.querySelector(".main-controls-container-layout").style.justifyContent = "center"

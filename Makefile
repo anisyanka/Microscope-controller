@@ -82,6 +82,7 @@ install_scripts:
 
 install_web_server:
 	mkdir -p $(TARGET_DIR)
+	sudo rm -rf $(WEB_DIR)/__pycache__
 	cp -r $(WEB_DIR) $(TARGET_DIR)
 	cp $(WEB_DIR)/microscope_server.conf $(TARGET_DIR)
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_4k.sh
