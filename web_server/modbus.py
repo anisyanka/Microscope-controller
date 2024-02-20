@@ -82,6 +82,8 @@ def modbus_focus_motor_control(level):
         c.write_register(12, 1, slave=slave_addr)
     elif level == "lower":
         c.write_register(12, 65535, slave=slave_addr)
+    else:
+        print("[ERR] wrong cmd")
 
 def modbus_light_control(level):
     global c
@@ -101,6 +103,8 @@ def modbus_light_control(level):
         else:
             print("Led MIN power already ENABLED")
         c.write_register(14, pwm_duty, slave=slave_addr)
+    else:
+        print("[ERR] wrong cmd")
 
 def modbus_main_motors_control(position):
     global c
