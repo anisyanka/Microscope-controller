@@ -228,4 +228,4 @@ if __name__ == '__main__':
     sys.stdout.flush()
 
     # run server
-    app.run(host='0.0.0.0', debug=server_debug_mode)
+    app.run(host='0.0.0.0', port=5000, debug=server_debug_mode)
