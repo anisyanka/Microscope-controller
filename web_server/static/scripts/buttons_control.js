@@ -53,8 +53,10 @@ function button_control_change_repeatedly(req, variable, value) {
     if (interval_id == 0) {
         if (polling_time_ms == 0) {
             interval_id = window.setInterval(function() {button_control(req, variable, value);}, 100);
+            console.log("polling_time_ms = " + polling_time_ms);
         } else {
             interval_id = window.setInterval(function() {button_control(req, variable, value);}, polling_time_ms);
+            console.log("polling_time_ms from server = " + polling_time_ms);
         }
         console.log("Repeat proccess started");
     }

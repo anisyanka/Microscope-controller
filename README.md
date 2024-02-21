@@ -257,6 +257,11 @@ sudo make install
 sudo apt-get install lsof
 ```
 
+**v4l**
+```bash
+apt-get install v4l-conf
+```
+
 **supervisor**
 ```bash
 sudo apt install supervisor

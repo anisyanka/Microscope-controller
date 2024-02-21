@@ -119,27 +119,6 @@ def modbus_main_motors_control(position):
     # Swap INdependent functions
     if position == "STOP":
         c.write_register(33, 1, slave=slave_addr)
-    elif position == "HOME":
-        focus_sign = conf_reader.focus_home_sign()
-        updown_sign = conf_reader.updown_home_sign()
-        leftright_sign = conf_reader.leftright_home_sign()
-
-        if focus_sign == "+":
-            c.write_register(12, 32767, slave=slave_addr)
-        elif focus_sign == "-":
-            c.write_register(12, 32769, slave=slave_addr)
-        sleep(0.02)
-
-        if updown_sign == "+":
-            c.write_register(2, 32767, slave=slave_addr)
-        elif updown_sign == "-":
-            c.write_register(2, 32769, slave=slave_addr)
-        sleep(0.02)
-
-        if leftright_sign == "+":
-            c.write_register(4, 32767, slave=slave_addr)
-        elif leftright_sign == "-":
-            c.write_register(4, 32769, slave=slave_addr)
     else:
         # Swap dependent functions
         if swap == "no":
@@ -151,6 +130,29 @@ def modbus_main_motors_control(position):
                 c.write_register(4, 1, slave=slave_addr)
             elif position == "left":
                 c.write_register(4, 65535, slave=slave_addr)
+            elif position == "HOME":
+                updown_sign = conf_reader.updown_home_sign()
+                leftright_sign = conf_reader.leftright_home_sign()
+                focus_sign = conf_reader.focus_home_sign()
+
+                if updown_sign == "+":
+                    c.write_register(2, 32767, slave=slave_addr)
+                    sleep(0.02)
+                elif updown_sign == "-":
+                    c.write_register(2, 32769, slave=slave_addr)
+                    sleep(0.02)
+
+                if leftright_sign == "+":
+                    c.write_register(4, 32767, slave=slave_addr)
+                    sleep(0.02)
+                elif leftright_sign == "-":
+                    c.write_register(4, 32769, slave=slave_addr)
+                    sleep(0.02)
+
+                if focus_sign == "+":
+                    c.write_register(12, 32767, slave=slave_addr)
+                elif focus_sign == "-":
+                    c.write_register(12, 32769, slave=slave_addr)
             elif position == "WORK":
                 updown_def_steps = conf_reader.get_updown_stepper_default_steps()
                 leftright_def_steps = conf_reader.get_leftright_stepper_default_steps()
@@ -183,6 +185,29 @@ def modbus_main_motors_control(position):
                 c.write_register(2, 65535, slave=slave_addr)
             elif position == "left":
                 c.write_register(2, 1, slave=slave_addr)
+            elif position == "HOME":
+                updown_sign = conf_reader.updown_home_sign()
+                leftright_sign = conf_reader.leftright_home_sign()
+                focus_sign = conf_reader.focus_home_sign()
+
+                if updown_sign == "+":
+                    c.write_register(4, 32767, slave=slave_addr)
+                    sleep(0.02)
+                elif updown_sign == "-":
+                    c.write_register(4, 32769, slave=slave_addr)
+                    sleep(0.02)
+
+                if leftright_sign == "+":
+                    c.write_register(2, 32767, slave=slave_addr)
+                    sleep(0.02)
+                elif leftright_sign == "-":
+                    c.write_register(2, 32769, slave=slave_addr)
+                    sleep(0.02)
+
+                if focus_sign == "+":
+                    c.write_register(12, 32767, slave=slave_addr)
+                elif focus_sign == "-":
+                    c.write_register(12, 32769, slave=slave_addr)
             elif position == "WORK":
                 updown_def_steps = conf_reader.get_updown_stepper_default_steps()
                 leftright_def_steps = conf_reader.get_leftright_stepper_default_steps()
