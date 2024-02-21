@@ -15,11 +15,6 @@ import config_reader as conf_reader
 global last_bat_level
 last_bat_level = 0
 
-def __make_negative(value):
-    negative = ~value
-    negative += 1
-    return negative
-
 def modbus_connect_to_tcp_rtu_converter(debug_mode):
     ip = helper_get_my_ip()
     port = conf_reader.get_modbus_tcp_rtu_converter_port()
@@ -149,19 +144,19 @@ def modbus_main_motors_control(position):
 
                 if updown_steps != 0:
                     if updown_steps < 0:
-                        updown_steps = __make_negative(abs(updown_steps))
+                        updown_steps &= 0xffff
                     c.write_register(2, updown_steps, slave=slave_addr)
                     sleep(0.02)
 
                 if leftright_steps != 0:
                     if leftright_steps < 0:
-                        leftright_steps = __make_negative(abs(leftright_steps))
+                        leftright_steps &= 0xffff
                     c.write_register(4, leftright_steps, slave=slave_addr)
                     sleep(0.02)
 
                 if focus_steps != 0:
                     if focus_steps < 0:
-                        focus_steps = __make_negative(abs(focus_steps))
+                        focus_steps &= 0xffff
                     c.write_register(12, focus_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
@@ -193,19 +188,19 @@ def modbus_main_motors_control(position):
 
                 if updown_steps != 0:
                     if updown_steps < 0:
-                        updown_steps = __make_negative(updown_steps)
+                        updown_steps &= 0xffff
                     c.write_register(4, updown_steps, slave=slave_addr)
                     sleep(0.02)
 
                 if leftright_steps != 0:
                     if leftright_steps < 0:
-                        leftright_steps = __make_negative(leftright_steps)
+                        leftright_steps &= 0xffff
                     c.write_register(2, leftright_steps, slave=slave_addr)
                     sleep(0.02)
 
                 if focus_steps != 0:
                     if focus_steps < 0:
-                        focus_steps = __make_negative(focus_steps)
+                        focus_steps &= 0xffff
                     c.write_register(12, focus_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
