@@ -109,3 +109,4 @@ uninstall:
 	sudo rm -rf /etc/supervisor/conf.d/uscope_srv.conf
 	sudo supervisorctl reread
 	sudo supervisorctl update
+	sudo rm -rf $(TARGET_DIR)

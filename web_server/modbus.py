@@ -130,50 +130,39 @@ def modbus_main_motors_control(position):
                 c.write_register(4, 1, slave=slave_addr)
             elif position == "left":
                 c.write_register(4, 65535, slave=slave_addr)
-            elif position == "HOME":
-                updown_sign = conf_reader.updown_home_sign()
-                leftright_sign = conf_reader.leftright_home_sign()
-                focus_sign = conf_reader.focus_home_sign()
+            elif position == "HOME" or position == "WORK":
+                if position == "WORK":
+                    updown_steps = conf_reader.get_work_btn_updown_stepper_default_steps()
+                    leftright_steps = conf_reader.get_work_btn_leftright_stepper_default_steps()
+                    focus_steps = conf_reader.get_work_btn_focus_stepper_default_steps()
+                elif position == "HOME":
+                    updown_steps = conf_reader.get_home_btn_updown_stepper_default_steps()
+                    leftright_steps = conf_reader.get_home_btn_leftright_stepper_default_steps()
+                    focus_steps = conf_reader.get_home_btn_focus_stepper_default_steps()
 
-                if updown_sign == "+":
-                    c.write_register(2, 32767, slave=slave_addr)
-                    sleep(0.02)
-                elif updown_sign == "-":
-                    c.write_register(2, 32769, slave=slave_addr)
-                    sleep(0.02)
+                print()
+                print("Steps from config:")
+                print("updown_steps={}".format(updown_steps))
+                print("leftright_steps={}".format(leftright_steps))
+                print("focus_steps={}".format(focus_steps))
+                print()
 
-                if leftright_sign == "+":
-                    c.write_register(4, 32767, slave=slave_addr)
-                    sleep(0.02)
-                elif leftright_sign == "-":
-                    c.write_register(4, 32769, slave=slave_addr)
-                    sleep(0.02)
-
-                if focus_sign == "+":
-                    c.write_register(12, 32767, slave=slave_addr)
-                elif focus_sign == "-":
-                    c.write_register(12, 32769, slave=slave_addr)
-            elif position == "WORK":
-                updown_def_steps = conf_reader.get_updown_stepper_default_steps()
-                leftright_def_steps = conf_reader.get_leftright_stepper_default_steps()
-                focus_def_steps = conf_reader.get_focus_stepper_default_steps()
-
-                if updown_def_steps != 0:
-                    if updown_def_steps < 0:
-                        updown_def_steps = __make_negative(abs(updown_def_steps))
-                    c.write_register(2, updown_def_steps, slave=slave_addr)
+                if updown_steps != 0:
+                    if updown_steps < 0:
+                        updown_steps = __make_negative(abs(updown_steps))
+                    c.write_register(2, updown_steps, slave=slave_addr)
                     sleep(0.02)
 
-                if leftright_def_steps != 0:
-                    if leftright_def_steps < 0:
-                        leftright_def_steps = __make_negative(abs(leftright_def_steps))
-                    c.write_register(4, leftright_def_steps, slave=slave_addr)
+                if leftright_steps != 0:
+                    if leftright_steps < 0:
+                        leftright_steps = __make_negative(abs(leftright_steps))
+                    c.write_register(4, leftright_steps, slave=slave_addr)
                     sleep(0.02)
 
-                if focus_def_steps != 0:
-                    if focus_def_steps < 0:
-                        focus_def_steps = __make_negative(abs(focus_def_steps))
-                    c.write_register(12, focus_def_steps, slave=slave_addr)
+                if focus_steps != 0:
+                    if focus_steps < 0:
+                        focus_steps = __make_negative(abs(focus_steps))
+                    c.write_register(12, focus_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
         elif swap == "yes":
@@ -185,50 +174,39 @@ def modbus_main_motors_control(position):
                 c.write_register(2, 65535, slave=slave_addr)
             elif position == "left":
                 c.write_register(2, 1, slave=slave_addr)
-            elif position == "HOME":
-                updown_sign = conf_reader.updown_home_sign()
-                leftright_sign = conf_reader.leftright_home_sign()
-                focus_sign = conf_reader.focus_home_sign()
+            elif position == "HOME" or position == "WORK":
+                if position == "WORK":
+                    updown_steps = conf_reader.get_work_btn_updown_stepper_default_steps()
+                    leftright_steps = conf_reader.get_work_btn_leftright_stepper_default_steps()
+                    focus_steps = conf_reader.get_work_btn_focus_stepper_default_steps()
+                elif position == "HOME":
+                    updown_steps = conf_reader.get_home_btn_updown_stepper_default_steps()
+                    leftright_steps = conf_reader.get_home_btn_leftright_stepper_default_steps()
+                    focus_steps = conf_reader.get_home_btn_focus_stepper_default_steps()
 
-                if updown_sign == "+":
-                    c.write_register(4, 32767, slave=slave_addr)
-                    sleep(0.02)
-                elif updown_sign == "-":
-                    c.write_register(4, 32769, slave=slave_addr)
-                    sleep(0.02)
+                print()
+                print("Steps from config:")
+                print("updown_steps={}".format(updown_steps))
+                print("leftright_steps={}".format(leftright_steps))
+                print("focus_steps={}".format(focus_steps))
+                print()
 
-                if leftright_sign == "+":
-                    c.write_register(2, 32767, slave=slave_addr)
-                    sleep(0.02)
-                elif leftright_sign == "-":
-                    c.write_register(2, 32769, slave=slave_addr)
-                    sleep(0.02)
-
-                if focus_sign == "+":
-                    c.write_register(12, 32767, slave=slave_addr)
-                elif focus_sign == "-":
-                    c.write_register(12, 32769, slave=slave_addr)
-            elif position == "WORK":
-                updown_def_steps = conf_reader.get_updown_stepper_default_steps()
-                leftright_def_steps = conf_reader.get_leftright_stepper_default_steps()
-                focus_def_steps = conf_reader.get_focus_stepper_default_steps()
-
-                if updown_def_steps != 0:
-                    if updown_def_steps < 0:
-                        updown_def_steps = __make_negative(updown_def_steps)
-                    c.write_register(4, updown_def_steps, slave=slave_addr)
+                if updown_steps != 0:
+                    if updown_steps < 0:
+                        updown_steps = __make_negative(updown_steps)
+                    c.write_register(4, updown_steps, slave=slave_addr)
                     sleep(0.02)
 
-                if leftright_def_steps != 0:
-                    if leftright_def_steps < 0:
-                        leftright_def_steps = __make_negative(leftright_def_steps)
-                    c.write_register(2, leftright_def_steps, slave=slave_addr)
+                if leftright_steps != 0:
+                    if leftright_steps < 0:
+                        leftright_steps = __make_negative(leftright_steps)
+                    c.write_register(2, leftright_steps, slave=slave_addr)
                     sleep(0.02)
 
-                if focus_def_steps != 0:
-                    if focus_def_steps < 0:
-                        focus_def_steps = __make_negative(focus_def_steps)
-                    c.write_register(12, focus_def_steps, slave=slave_addr)
+                if focus_steps != 0:
+                    if focus_steps < 0:
+                        focus_steps = __make_negative(focus_steps)
+                    c.write_register(12, focus_steps, slave=slave_addr)
             else:
                 print("[ERR] Unknown command for motors")
         else:
