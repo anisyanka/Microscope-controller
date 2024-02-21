@@ -58,10 +58,10 @@ submodule_update:
 	@git submodule update --init --recursive
 
 install_converter:
+	mkdir -p $(TARGET_DIR)
 	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/rpi_stop_video_stream.sh
-	mkdir -p $(TARGET_DIR)
-	cp $(MODBUS_CONVERTER_DIR)/modbus_converter.conf $(TARGET_DIR)
+	$(SCRIPTS_DIR)/check_config_exists.sh $(TARGET_DIR)/modbus_converter.conf $(MODBUS_CONVERTER_DIR)/modbus_converter.conf $(TARGET_DIR) "MODBUS-TCP/RTU-converter"
 	chmod 666 $(TARGET_DIR)/modbus_converter.conf
 	touch $(TARGET_DIR)/host_ip.conf
 	sudo cp $(MODBUS_CONVERTER_DIR)/modbus_converter.service /etc/systemd/system/
@@ -79,17 +79,16 @@ install_scripts:
 	chmod +x $(TARGET_DIR)/scripts/rpi_stop_video_stream.sh
 	chmod +x $(TARGET_DIR)/scripts/rpi_launch_udp_4k_soft_h264.sh
 	chmod +x $(TARGET_DIR)/scripts/rpi_launch_udp_1080p_mjpg.sh
-	chmod +x $(TARGET_DIR)/scripts/rpi_kill_web_server.sh
 
 install_web_server:
 	mkdir -p $(TARGET_DIR)
 	sudo rm -rf $(WEB_DIR)/__pycache__ 2>/dev/null
 	cp -r $(WEB_DIR) $(TARGET_DIR)
-	cp $(WEB_DIR)/microscope_server.conf $(TARGET_DIR)
+	$(SCRIPTS_DIR)/check_config_exists.sh $(TARGET_DIR)/microscope_server.conf $(WEB_DIR)/microscope_server.conf $(TARGET_DIR) "MICROSCOPE"
+	chmod 666 $(TARGET_DIR)/microscope_server.conf
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_4k.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_1920x1080.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_image.sh
-	chmod 666 $(TARGET_DIR)/microscope_server.conf
 	chmod +x $(TARGET_DIR)/web_server/uscope_srv.sh
 	chmod +x $(TARGET_DIR)/web_server/app.py
 	chmod 666 $(TARGET_DIR)/web_server/uscope_srv.conf
@@ -105,9 +104,8 @@ install: all install_converter install_scripts install_web_server
 
 uninstall:
 	$(SCRIPTS_DIR)/stop_modbus_converter_service_if_running.sh $(TARGET)
-	sudo rm -rf /etc/systemd/system/modbus_converter.service
-	sudo rm -rf $(TARGET_DIR)
 	sudo $(SCRIPTS_DIR)/rpi_kill_web_server.sh
+	sudo rm -rf /etc/systemd/system/modbus_converter.service
 	sudo rm -rf /etc/supervisor/conf.d/uscope_srv.conf
 	sudo supervisorctl reread
 	sudo supervisorctl update
