@@ -1,6 +1,7 @@
 var interval_id = 0;
 var timeout_id = 0;
 var was_btn_released = 0;
+var new_req_started = 0;
 
 var polling_time_ms = 0;
 function button_control_set_poll_time(poltime) {
@@ -11,7 +12,7 @@ function button_control_pressed(req, variable, value) {
     was_btn_released = 0;
 
     if (timeout_id == 0) {
-        timeout_id = setTimeout(function() {button_control_check_was_release(req, variable, value);}, 400);
+        timeout_id = setTimeout(function() {button_control_check_was_release(req, variable, value);}, 800);
     }
 }
 
@@ -41,22 +42,24 @@ function button_control(req, variable, value) {
         } else {
             console.log("[ERR] HTTP request answer internal server error");
         }
+        new_req_started = 0;
     }
 
     // Send a request
-    request.responseType = 'json';
-    request.open("GET", "/" + req + "?" + variable + "=" + value, true);
-    request.send();
+    if (new_req_started == 0) {
+        request.responseType = 'json';
+        request.open("GET", "/" + req + "?" + variable + "=" + value, true);
+        request.send();
+        new_req_started = 1;
+    }
 }
 
 function button_control_change_repeatedly(req, variable, value) {
     if (interval_id == 0) {
         if (polling_time_ms == 0) {
-            interval_id = window.setInterval(function() {button_control(req, variable, value);}, 100);
-            console.log("polling_time_ms = " + polling_time_ms);
+            interval_id = window.setInterval(function() {button_control(req, variable, value);}, 200);
         } else {
             interval_id = window.setInterval(function() {button_control(req, variable, value);}, polling_time_ms);
-            console.log("polling_time_ms from server = " + polling_time_ms);
         }
         console.log("Repeat proccess started");
     }
