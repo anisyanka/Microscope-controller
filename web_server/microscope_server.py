@@ -8,23 +8,25 @@ import helpers as helper
 import stream_control as stream
 import config_reader as conf_reader
 import signal
+import logging
+from systemd.journal import JournalHandler
 
 # Ignore SIGCHLD to avoid zombi-proccesses
 signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
+# https://python.hotexamples.com/examples/systemd.journal/JournalHandler/-/python-journalhandler-class-examples.html
+log = logging.getLogger()
+log_handler = JournalHandler(SYSLOG_IDENTIFIER='microscope')
+formatter = logging.Formatter('[%(levelname)s] %(message)s')
+log_handler.setFormatter(formatter)
+log.addHandler(log_handler)
+log.setLevel(logging.INFO)
 
 # Obtain all initial config data. MUST be call first
 conf_reader.read_all_configs()
 
 # Modbus class
 microscope_mb = ModbusMicroscope()
-
-# Modbus library debug mode enabled?
-if conf_reader.is_modbus_debug_enabled() == "On":
-    print("Modbus lib debug mode ENABLED")
-    microscope_mb.debug_mode(True)
-else:
-    microscope_mb.debug_mode(False)
-    print("Modbus lib debug mode DISABLED")
 
 # Temp file to save one frame
 if not os.path.exists(stream.get_img_path()):
@@ -51,8 +53,8 @@ def index():
 
     conf_reader.read_all_configs()
 
-    print("Board ip=" + helper.get_my_ip())
-    print("Client ip=" + request.remote_addr)
+    logging.info("Board ip=" + helper.get_my_ip())
+    logging.info("Client ip=" + request.remote_addr)
 
     helper.update_host_ip_config(request.remote_addr)
 
@@ -116,11 +118,8 @@ def video_feed():
 #################################
 @app.route("/focus_control", methods=["GET", "POST"])
 def focus_control_request():
-    print("Obtained request to focus " + request.args.get("sign"))
-
     # Call Modbus TCP/RTU converter to send focus cmd and wait for reply
     microscope_mb.focus_motor_control(request.args.get("sign"))
-
     return jsonify("OK")
 
 
@@ -128,11 +127,7 @@ def focus_control_request():
 ##################################
 @app.route("/light_control", methods=["GET", "POST"])
 def light_control_request():
-    print("Obtained request to make light " + request.args.get("level"))
-
-    # Call Modbus TCP/RTU converter to send light cmd and wait for reply
     microscope_mb.light_control(request.args.get("level"))
-
     return jsonify("OK")
 
 
@@ -140,8 +135,6 @@ def light_control_request():
 ###########################################################
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():
-    print("Obtained request to move motors to " + request.args.get("position"))
-
     # Call Modbus TCP/RTU converter to send position cmd and wait for reply
     microscope_mb.main_motors_control(request.args.get("position"))
     return jsonify("OK")
@@ -151,8 +144,6 @@ def motor_control_request():
 ######################################
 @app.route("/get_battery_level", methods=["GET", "POST"])
 def get_battery_level_request():
-    print("Obtained request to retrieve battery level")
-
     # Call Modbus TCP/RTU converter and wait for reply
     level = microscope_mb.get_bat_level()
     return jsonify({ "level": level })

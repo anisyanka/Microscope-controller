@@ -12,7 +12,7 @@ function button_control_pressed(req, variable, value) {
     was_btn_released = 0;
 
     if (timeout_id == 0) {
-        timeout_id = setTimeout(function() {button_control_check_was_release(req, variable, value);}, 800);
+        timeout_id = setTimeout(function() {button_control_check_was_release(req, variable, value);}, 400);
     }
 }
 

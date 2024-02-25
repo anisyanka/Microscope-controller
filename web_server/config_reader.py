@@ -1,4 +1,5 @@
 import json
+import logging
 
 modbus_converter_conf="/home/pi/.microscope/modbus_converter.conf"
 microscope_cmd_conf="/home/pi/.microscope/microscope_server.conf"
@@ -7,7 +8,7 @@ global mb_conv_data
 global microscope_data
 
 def read_all_configs():
-    print("Read config files")
+    logging.debug("Read config files")
     with open(modbus_converter_conf, 'r') as j:
         global mb_conv_data
         mb_conv_data = json.loads(j.read())
@@ -16,15 +17,15 @@ def read_all_configs():
         global microscope_data
         microscope_data = json.loads(m.read())
 
-    print()
-    print("Modbus converter CONF:")
-    print(mb_conv_data)
-    print()
+    logging.debug("")
+    logging.debug("Modbus converter CONF:")
+    logging.debug(mb_conv_data)
+    logging.debug("")
 
-    print()
-    print("Microscope server CONF:")
-    print(microscope_data)
-    print()
+    logging.debug("")
+    logging.debug("Microscope server CONF:")
+    logging.debug(microscope_data)
+    logging.debug("")
 
 def get_modbus_tcp_rtu_converter_port():
     global mb_conv_data
@@ -73,10 +74,6 @@ def get_repeat_cmd_perid_ms():
 def get_soc_polling_period_ms():
     global microscope_data
     return microscope_data['modbus_soc_polling_period_ms']
-
-def is_server_debug_enabled():
-    global microscope_data
-    return microscope_data['server_debug_mode']
 
 def is_modbus_debug_enabled():
     global microscope_data

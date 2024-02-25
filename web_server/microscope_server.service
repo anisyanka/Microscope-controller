@@ -1,11 +1,10 @@
 [Unit]
 Description=Microscpope web application
-After=modbus_converter
+After=modbus_converter.service
+PartOf=modbus_converter.service
 
 [Service]
 Type=simple
-User=pi
-Group=pi
 
 Environment=VIRTUAL_ENV=/home/pi/.venv
 Environment=PYTHONPATH=/home/pi/.microscope/web_server
