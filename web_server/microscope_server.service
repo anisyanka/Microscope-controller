@@ -1,0 +1,25 @@
+[Unit]
+Description=Microscpope web application
+After=modbus_converter
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+
+Environment=VIRTUAL_ENV=/home/pi/.venv
+Environment=PYTHONPATH=/home/pi/.microscope/web_server
+Environment=FLASK_APP=/home/pi/.microscope/web_server/microscope_server.py
+
+ExecStart=/home/pi/.venv/bin/python3 -m flask run --host=0.0.0.0
+WorkingDirectory=/home/pi/.microscope
+
+Restart=always
+RestartSec=5s
+
+StandardError=journal
+StandardOutput=journal
+StandardInput=null
+
+[Install]
+WantedBy=multi-user.target

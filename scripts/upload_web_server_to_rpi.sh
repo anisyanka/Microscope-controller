@@ -35,19 +35,17 @@ scp $web_dir/stream_scripts/camera_set_resolution_4k.sh \
 scp $web_dir/templates/index.html \
     $web_dir/templates/layout.html \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/templates
-scp $web_dir/app.py \
+scp $web_dir/microscope_server.py \
     $web_dir/helpers.py \
     $web_dir/stream_control.py \
     $web_dir/config_reader.py \
     $web_dir/microscope_modbus.py \
+    $web_dir/microscope_server.service \
     $web_dir/requirements.txt \
-    $web_dir/uscope_srv.sh \
-    $web_dir/uscope_srv.conf \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/
 
 # Send config
 scp $web_dir/microscope_server.conf \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/
 
-ssh $rpi_user@$rpi_ip "chmod +x $web_dir/uscope_srv.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $web_dir/app.py"
+ssh $rpi_user@$rpi_ip "chmod +x $web_dir/microscope_server.py"

@@ -226,6 +226,13 @@ alias myip='curl ipinfo.io/ip; echo'
 sudo adduser pi sudo
 ```
 
+ * Ограничен размер логов до 100Mb
+```bash
+sudo nano /etc/systemd/journald.conf
+SystemMaxUse=100M
+sudo systemctl restart systemd-journald
+```
+
  * Далее были доустановлены в образ следующие программы:
 
 **gstreamer**
@@ -262,23 +269,6 @@ sudo apt-get install lsof
 apt-get install v4l-conf
 ```
 
-**supervisor**
-```bash
-sudo apt install supervisor
-
-# Usefull commands
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl status uscope_srv
-sudo supervisorctl stop uscope_srv
-sudo supervisorctl start uscope_srv
-sudo supervisorctl restart uscope_srv
-
-sudo supervisorctl tail -f uscope_srv stdout
-
-sudo lsof -iTCP -sTCP:LISTEN
-```
-
 **Flask**
 ```bash
 # Install Flask itself
@@ -293,10 +283,10 @@ deactivate
 # Run server at <ip>:5000
 . .venv/bin/activate
 cd /home/pi/Microscope-controller/web_server
-flask run --host=0.0.0.0 --debug
+flask run --host=0.0.0.0 --debug --app microscope_server.py
 ```
 
-sudo supervisorctl stop uscope_srv
 sudo lsof -iTCP -sTCP:LISTEN
-sudo kill <first PID with port 5000>
-sudo supervisorctl start uscope_srv
+
+#!/bin/sh
+for pid in $(lsof -iTCP -sTCP:LISTEN | grep 5000 | awk -F' ' '{print $2}'); do kill -9 $pid 2>/dev/null; done
