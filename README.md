@@ -262,6 +262,7 @@ sudo make install
 **libsystemd для Python-обёртки**
 ```
 sudo apt-get install libsystemd-dev
+sudo apt-get install python3-dev
 ```
 
 **lsof**

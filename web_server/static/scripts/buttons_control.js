@@ -19,11 +19,8 @@ function button_control_pressed(req, variable, value) {
 function button_control_released() {
     was_btn_released = 1;
     button_control_stop();
-
-    if (timeout_id != 0) {
-        clearTimeout(timeout_id);
-        timeout_id = 0;
-    }
+    clearTimeout(timeout_id);
+    timeout_id = 0;
 }
 
 function button_control_check_was_release(req, variable, value) {
