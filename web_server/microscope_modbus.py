@@ -123,13 +123,13 @@ class ModbusMicroscope:
                         if updown_steps < 0:
                             updown_steps &= 0xffff
                         self.clinet.write_register(2, updown_steps, slave=self.slave_addr)
-                        sleep(0.01)
+                        sleep(0.02)
 
                     if leftright_steps != 0:
                         if leftright_steps < 0:
                             leftright_steps &= 0xffff
                         self.clinet.write_register(4, leftright_steps, slave=self.slave_addr)
-                        sleep(0.01)
+                        sleep(0.02)
 
                     if focus_steps != 0:
                         if focus_steps < 0:
@@ -160,13 +160,13 @@ class ModbusMicroscope:
                         if updown_steps < 0:
                             updown_steps &= 0xffff
                         self.clinet.write_register(4, updown_steps, slave=self.slave_addr)
-                        sleep(0.01)
+                        sleep(0.02)
 
                     if leftright_steps != 0:
                         if leftright_steps < 0:
                             leftright_steps &= 0xffff
                         self.clinet.write_register(2, leftright_steps, slave=self.slave_addr)
-                        sleep(0.01)
+                        sleep(0.02)
 
                     if focus_steps != 0:
                         if focus_steps < 0:
@@ -177,4 +177,4 @@ class ModbusMicroscope:
             else:
                 logging.error("Unknown swap value in config file")
 
-        sleep(0.01)
+        sleep(0.02)

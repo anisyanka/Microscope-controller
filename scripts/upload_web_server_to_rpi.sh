@@ -28,7 +28,7 @@ scp $web_dir/static/scripts/video_control.js \
 # Send stream scripts
 scp $web_dir/stream_scripts/camera_set_resolution_4k.sh \
     $web_dir/stream_scripts/camera_set_resolution_1920x1080.sh \
-    $web_dir/stream_scripts/camera_capture_image.sh \
+    $web_dir/stream_scripts/camera_capture_one_image_frame.sh \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/stream_scripts
 
 # Send Flask web-server
@@ -37,7 +37,7 @@ scp $web_dir/templates/index.html \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/templates
 scp $web_dir/microscope_server.py \
     $web_dir/helpers.py \
-    $web_dir/stream_control.py \
+    $web_dir/video_streamer.py \
     $web_dir/config_reader.py \
     $web_dir/microscope_modbus.py \
     $web_dir/microscope_server.service \

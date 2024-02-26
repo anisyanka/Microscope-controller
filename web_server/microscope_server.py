@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 import os
 import sys
-from flask import Flask, render_template, request, json, jsonify
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from flask import Flask, Response, render_template, request, json, jsonify, stream_with_context
+from werkzeug.exceptions import HTTPException
 from microscope_modbus import ModbusMicroscope
+from video_streamer import VideoStreamer, FrameGeneratorExit
 import helpers as helper
-import stream_control as stream
 import config_reader as conf_reader
 import signal
 import logging
+from time import sleep
 from systemd.journal import JournalHandler
 
 # Ignore SIGCHLD to avoid zombi-proccesses
@@ -28,44 +29,22 @@ conf_reader.read_all_configs()
 # Modbus class
 microscope_mb = ModbusMicroscope()
 
-# Temp file to save one frame
-if not os.path.exists(stream.get_img_path()):
-    with open(stream.get_img_path(), 'w'):
-        pass
-
-# Disable previously enabled settings
-stream.stop_stream()
-stream.set_resolution("1080p")
+# Streamer class
+streamer = VideoStreamer()
 
 # Run server
 app = Flask(__name__)
-
-allow_to_chang_res = 0
-video_control_req = 0
-is_video_stream_started = 0
 
 # Load main page #
 ##################
 @app.route("/", methods=["GET"])
 def index():
-    global video_control_req
-    global is_video_stream_started
-
     conf_reader.read_all_configs()
 
     logging.info("Board ip=" + helper.get_my_ip())
     logging.info("Client ip=" + request.remote_addr)
 
     helper.update_host_ip_config(request.remote_addr)
-
-    if is_video_stream_started == 1:
-        is_video_stream_started = 0
-        video_control_req = 1 # Wait for sending frame will be finished
-        while allow_to_chang_res == 0:
-            pass
-        stream.stop_stream()
-        video_control_req = 0 # Start sending frames again
-
     return render_template('index.html')
 
 
@@ -73,45 +52,30 @@ def index():
 ##############################
 @app.route("/video_control", methods=["GET", "POST"])
 def resolution_switch_request():
-    print("Obtained request to change stream resolution to " + request.args.get("new_res"))
-
-    # Wait for sending frame will be finished
-    global video_control_req
-    video_control_req = 1
-    while allow_to_chang_res == 0:
-        pass
-
-    stream.stop_stream()
-    stream.set_resolution(request.args.get("new_res"))
-
-    # Start sending frames again
-    video_control_req = 0
-
+    streamer.set_resolution(request.args.get("new_res"))    
     return jsonify("OK")
 
 
 # STREAM: send jpeg frame #
 ###########################
-def get_camera_frame():
-    global allow_to_chang_res
-    while True:
-        if video_control_req == 0:
-            allow_to_chang_res = 0
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n')
-        else:
-            allow_to_chang_res = 1
-            if is_video_stream_started == 0:
-                print("STOP VIDEO STREAM")
-                break
-
 @app.route('/video_feed')
 def video_feed():
-    # global is_video_stream_started
-    # is_video_stream_started = 1
+    def get_camera_frame():
+        try:
+            while True:
+                frame = streamer.capture_frame()
+                yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        except FrameGeneratorExit:
+            return b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n'
 
-    print("START VIDEO STREAM")
-    # return Response(get_camera_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    return "OK"
+    if streamer.is_stream_started():
+        streamer.request_to_stop_stream()
+        streamer.wait_stopping()
+        streamer.request_to_start_stream()
+    else:
+        streamer.request_to_start_stream()
+
+    return Response(stream_with_context(get_camera_frame()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 # AJAX: Focus change via Modbus #
