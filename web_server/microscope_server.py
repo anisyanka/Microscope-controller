@@ -63,8 +63,7 @@ def video_feed():
     def get_camera_frame():
         try:
             while True:
-                frame = streamer.capture_frame()
-                yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + streamer.capture_frame() + b'\r\n')
         except FrameGeneratorExit:
             return b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n'
 

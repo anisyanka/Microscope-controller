@@ -14,15 +14,17 @@ class VideoStreamer:
     GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_capture_one_image_frame.sh"
 
     _is_stream_started = False
-
     _stop_pending = False
     _stop_done = False
 
-    def __init__(self):
+    _last_captured_frame = b''
+
+    def __init__(self, stream_to="pipe"):
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
-        self.stream_to = "file"
+        self.stream_to = stream_to
         self.lock = threading.Lock()
+        logging.info("Videio streamer will use <{}> to stream".format(self.stream_to))
 
 
     def request_to_start_stream(self):
@@ -74,8 +76,8 @@ class VideoStreamer:
     def capture_frame(self):
         def _get_frame_from_file(self):
             with open(self.TEMP_IMG_FILE, 'rb') as f:
-                frame = f.read()
-            return frame
+                r_frame = f.read()
+            return r_frame
 
         if self._stop_pending: # return old frame
             if not self._stop_done:
@@ -85,19 +87,19 @@ class VideoStreamer:
                 self._is_stream_started = False
                 self.lock.release()
 
-            if self.stream_to == "file":
-                frame = _get_frame_from_file(self)
-            elif self.stream_to == "pipe":
-                pass
-            else:
-                logging.error("Specify proper stream_to for video streamer or use default constructor")
+            return self._last_captured_frame
         else:
-            if self.stream_to == "file":
+            if self.stream_to == "pipe":
+                proc = subprocess.Popen([self.GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH, "/dev/stdout"], stdout=subprocess.PIPE)
+                try:
+                    self._last_captured_frame, errs = proc.communicate(timeout=8)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    logging.error("TimeoutExpired to communicate with video stream proc")
+            elif self.stream_to == "file":
                 subprocess.call([self.GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH, self.TEMP_IMG_FILE])
-                frame = _get_frame_from_file(self)
-            elif self.stream_to == "pipe":
-                pass
+                self._last_captured_frame = _get_frame_from_file(self)
             else:
-                logging.error("Specify proper stream_to for video streamer or use default constructor")
+                logging.critical("Specify <stream_to> parameter for video streamer properly or use default constructor")
 
-        return frame
+        return self._last_captured_frame

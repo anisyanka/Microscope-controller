@@ -24,8 +24,6 @@ class ModbusMicroscope:
         self.slave_addr = conf_reader.get_modbus_slave_id()
         logging.info('Modbus TCP/RTU converter is running on {}:{}, stm32 slave addr={}, timeout={}s'.format(self.ip, self.port, self.slave_addr, self.timeout))
 
-        # pymodbus_apply_logging_config("DEBUG")
-
         # connect to Modbus TCP/RTU converter
         self.clinet = ModbusClient.ModbusTcpClient(
                             host=self.ip,
