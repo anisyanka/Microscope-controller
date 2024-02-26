@@ -109,6 +109,8 @@ upload_all: upload_src upload_scripts upload_web
 install: install_converter install_scripts install_web_server
 
 uninstall:
+	@echo
+	@echo "---> UNINSTALL ALL (remove web server, scripts and tcp/rtu converter)<---"
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(WEB_SERV_TARGET)
 	sudo rm -rf /etc/systemd/system/modbus_converter.service
