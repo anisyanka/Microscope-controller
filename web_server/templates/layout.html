@@ -42,6 +42,16 @@
                 right = document.getElementById("arrow-right-btn");
                 down = document.getElementById("arrow-down-btn");
 
+                light_up = document.getElementById("light-plus-btn");
+                light_down = document.getElementById("light-minus-btn");
+
+                video_1080p_btn = document.getElementById("video-1080p-btn");
+                video_4k_btn = document.getElementById("video-4k-btn");
+
+                stop_btn = document.getElementById("alarm-btn");
+                home_btn = document.getElementById("home-btn");
+                work_btn = document.getElementById("work-btn");
+
                 plus.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper') });
                 minus.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower') });
                 up.addEventListener('click', () => { button_control('motor_control', 'position', 'up') });
@@ -69,29 +79,51 @@
                 if (window.mobileAndTabletCheck()) {
                     console.log("Mobile browser detected")
 
-                    plus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper') });
-                    plus.addEventListener('touchend', () => { button_control_released() });
-                    plus.addEventListener('touchcancel', () => { button_control_stop() });
+                    video_1080p_btn.addEventListener('touchstart', () => { video_1080p_btn.classList.remove("FixMobileHover"); });
+                    video_1080p_btn.addEventListener('touchend', () => { video_1080p_btn.classList.add("FixMobileHover"); });
+                    video_1080p_btn.addEventListener('touchcancel', () => { video_1080p_btn.classList.add("FixMobileHover"); });
+                    video_4k_btn.addEventListener('touchstart', () => { video_4k_btn.classList.remove("FixMobileHover"); });
+                    video_4k_btn.addEventListener('touchend', () => { video_4k_btn.classList.add("FixMobileHover"); });
+                    video_4k_btn.addEventListener('touchcancel', () => { video_4k_btn.classList.add("FixMobileHover"); });
+                    light_up.addEventListener('touchstart', () => { light_up.classList.remove("FixMobileHover"); });
+                    light_up.addEventListener('touchend', () => { light_up.classList.add("FixMobileHover"); });
+                    light_up.addEventListener('touchcancel', () => { light_up.classList.add("FixMobileHover"); });
+                    light_down.addEventListener('touchstart', () => { light_down.classList.remove("FixMobileHover"); });
+                    light_down.addEventListener('touchend', () => { light_down.classList.add("FixMobileHover"); });
+                    light_down.addEventListener('touchcancel', () => { light_down.classList.add("FixMobileHover"); });
+                    stop_btn.addEventListener('touchstart', () => { stop_btn.classList.remove("FixMobileHover"); });
+                    stop_btn.addEventListener('touchend', () => { stop_btn.classList.add("FixMobileHover"); });
+                    stop_btn.addEventListener('touchcancel', () => { stop_btn.classList.add("FixMobileHover"); });
+                    home_btn.addEventListener('touchstart', () => { home_btn.classList.remove("FixMobileHover"); });
+                    home_btn.addEventListener('touchend', () => { home_btn.classList.add("FixMobileHover"); });
+                    home_btn.addEventListener('touchcancel', () => { home_btn.classList.add("FixMobileHover"); });
+                    work_btn.addEventListener('touchstart', () => { work_btn.classList.remove("FixMobileHover"); });
+                    work_btn.addEventListener('touchend', () => { work_btn.classList.add("FixMobileHover"); });
+                    work_btn.addEventListener('touchcancel', () => { work_btn.classList.add("FixMobileHover"); });
 
-                    minus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower') });
-                    minus.addEventListener('touchend', () => { button_control_released() });
-                    minus.addEventListener('touchcancel', () => { button_control_stop() });
+                    plus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus.classList.remove("FixMobileHover"); });
+                    plus.addEventListener('touchend', () => { button_control_released(); plus.classList.add("FixMobileHover"); });
+                    plus.addEventListener('touchcancel', () => { button_control_stop(); plus.classList.add("FixMobileHover"); });
 
-                    up.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'up') });
-                    up.addEventListener('touchend', () => { button_control_released() });
-                    up.addEventListener('touchcancel', () => { button_control_stop() });
+                    minus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus.classList.remove("FixMobileHover"); });
+                    minus.addEventListener('touchend', () => { button_control_released(); minus.classList.add("FixMobileHover"); });
+                    minus.addEventListener('touchcancel', () => { button_control_stop(); minus.classList.add("FixMobileHover"); });
 
-                    left.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'left') });
-                    left.addEventListener('touchend', () => { button_control_released() });
-                    left.addEventListener('touchcancel', () => { button_control_stop() });
+                    up.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'up'); up.classList.remove("FixMobileHover"); });
+                    up.addEventListener('touchend', () => { button_control_released(); up.classList.add("FixMobileHover"); });
+                    up.addEventListener('touchcancel', () => { button_control_stop(); up.classList.add("FixMobileHover"); });
 
-                    right.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'right') });
-                    right.addEventListener('touchend', () => { button_control_released() });
-                    right.addEventListener('touchcancel', () => { button_control_stop() });
+                    left.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'left'); left.classList.remove("FixMobileHover"); });
+                    left.addEventListener('touchend', () => { button_control_released(); left.classList.add("FixMobileHover"); });
+                    left.addEventListener('touchcancel', () => { button_control_stop(); left.classList.add("FixMobileHover"); });
 
-                    down.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'down') });
-                    down.addEventListener('touchend', () => { button_control_released() });
-                    down.addEventListener('touchcancel', () => { button_control_stop() });
+                    right.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'right'); right.classList.remove("FixMobileHover"); });
+                    right.addEventListener('touchend', () => { button_control_released(); right.classList.add("FixMobileHover"); });
+                    right.addEventListener('touchcancel', () => { button_control_stop(); right.classList.add("FixMobileHover"); });
+
+                    down.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'down'); down.classList.remove("FixMobileHover"); });
+                    down.addEventListener('touchend', () => { button_control_released(); down.classList.add("FixMobileHover"); });
+                    down.addEventListener('touchcancel', () => { button_control_stop(); down.classList.add("FixMobileHover"); });
                 } else {
                     console.log("Desktop browser detected")
 

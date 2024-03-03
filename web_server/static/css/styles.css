@@ -202,3 +202,13 @@ th, td {
 #stream {
     object-fit: cover;
 }
+
+.btn:active,
+.btn:hover {
+    color: #000;
+}
+
+.FixMobileHover:hover {
+    background-color: inherit;
+    text-decoration: none;
+}
