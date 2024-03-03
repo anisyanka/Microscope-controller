@@ -202,8 +202,3 @@ th, td {
 #stream {
     object-fit: cover;
 }
-
-.mobileHoverFix:hover,
-.mobileHoverFix.hover{
-    background-position: 0 0px;
-}
