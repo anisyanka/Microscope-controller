@@ -97,16 +97,22 @@ class ModbusMicroscope:
         if position == "STOP":
             self.clinet.write_register(33, 1, slave=self.slave_addr)
         else:
+            step_size_positive = abs(conf_reader.get_step_size())
+            step_size_negative = (step_size_positive * (-1)) & 0xffff
+
+            logging.debug("step_size_positive = {}".format(step_size_positive))
+            logging.debug("step_size_negative = {}".format(step_size_negative))
+
             # Swap dependent functions
             if swap == "no":
                 if position == "up":
-                    self.clinet.write_register(2, 1, slave=self.slave_addr)
+                    self.clinet.write_register(2, step_size_positive, slave=self.slave_addr)
                 elif position == "down":
-                    self.clinet.write_register(2, 65535, slave=self.slave_addr)
+                    self.clinet.write_register(2, step_size_negative, slave=self.slave_addr)
                 elif position == "right":
-                    self.clinet.write_register(4, 1, slave=self.slave_addr)
+                    self.clinet.write_register(4, step_size_positive, slave=self.slave_addr)
                 elif position == "left":
-                    self.clinet.write_register(4, 65535, slave=self.slave_addr)
+                    self.clinet.write_register(4, step_size_negative, slave=self.slave_addr)
                 elif position == "HOME" or position == "WORK":
                     if position == "WORK":
                         updown_steps = conf_reader.get_work_btn_updown_stepper_default_steps()
@@ -137,13 +143,13 @@ class ModbusMicroscope:
                     logging.error("Unknown command for motors")
             elif swap == "yes":
                 if position == "up":
-                    self.clinet.write_register(4, 65535, slave=self.slave_addr)
+                    self.clinet.write_register(4, step_size_negative, slave=self.slave_addr)
                 elif position == "down":
-                    self.clinet.write_register(4, 1, slave=self.slave_addr)
+                    self.clinet.write_register(4, step_size_positive, slave=self.slave_addr)
                 elif position == "right":
-                    self.clinet.write_register(2, 65535, slave=self.slave_addr)
+                    self.clinet.write_register(2, step_size_negative, slave=self.slave_addr)
                 elif position == "left":
-                    self.clinet.write_register(2, 1, slave=self.slave_addr)
+                    self.clinet.write_register(2, step_size_positive, slave=self.slave_addr)
                 elif position == "HOME" or position == "WORK":
                     if position == "WORK":
                         updown_steps = conf_reader.get_work_btn_updown_stepper_default_steps()

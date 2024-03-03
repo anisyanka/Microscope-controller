@@ -82,3 +82,7 @@ def is_modbus_debug_enabled():
 def get_led_pwm_max_power():
     global microscope_data
     return int(microscope_data['modbus_led_max_pwm_percentage'])
+
+def get_step_size():
+    global microscope_data
+    return int(microscope_data['step_size'])
