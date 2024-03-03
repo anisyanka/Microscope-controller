@@ -16,12 +16,13 @@ from systemd.journal import JournalHandler
 signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 # https://python.hotexamples.com/examples/systemd.journal/JournalHandler/-/python-journalhandler-class-examples.html
-log = logging.getLogger()
-log_handler = JournalHandler(SYSLOG_IDENTIFIER='microscope')
-formatter = logging.Formatter('[%(levelname)s] %(message)s')
-log_handler.setFormatter(formatter)
-log.addHandler(log_handler)
-log.setLevel(logging.INFO)
+# log = logging.getLogger()
+# log_handler = JournalHandler(SYSLOG_IDENTIFIER='microscope')
+# formatter = logging.Formatter('[%(levelname)s] %(message)s')
+# log_handler.setFormatter(formatter)
+# log.addHandler(log_handler)
+# logging.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 # Obtain all initial config data. MUST be call first
 conf_reader.read_all_configs()
