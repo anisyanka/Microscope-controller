@@ -22,7 +22,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 # log_handler.setFormatter(formatter)
 # log.addHandler(log_handler)
 # logging.setLevel(logging.INFO)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Obtain all initial config data. MUST be call first
 conf_reader.read_all_configs()
@@ -83,7 +83,7 @@ def video_feed():
 @app.route("/focus_control", methods=["GET", "POST"])
 def focus_control_request():
     # Call Modbus TCP/RTU converter to send focus cmd and wait for reply
-    microscope_mb.focus_motor_control(request.args.get("sign"))
+    microscope_mb.focus_motor_control(request.args.get("sign"), request.args.get("retention"))
     return jsonify("OK")
 
 
@@ -100,7 +100,7 @@ def light_control_request():
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():
     # Call Modbus TCP/RTU converter to send position cmd and wait for reply
-    microscope_mb.main_motors_control(request.args.get("position"))
+    microscope_mb.main_motors_control(request.args.get("position"), request.args.get("retention"))
     return jsonify("OK")
 
 

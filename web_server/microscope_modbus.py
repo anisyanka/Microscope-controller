@@ -57,12 +57,22 @@ class ModbusMicroscope:
         logging.debug('BAT level = {}%'.format(self.last_bat_level))
         return self.last_bat_level
 
-    def focus_motor_control(self, level):
+    def focus_motor_control(self, level, retention):
         logging.debug("Obtained request to focus " + level)
+        step_size_positive = abs(conf_reader.get_step_size())
+        step_size_negative = (step_size_positive * (-1)) & 0xffff
+
+        if retention == "no":
+            step_size_positive = 1
+            step_size_negative = (-1) & 0xffff
+
+        logging.debug("step_size_positive = {}".format(step_size_positive))
+        logging.debug("step_size_negative = {}".format(step_size_negative))
+
         if level == "upper":
-            self.clinet.write_register(12, 1, slave=self.slave_addr)
+            self.clinet.write_register(12, step_size_positive, slave=self.slave_addr)
         elif level == "lower":
-            self.clinet.write_register(12, 65535, slave=self.slave_addr)
+            self.clinet.write_register(12, step_size_negative, slave=self.slave_addr)
         else:
             logging.error("wrong cmd")
 
@@ -84,7 +94,7 @@ class ModbusMicroscope:
         
         logging.debug("Light PWM=%d%% %s\n" % (self.cur_pwm_duty, "(MAX)" if self.cur_pwm_duty >= MAX_PWM_DUTY else ""))
 
-    def main_motors_control(self, position):
+    def main_motors_control(self, position, retention):
         logging.debug("Obtained request to move motors to " + position)
         # Swap up and left AND right and down?
         swap = conf_reader.get_swap()
@@ -99,6 +109,10 @@ class ModbusMicroscope:
         else:
             step_size_positive = abs(conf_reader.get_step_size())
             step_size_negative = (step_size_positive * (-1)) & 0xffff
+
+            if retention == "no":
+                step_size_positive = 1
+                step_size_negative = (-1) & 0xffff
 
             logging.debug("step_size_positive = {}".format(step_size_positive))
             logging.debug("step_size_negative = {}".format(step_size_negative))

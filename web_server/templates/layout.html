@@ -52,12 +52,17 @@
                 home_btn = document.getElementById("home-btn");
                 work_btn = document.getElementById("work-btn");
 
-                plus.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper') });
-                minus.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower') });
-                up.addEventListener('click', () => { button_control('motor_control', 'position', 'up') });
-                left.addEventListener('click', () => { button_control('motor_control', 'position', 'left') });
-                right.addEventListener('click', () => { button_control('motor_control', 'position', 'right') });
-                down.addEventListener('click', () => { button_control('motor_control', 'position', 'down') });
+                plus.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper', 'no') });
+                minus.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower', 'no') });
+                up.addEventListener('click', () => { button_control('motor_control', 'position', 'up', 'no') });
+                left.addEventListener('click', () => { button_control('motor_control', 'position', 'left', 'no') });
+                right.addEventListener('click', () => { button_control('motor_control', 'position', 'right', 'no') });
+                down.addEventListener('click', () => { button_control('motor_control', 'position', 'down', 'no') });
+                work_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'WORK', 'no') });
+                home_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'HOME', 'no') });
+                stop_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'STOP', 'no') });
+                light_up.addEventListener('click', () => { button_control('light_control', 'level', 'upper', 'no') });
+                light_down.addEventListener('click', () => { button_control('light_control', 'level', 'lower', 'no') });
 
                 // Debug purpose
                 // But still don't know how to fix this https://stackoverflow.com/questions/15305914/bootstrap-buttons-get-stuck-down-on-mobile-devices

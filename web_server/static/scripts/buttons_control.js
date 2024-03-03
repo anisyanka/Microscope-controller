@@ -30,12 +30,12 @@ function button_control_check_was_release(req, variable, value) {
     timeout_id = 0;
 }
 
-function button_control(req, variable, value) {
+function button_control(req, variable, value, is_retention) {
     var request = new XMLHttpRequest();
 
     request.onload = function() {
         if (request.response == "OK") {
-            console.log("Request <" + req + "> OK! Parameter <" + variable + "> became " + value);
+            console.log("Request <" + req + "> OK! Parameter <" + variable + "> became " + value + "; retention=" + is_retention);
         } else {
             console.log("[ERR] HTTP request answer internal server error");
         }
@@ -45,7 +45,7 @@ function button_control(req, variable, value) {
     // Send a request
     if (new_req_started == 0) {
         request.responseType = 'json';
-        request.open("GET", "/" + req + "?" + variable + "=" + value, true);
+        request.open("GET", "/" + req + "?" + variable + "=" + value + "&retention=" + is_retention, true);
         request.send();
         new_req_started = 1;
     }
@@ -54,9 +54,9 @@ function button_control(req, variable, value) {
 function button_control_change_repeatedly(req, variable, value) {
     if (interval_id == 0) {
         if (polling_time_ms == 0) {
-            interval_id = window.setInterval(function() {button_control(req, variable, value);}, 200);
+            interval_id = window.setInterval(function() {button_control(req, variable, value, "yes");}, 200);
         } else {
-            interval_id = window.setInterval(function() {button_control(req, variable, value);}, polling_time_ms);
+            interval_id = window.setInterval(function() {button_control(req, variable, value, "yes");}, polling_time_ms);
         }
         console.log("Repeat proccess started");
     }
