@@ -21,7 +21,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 # formatter = logging.Formatter('[%(levelname)s] %(message)s')
 # log_handler.setFormatter(formatter)
 # log.addHandler(log_handler)
-# logging.setLevel(logging.INFO)
+# log.setLevel(logging.INFO)
 logging.basicConfig(level=logging.INFO)
 
 # Obtain all initial config data. MUST be call first
