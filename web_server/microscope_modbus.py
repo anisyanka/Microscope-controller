@@ -68,7 +68,7 @@ class ModbusMicroscope:
         elif retention == "released":
             step_size_positive = 0
             step_size_negative = 0
-            logging.info("0 STEPS! 0 STEPS! 0 STEPS!")
+            logging.debug("0 STEPS! 0 STEPS! 0 STEPS!")
 
         logging.debug("step_size_positive = {}".format(step_size_positive))
         logging.debug("step_size_negative = {}".format(step_size_negative))
@@ -120,7 +120,7 @@ class ModbusMicroscope:
             elif retention == "released":
                 step_size_positive = 0
                 step_size_negative = 0
-                logging.info("0 STEPS! 0 STEPS! 0 STEPS!")
+                logging.debug("0 STEPS! 0 STEPS! 0 STEPS!")
 
             logging.debug("step_size_positive = {}".format(step_size_positive))
             logging.debug("step_size_negative = {}".format(step_size_negative))
