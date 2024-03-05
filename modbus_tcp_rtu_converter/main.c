@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
                     logger_dbg_print("Uart slave responce len = %d\r\n", rc);
 
                     /* Send the responce to TCP client */
-                    rc = modbus_send_raw_request(modbus_converter_dev.tcp_ctx, uart_rsp, rc, (int)(((uint16_t)(tcp_query[0]) << 8) | tcp_query[1]));
+                    rc = modbus_send_raw_request(modbus_converter_dev.tcp_ctx, uart_rsp, rc - 2, (int)(((uint16_t)(tcp_query[0]) << 8) | tcp_query[1]));
                     if (rc < 0) {
                         logger_err_print("Unable to send raw request to TCP connection: errno=%d --> %s\r\n", errno, modbus_strerror(errno));
                     }
