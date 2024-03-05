@@ -34,6 +34,7 @@
             };
 
             document.addEventListener('DOMContentLoaded', function() {
+                dom_loaded();
 
                 plus = document.getElementById("focus-plus-btn");
                 minus = document.getElementById("focus-minus-btn");
@@ -82,7 +83,8 @@
                 // plus.addEventListener('touchcancel', () => { console.log('touchcancel') });
 
                 if (window.mobileAndTabletCheck()) {
-                    console.log("Mobile browser detected")
+                    console.log("Mobile browser detected");
+                    button_set_mobile_button_type(true);
 
                     video_1080p_btn.addEventListener('touchstart', () => { video_1080p_btn.classList.remove("FixMobileHover"); });
                     video_1080p_btn.addEventListener('touchend', () => { video_1080p_btn.classList.add("FixMobileHover"); });
@@ -131,6 +133,7 @@
                     down.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'down'); down.classList.add("FixMobileHover"); });
                 } else {
                     console.log("Desktop browser detected")
+                    button_set_mobile_button_type(false);
 
                     plus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
                     plus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
