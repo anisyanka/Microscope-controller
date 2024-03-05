@@ -16,9 +16,9 @@ function button_control_pressed(req, variable, value) {
     }
 }
 
-function button_control_released() {
+function button_control_released(req, variable, value) {
     was_btn_released = 1;
-    button_control_stop();
+    button_control_stop(req, variable, value);
     clearTimeout(timeout_id);
     timeout_id = 0;
 }
@@ -62,12 +62,14 @@ function button_control_change_repeatedly(req, variable, value) {
     }
 }
 
-function button_control_stop() {
+function button_control_stop(req, variable, value) {
     was_btn_released = 1;
 
     if (interval_id) {
         clearInterval(interval_id);
         interval_id = 0;
+        new_req_started = 0;
         console.log("Repeat proccess stoped");
+        setTimeout(function() { button_control(req, variable, value, "released"); }, 100);
     }
 }

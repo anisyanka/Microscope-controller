@@ -107,48 +107,48 @@
                     work_btn.addEventListener('touchcancel', () => { work_btn.classList.add("FixMobileHover"); });
 
                     plus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus.classList.remove("FixMobileHover"); });
-                    plus.addEventListener('touchend', () => { button_control_released(); plus.classList.add("FixMobileHover"); });
-                    plus.addEventListener('touchcancel', () => { button_control_stop(); plus.classList.add("FixMobileHover"); });
+                    plus.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'upper'); plus.classList.add("FixMobileHover"); });
+                    plus.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'upper'); plus.classList.add("FixMobileHover"); });
 
                     minus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus.classList.remove("FixMobileHover"); });
-                    minus.addEventListener('touchend', () => { button_control_released(); minus.classList.add("FixMobileHover"); });
-                    minus.addEventListener('touchcancel', () => { button_control_stop(); minus.classList.add("FixMobileHover"); });
+                    minus.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'lower'); minus.classList.add("FixMobileHover"); });
+                    minus.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'lower'); minus.classList.add("FixMobileHover"); });
 
                     up.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'up'); up.classList.remove("FixMobileHover"); });
-                    up.addEventListener('touchend', () => { button_control_released(); up.classList.add("FixMobileHover"); });
-                    up.addEventListener('touchcancel', () => { button_control_stop(); up.classList.add("FixMobileHover"); });
+                    up.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'up'); up.classList.add("FixMobileHover"); });
+                    up.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'up'); up.classList.add("FixMobileHover"); });
 
                     left.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'left'); left.classList.remove("FixMobileHover"); });
-                    left.addEventListener('touchend', () => { button_control_released(); left.classList.add("FixMobileHover"); });
-                    left.addEventListener('touchcancel', () => { button_control_stop(); left.classList.add("FixMobileHover"); });
+                    left.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'left'); left.classList.add("FixMobileHover"); });
+                    left.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'left'); left.classList.add("FixMobileHover"); });
 
                     right.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'right'); right.classList.remove("FixMobileHover"); });
-                    right.addEventListener('touchend', () => { button_control_released(); right.classList.add("FixMobileHover"); });
-                    right.addEventListener('touchcancel', () => { button_control_stop(); right.classList.add("FixMobileHover"); });
+                    right.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'right'); right.classList.add("FixMobileHover"); });
+                    right.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'right'); right.classList.add("FixMobileHover"); });
 
                     down.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'down'); down.classList.remove("FixMobileHover"); });
-                    down.addEventListener('touchend', () => { button_control_released(); down.classList.add("FixMobileHover"); });
-                    down.addEventListener('touchcancel', () => { button_control_stop(); down.classList.add("FixMobileHover"); });
+                    down.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'down'); down.classList.add("FixMobileHover"); });
+                    down.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'down'); down.classList.add("FixMobileHover"); });
                 } else {
                     console.log("Desktop browser detected")
 
                     plus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
-                    plus.addEventListener('mouseup', () => { button_control_released() });
+                    plus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
 
                     minus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
-                    minus.addEventListener('mouseup', () => { button_control_released() });
+                    minus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
 
                     up.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'up') });
-                    up.addEventListener('mouseup', () => { button_control_released() });
+                    up.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'up') });
 
                     left.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'left') });
-                    left.addEventListener('mouseup', () => { button_control_released() });
+                    left.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'left') });
 
                     right.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'right') });
-                    right.addEventListener('mouseup', () => { button_control_released() });
+                    right.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'right') });
 
                     down.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'down') });
-                    down.addEventListener('mouseup', () => { button_control_released() });
+                    down.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'down') });
                 }
 
                 /* Set stream window size */

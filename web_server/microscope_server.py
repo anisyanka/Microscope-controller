@@ -22,7 +22,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 # log_handler.setFormatter(formatter)
 # log.addHandler(log_handler)
 # logging.setLevel(logging.INFO)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 # Obtain all initial config data. MUST be call first
 conf_reader.read_all_configs()
