@@ -14,19 +14,19 @@ static int _exec_cmd(uint16_t cmd);
 void camera_api_setup_host_ip_config(const char *host_ip)
 {
     int rv = 0;
-    char command[128];
+    static char command[256];
 
     strcpy(command, CAMERA_API_SETUP_HOST_IP_SCRIPT " ");
     strcat(command, host_ip);
 
-    logger_dbg_print("Trying to exec camera command=%s\t\n", command);
+    logger_dbg_print("Trying to exec camera command=%s\r\n", command);
 
     rv = system(command);
     if (rv < 0) {
-        logger_err_print("Unable to execute command <%s>. errno=%d --> %s\r\n", command, errno, strerror(errno));
+        logger_err_print("Unable to execute command <%s>. rc=%d, errno=%d --> %s\r\n", command, rv, errno, strerror(errno));
+    } else {
+        logger_info_print("Host ip config has been updated with ip=%s\r\n", host_ip);
     }
-
-    logger_info_print("Host ip config has been updated with ip=%s\r\n", host_ip);
 }
 
 int camera_api_parse_and_execute_cmd(uint8_t *rtu_query)

@@ -46,8 +46,6 @@ static modbus_converter_dev_t modbus_converter_dev = { 0 };
 
 int main(int argc, char *argv[])
 {
-    signal(SIGCHLD, SIG_IGN);
-
     /* Log starting time */
     _hello_print(argv[0]);
 

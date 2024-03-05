@@ -8,10 +8,10 @@
 extern "C" {
 #endif
 
-#define CAMERA_API_SETUP_HOST_IP_SCRIPT ".scripts/update_host_ip_for_video_streaming.sh"
-#define CAMERA_API_LAUNCH_4K_VIDEO_SCRIPT ".scripts/rpi_launch_udp_4k_soft_h264.sh"
-#define CAMERA_API_LAUNCH_1080P_VIDEO_SCRIPT ".scripts/rpi_launch_udp_1080p_mjpg.sh"
-#define CAMERA_API_LAUNCH_STOP_VIDEO_SCRIPT ".scripts/rpi_stop_video_stream.sh"
+#define CAMERA_API_SETUP_HOST_IP_SCRIPT "./scripts/update_host_ip_for_video_streaming.sh"
+#define CAMERA_API_LAUNCH_4K_VIDEO_SCRIPT "./scripts/rpi_launch_udp_4k_soft_h264.sh"
+#define CAMERA_API_LAUNCH_1080P_VIDEO_SCRIPT "./scripts/rpi_launch_udp_1080p_mjpg.sh"
+#define CAMERA_API_LAUNCH_STOP_VIDEO_SCRIPT "./scripts/rpi_stop_video_stream.sh"
 
 #define CAMERA_API_REACT_TO_FC (MODBUS_FC_WRITE_SINGLE_REGISTER)
 
