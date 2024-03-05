@@ -41,11 +41,6 @@ app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def index():
     conf_reader.read_all_configs()
-
-    logging.info("Board ip=" + helper.get_my_ip())
-    logging.info("Client ip=" + request.remote_addr)
-
-    helper.update_host_ip_config(request.remote_addr)
     return render_template('index.html')
 
 
