@@ -4,7 +4,7 @@ import sys
 from flask import Flask, Response, render_template, request, json, jsonify, stream_with_context
 from werkzeug.exceptions import HTTPException
 from microscope_modbus import ModbusMicroscope
-from video_streamer import VideoStreamer, FrameGeneratorExit
+from video_streamer import VideoStreamer
 import helpers as helper
 import config_reader as conf_reader
 import signal
@@ -57,11 +57,8 @@ def resolution_switch_request():
 @app.route('/video_feed')
 def video_feed():
     def get_camera_frame():
-        try:
-            while True:
-                yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + streamer.capture_frame() + b'\r\n')
-        except FrameGeneratorExit:
-            return b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n'
+        while True:
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + streamer.capture_frame() + b'\r\n')
 
     if streamer.is_stream_started():
         streamer.request_to_stop_stream()

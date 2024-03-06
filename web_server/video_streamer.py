@@ -3,9 +3,6 @@ import logging
 from time import sleep
 import threading
 
-class FrameGeneratorExit(Exception):
-    """Exception to exit video cycle generator"""
-
 class VideoStreamer:
     TEMP_IMG_FILE="/home/pi/.microscope/web_server/temp_img_frame"
     STOP_STREAM_SCRIPT_FILE_PATH="/home/pi/.microscope/scripts/rpi_stop_video_stream.sh"
