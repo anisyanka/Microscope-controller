@@ -29,6 +29,7 @@ scp $web_dir/static/scripts/video_control.js \
 scp $web_dir/stream_scripts/camera_set_resolution_4k.sh \
     $web_dir/stream_scripts/camera_set_resolution_1920x1080.sh \
     $web_dir/stream_scripts/camera_capture_one_image_frame.sh \
+    $web_dir/stream_scripts/camera_capture_frames_continuously.sh \
         $rpi_user@$rpi_ip:/home/pi/$web_dir/stream_scripts
 
 # Send Flask web-server

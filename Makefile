@@ -97,6 +97,7 @@ install_web_server:
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_4k.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_1920x1080.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_one_image_frame.sh
+	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_frames_continuously.sh
 	chmod +x $(TARGET_DIR)/web_server/microscope_server.py
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(WEB_SERV_TARGET)
 	sudo cp $(WEB_DIR)/microscope_server.service /etc/systemd/system/

@@ -4,99 +4,113 @@ from time import sleep
 import threading
 
 class VideoStreamer:
-    TEMP_IMG_FILE="/home/pi/.microscope/web_server/temp_img_frame"
+    # Stop gstreamer and v4l2 if running
     STOP_STREAM_SCRIPT_FILE_PATH="/home/pi/.microscope/scripts/rpi_stop_video_stream.sh"
+
+    # Set resolution
     SET_RES_1920X1080_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_set_resolution_1920x1080.sh"
     SET_RES_4k_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_set_resolution_4k.sh"
+
+    # Get exactly one frame
     GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_capture_one_image_frame.sh"
+    
+    # Get frames in continuously mode (for threading)
+    START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_capture_frames_continuously.sh"
 
-    _is_stream_started = False
-    _stop_pending = False
-    _stop_done = False
+    is_stream_started_flag = False
+    is_stop_pending_flag = False
+    is_stop_done_flag = False
 
-    _last_captured_frame = b''
+    last_captured_frame = b''
 
-    def __init__(self, stream_to="pipe"):
+    current_width = "1920"
+    current_height = "1080"
+    current_framerate = "30"
+
+    def __init__(self):
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
-        self.stream_to = stream_to
-        self.lock = threading.Lock()
-        logging.info("Videio streamer will use <{}> to stream".format(self.stream_to))
+
+        # Read stdout from Gstreamer
+        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=10**8)
+        
+        # Fetch new frame thread
+        self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
+        self.thread.start()
+        self.is_stream_started_flag = True
+        self.is_stop_done_flag = False
+        self.is_stop_pending_flag = False
 
 
-    def request_to_start_stream(self):
-        self.lock.acquire()
-        self._is_stream_started = True
-        self._stop_pending = False
-        self._stop_done = False
-        self.lock.release()
-        logging.debug("Video streaming request to start")
+    def mjpg_frames_fetcher(self):
+        bytes = b''
+        while True:
+            part = self.pipe.stdout.read(1024)
+            bytes += part
+            a = bytes.find(b'\xff\xd8')
+            b = bytes.find(b'\xff\xd9')
+            if a != -1 and b != -1:
+                self.last_captured_frame = bytes[a:b+2]
+                bytes = bytes[b+2:]
+
+            if self.is_stop_pending_flag:
+                self.is_stop_done_flag = True
+                self.is_stream_started_flag = False
+                self.is_stop_pending_flag = False
+                logging.info("Video fetcher has been stopped")
+                break
 
 
-    def is_stream_started(self):
-        return self._is_stream_started
-
-
-    def request_to_stop_stream(self):
-        self.lock.acquire()
-        self._stop_pending = True
-        self._stop_done = False
-        self.lock.release()
-        logging.debug("Video streaming request to stop")
+    def request_to_stop_mjpg_fetcher(self):
+        self.is_stop_pending_flag = True
+        self.is_stop_done_flag = False
+        logging.debug("Video streaming request to stop mjpg fetcher thread..")
 
 
     def wait_stopping(self):
         stop_iter = 0
         logging.debug("Video streaming waiting stop.....")
-        if self._is_stream_started:
-            while self._stop_done == False:
+        if self.is_stream_started_flag:
+            while self.is_stop_done_flag == False:
                 sleep(0.1)
                 stop_iter += 1
                 if stop_iter >= 40: # 4sec
                     break
+            sleep(0.5)
         logging.debug("Video streaming waiting stop done")
 
 
     def set_resolution(self, resolution):
-        self.request_to_stop_stream()
-        self.wait_stopping()
         logging.debug("Video streamer obtained request to change stream resolution to " + resolution)
+
+        self.request_to_stop_mjpg_fetcher()
+        self.wait_stopping()
+        sleep(0.1)
+        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
+        sleep(0.1)
+
         if resolution == "1080p":
             subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
+            self.current_width = "1920"
+            self.current_height = "1080"
+            self.current_framerate = "30"
         elif resolution == "4k":
             subprocess.call(self.SET_RES_4k_SCRIPT_FILE_PATH)
+            self.current_width = "4656"
+            self.current_height = "3496"
+            self.current_framerate = "10"
         else:
             logging.error("Video streamer wrong command to set resolution")
-        self.request_to_start_stream()
+            return
 
+        # Create pipe and thread again
+        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=10**8)
+        self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
+        self.thread.start()
+        logging.info("Start video fetching and streaming")
+        self.is_stream_started_flag = True
+        self.is_stop_done_flag = False
+        self.is_stop_pending_flag = False
 
     def capture_frame(self):
-        def _get_frame_from_file(self):
-            with open(self.TEMP_IMG_FILE, 'rb') as f:
-                r_frame = f.read()
-            return r_frame
-
-        if self._stop_pending: # return old frame
-            if not self._stop_done:
-                self.lock.acquire()
-                subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-                self._stop_done = True
-                self._is_stream_started = False
-                self.lock.release()
-
-            return self._last_captured_frame
-        else:
-            if self.stream_to == "pipe":
-                proc = subprocess.Popen([self.GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH, "/dev/stdout"], stdout=subprocess.PIPE)
-                try:
-                    self._last_captured_frame, errs = proc.communicate(timeout=8)
-                except subprocess.TimeoutExpired:
-                    proc.kill()
-                    logging.error("TimeoutExpired to communicate with video stream proc")
-            elif self.stream_to == "file":
-                subprocess.call([self.GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH, self.TEMP_IMG_FILE])
-                self._last_captured_frame = _get_frame_from_file(self)
-            else:
-                logging.critical("Specify <stream_to> parameter for video streamer properly or use default constructor")
-
-        return self._last_captured_frame
+        return self.last_captured_frame

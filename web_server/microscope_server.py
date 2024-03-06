@@ -59,14 +59,6 @@ def video_feed():
     def get_camera_frame():
         while True:
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + streamer.capture_frame() + b'\r\n')
-
-    if streamer.is_stream_started():
-        streamer.request_to_stop_stream()
-        streamer.wait_stopping()
-        streamer.request_to_start_stream()
-    else:
-        streamer.request_to_start_stream()
-
     return Response(stream_with_context(get_camera_frame()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
