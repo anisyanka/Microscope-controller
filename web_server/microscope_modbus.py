@@ -83,7 +83,7 @@ class ModbusMicroscope:
             self.clinet.write_register(12, step_size_negative, slave=self.slave_addr)
         else:
             logging.error("wrong cmd")
-        sleep(0.02)
+        sleep(0.001)
 
         # Send 0 steps to disable engine after click
         if retention == "no":
