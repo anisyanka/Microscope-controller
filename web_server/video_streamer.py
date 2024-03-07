@@ -31,8 +31,11 @@ class VideoStreamer:
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
 
+        # Lock to access self.last_captured_frame
+        self.mutex = threading.Lock()
+
         # Read stdout from Gstreamer
-        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=10**8)
+        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=-1)
         
         # Fetch new frame thread
         self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
@@ -45,12 +48,14 @@ class VideoStreamer:
     def mjpg_frames_fetcher(self):
         bytes = b''
         while True:
-            part = self.pipe.stdout.read(1024)
+            part = self.pipe.stdout.read(10000)
             bytes += part
             a = bytes.find(b'\xff\xd8')
             b = bytes.find(b'\xff\xd9')
             if a != -1 and b != -1:
+                self.mutex.acquire()
                 self.last_captured_frame = bytes[a:b+2]
+                self.mutex.release()
                 bytes = bytes[b+2:]
 
             if self.is_stop_pending_flag:
@@ -81,7 +86,11 @@ class VideoStreamer:
 
 
     def set_resolution(self, resolution):
-        logging.debug("Video streamer obtained request to change stream resolution to " + resolution)
+        if resolution == "1080p" and self.current_width == "1920" or resolution == "4k" and self.current_width == "4656":
+            logging.info("Requested resolution {} had already been set previously".format(resolution))
+            return
+        else:
+            logging.info("Video streamer obtained request to change stream resolution to " + resolution)
 
         self.request_to_stop_mjpg_fetcher()
         self.wait_stopping()
@@ -113,4 +122,8 @@ class VideoStreamer:
         self.is_stop_pending_flag = False
 
     def capture_frame(self):
-        return self.last_captured_frame
+        self.mutex.acquire()
+        frame = self.last_captured_frame
+        self.mutex.release()
+
+        return frame
