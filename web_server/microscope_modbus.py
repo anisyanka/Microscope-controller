@@ -83,12 +83,12 @@ class ModbusMicroscope:
             self.clinet.write_register(12, step_size_negative, slave=self.slave_addr)
         else:
             logging.error("wrong cmd")
-        sleep(0.03)
+        sleep(0.02)
 
         # Send 0 steps to disable engine after click
         if retention == "no":
             self.clinet.write_register(12, 0, slave=self.slave_addr)
-            sleep(0.03)
+            sleep(0.02)
 
 
     def light_control(self, level):
