@@ -34,8 +34,6 @@
             };
 
             document.addEventListener('DOMContentLoaded', function() {
-                dom_loaded();
-
                 plus = document.getElementById("focus-plus-btn");
                 minus = document.getElementById("focus-minus-btn");
                 up = document.getElementById("arrow-up-btn");
@@ -84,7 +82,6 @@
 
                 if (window.mobileAndTabletCheck()) {
                     console.log("Mobile browser detected");
-                    button_set_mobile_button_type(true);
 
                     video_1080p_btn.addEventListener('touchstart', () => { video_1080p_btn.classList.remove("FixMobileHover"); });
                     video_1080p_btn.addEventListener('touchend', () => { video_1080p_btn.classList.add("FixMobileHover"); });
@@ -133,25 +130,30 @@
                     down.addEventListener('touchcancel', () => { button_control_stop('motor_control', 'position', 'down'); down.classList.add("FixMobileHover"); });
                 } else {
                     console.log("Desktop browser detected")
-                    button_set_mobile_button_type(false);
 
                     plus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
                     plus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
+                    plus.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'upper') });
 
                     minus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
                     minus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
+                    minus.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'lower') });
 
                     up.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'up') });
                     up.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'up') });
+                    up.addEventListener('mouseleave', () => { button_control_stop('motor_control', 'position', 'up') });
 
                     left.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'left') });
                     left.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'left') });
+                    left.addEventListener('mouseleave', () => { button_control_stop('motor_control', 'position', 'left') });
 
                     right.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'right') });
                     right.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'right') });
+                    right.addEventListener('mouseleave', () => { button_control_stop('motor_control', 'position', 'right') });
 
                     down.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'down') });
                     down.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'down') });
+                    down.addEventListener('mouseleave', () => { button_control_stop('motor_control', 'position', 'down') });
                 }
 
                 /* Set stream window size */
