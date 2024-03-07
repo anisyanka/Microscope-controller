@@ -34,6 +34,10 @@
             };
 
             document.addEventListener('DOMContentLoaded', function() {
+                /* Set stream window size */
+                document.getElementById("stream").width = window.innerWidth;
+                document.getElementById("stream").height = (window.innerHeight * 0.62);
+
                 plus = document.getElementById("focus-plus-btn");
                 minus = document.getElementById("focus-minus-btn");
                 up = document.getElementById("arrow-up-btn");
@@ -155,10 +159,6 @@
                     down.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'down') });
                     down.addEventListener('mouseleave', () => { button_control_stop('motor_control', 'position', 'down') });
                 }
-
-                /* Set stream window size */
-                document.getElementById("stream").width = window.innerWidth;
-                document.getElementById("stream").height = (window.innerHeight * 0.62);
 
                 console.log("Video size = " + document.getElementById("stream").width + "x" + document.getElementById("stream").height);
 

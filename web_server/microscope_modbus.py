@@ -59,8 +59,9 @@ class ModbusMicroscope:
 
     def focus_motor_control(self, level, retention):
         logging.debug("Obtained request to focus " + level)
-        step_size_positive = abs(conf_reader.get_step_size_for_focus_stepper())
-        step_size_negative = (step_size_positive * (-1)) & 0xffff
+
+        step_size_positive = 0
+        step_size_negative = 0
 
         if retention == "no":
             step_size_positive = 1
@@ -69,6 +70,9 @@ class ModbusMicroscope:
             step_size_positive = 0
             step_size_negative = 0
             logging.debug("0 STEPS! 0 STEPS! 0 STEPS!")
+        elif retention == "yes":
+            step_size_positive = abs(conf_reader.get_step_size_for_focus_stepper())
+            step_size_negative = (step_size_positive * (-1)) & 0xffff
 
         logging.debug("step_size_positive = {}".format(step_size_positive))
         logging.debug("step_size_negative = {}".format(step_size_negative))
