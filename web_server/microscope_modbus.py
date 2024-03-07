@@ -83,6 +83,8 @@ class ModbusMicroscope:
             self.clinet.write_register(12, step_size_negative, slave=self.slave_addr)
         else:
             logging.error("wrong cmd")
+        sleep(0.02)
+
 
     def light_control(self, level):
         logging.debug("Obtained request to make light " + level)
@@ -99,7 +101,7 @@ class ModbusMicroscope:
             self.clinet.write_register(14, self.cur_pwm_duty, slave=self.slave_addr)
         else:
             logging.error("wrong cmd")
-        
+
         logging.debug("Light PWM=%d%% %s\n" % (self.cur_pwm_duty, "(MAX)" if self.cur_pwm_duty >= MAX_PWM_DUTY else ""))
 
     def main_motors_control(self, position, retention):
