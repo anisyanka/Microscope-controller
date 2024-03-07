@@ -83,6 +83,14 @@ def get_led_pwm_max_power():
     global microscope_data
     return int(microscope_data['modbus_led_max_pwm_percentage'])
 
-def get_step_size():
+def get_step_size_for_focus_stepper():
     global microscope_data
-    return int(microscope_data['step_size'])
+    return int(microscope_data['retention_step_size_focus_stepper'])
+
+def get_step_size_for_updown_stepper():
+    global microscope_data
+    return int(microscope_data['retention_step_size_updown_stepper'])
+
+def get_step_size_for_leftright_stepper():
+    global microscope_data
+    return int(microscope_data['retention_step_size_leftright_stepper'])

@@ -59,7 +59,7 @@ class ModbusMicroscope:
 
     def focus_motor_control(self, level, retention):
         logging.debug("Obtained request to focus " + level)
-        step_size_positive = abs(conf_reader.get_step_size())
+        step_size_positive = abs(conf_reader.get_step_size_for_focus_stepper())
         step_size_negative = (step_size_positive * (-1)) & 0xffff
 
         if retention == "no":
@@ -111,8 +111,8 @@ class ModbusMicroscope:
         if position == "STOP":
             self.clinet.write_register(33, 1, slave=self.slave_addr)
         else:
-            step_size_positive = abs(conf_reader.get_step_size())
-            step_size_negative = (step_size_positive * (-1)) & 0xffff
+            step_size_positive = 0
+            step_size_negative = 0
 
             if retention == "no":
                 step_size_positive = 1
@@ -121,6 +121,13 @@ class ModbusMicroscope:
                 step_size_positive = 0
                 step_size_negative = 0
                 logging.debug("0 STEPS! 0 STEPS! 0 STEPS!")
+            elif retention == "yes":
+                if position == "up" or position == "down":
+                    step_size_positive = abs(conf_reader.get_step_size_for_updown_stepper())
+                    step_size_negative = (step_size_positive * (-1)) & 0xffff
+                elif position == "right" or position == "left":
+                    step_size_positive = abs(conf_reader.get_step_size_for_leftright_stepper())
+                    step_size_negative = (step_size_positive * (-1)) & 0xffff
 
             logging.debug("step_size_positive = {}".format(step_size_positive))
             logging.debug("step_size_negative = {}".format(step_size_negative))

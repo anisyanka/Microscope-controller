@@ -126,7 +126,9 @@ sudo reboot
     "work_steps_cnt_updown_stepper": "-111",
     "work_steps_cnt_leftright_stepper": "-112",
 
-    "step_size": "1",
+    "retention_step_size_focus_stepper": "1",
+    "retention_step_size_updown_stepper": "1",
+    "retention_step_size_leftright_stepper": "1",
 
     "modbus_repeat_cmd_period_ms": "100",
     "modbus_soc_polling_period_ms": "60000",
@@ -154,7 +156,7 @@ sudo reboot
 микроконтроллер, когда пользователь нажимает кнопку **WORK** в интерфейсе управления.
 Тут также можно устанавливать либо положительные числа, либо отрицательные, либо ноль.
 
-`step_size` - это количество шагов, которые будут посылаться сервисом в нижестоящий микроконтроллер,
+`retention_step_size_*` - это количество шагов, которые будут посылаться сервисом в нижестоящий микроконтроллер,
 когда пользователь **удерживает** кнопки +/- или up/down/left/right. То есть при однократном нажатии
 пошлётся точно 1 шаг. А при удержании будет переодически посылаться кол-во шагов, указанное тут.
 
