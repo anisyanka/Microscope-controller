@@ -13,6 +13,7 @@ ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $scripts_dir;"
 scp -r $scripts_dir/*.sh $rpi_user@$rpi_ip:/home/pi/$scripts_dir
 scp $scripts_dir/../update.sh $rpi_user@$rpi_ip:/home/pi/$scripts_dir/../
 
+ssh $rpi_user@$rpi_ip "chmod +x $scripts_dir/rpi_get_throttling_state.sh"
 ssh $rpi_user@$rpi_ip "chmod +x $scripts_dir/stop_service_if_running.sh"
 ssh $rpi_user@$rpi_ip "chmod +x $scripts_dir/update_host_ip_for_video_streaming.sh"
 ssh $rpi_user@$rpi_ip "chmod +x $scripts_dir/rpi_launch_udp_4k_soft_h264.sh"
