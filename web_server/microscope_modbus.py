@@ -87,7 +87,7 @@ class ModbusMicroscope:
 
         # Send 0 steps to disable engine after click
         if retention == "no":
-            self.clinet.write_register(12, 0, slave=self.slave_addr)
+            # self.clinet.write_register(12, 0, slave=self.slave_addr)
             sleep(0.02)
 
 
