@@ -12,7 +12,7 @@ fi
 
 video=$(ls /sys/class/video4linux -1 | head -n1)
 sudo v4l2-ctl -d /dev/$video --set-fmt-video=width=4656,height=3496,pixelformat=MJPG -p 10 > /dev/null
-gst-launch-1.0 -v v4l2src device=/dev/$video io-mode=4 ! image/jpeg,width=4656,height=3496,type=video,framerate=10/1 ! jpegdec ! videoconvert ! x264enc tune=zerolatency ! rtph264pay ! udpsink host=$HOST port=5602 > /dev/null &
+gst-launch-1.0 -v --eos-on-shutdown v4l2src device=/dev/$video io-mode=4 ! image/jpeg,width=4656,height=3496,type=video,framerate=10/1 ! jpegdec ! videoconvert ! x264enc tune=zerolatency ! rtph264pay ! udpsink host=$HOST port=5602 > /dev/null &
 
 pid=`pgrep gst-launch-1.0`
 exit $pid
