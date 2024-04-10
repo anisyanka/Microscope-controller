@@ -12,8 +12,13 @@ import logging
 from time import sleep
 from systemd.journal import JournalHandler
 
+from usbmonitor import USBMonitor
+from usbmonitor.attributes import ID_MODEL, ID_MODEL_ID, ID_VENDOR_ID
+
+
 # Ignore SIGCHLD to avoid zombi-proccesses
 signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
 
 # https://python.hotexamples.com/examples/systemd.journal/JournalHandler/-/python-journalhandler-class-examples.html
 # log = logging.getLogger()
@@ -24,14 +29,28 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 # log.setLevel(logging.INFO)
 logging.basicConfig(level=logging.INFO)
 
+
 # Obtain all initial config data. MUST be call first
 conf_reader.read_all_configs()
+
 
 # Modbus class
 microscope_mb = ModbusMicroscope()
 
+
 # Streamer class
 streamer = VideoStreamer()
+
+
+# Define the `on_connect` and `on_disconnect` callbacks
+device_info_str = lambda device_info: f"{device_info[ID_MODEL]} ({device_info[ID_MODEL_ID]} - {device_info[ID_VENDOR_ID]})"
+on_connect = lambda device_id, device_info: logging.info(f"Connected: {device_info_str(device_info=device_info)}")
+on_disconnect = lambda device_id, device_info: logging.info(f"Disconnected: {device_info_str(device_info=device_info)}")
+
+# Create the USBMonitor instance and start the daemon
+monitor = USBMonitor()
+monitor.start_monitoring(on_connect=on_connect, on_disconnect=on_disconnect)
+
 
 # Run server
 app = Flask(__name__)
