@@ -11,7 +11,6 @@ import signal
 import logging
 from time import sleep
 from systemd.journal import JournalHandler
-
 from usbmonitor import USBMonitor
 from usbmonitor.attributes import ID_MODEL, ID_MODEL_ID, ID_VENDOR_ID
 
@@ -42,14 +41,19 @@ microscope_mb = ModbusMicroscope()
 streamer = VideoStreamer()
 
 
-# Define the `on_connect` and `on_disconnect` callbacks
-device_info_str = lambda device_info: f"{device_info[ID_MODEL]} ({device_info[ID_MODEL_ID]} - {device_info[ID_VENDOR_ID]})"
-on_connect = lambda device_id, device_info: logging.info(f"Connected: {device_info_str(device_info=device_info)}")
-on_disconnect = lambda device_id, device_info: logging.info(f"Disconnected: {device_info_str(device_info=device_info)}")
-
 # Create the USBMonitor instance and start the daemon
+device_info_str = lambda device_info: f"{device_info[ID_MODEL]} ({device_info[ID_MODEL_ID]} - {device_info[ID_VENDOR_ID]})"
+
+def new_dev_on_connect(dev_id, device_info):
+    logging.info(f"New device connected: {device_info_str(device_info=device_info)}")
+    streamer.cam_device_connected()
+
+def new_dev_on_disconnect(dev_id, device_info):
+    logging.info(f"Some device disconnected: {device_info_str(device_info=device_info)}")
+    streamer.cam_device_disconnected()
+
 monitor = USBMonitor()
-monitor.start_monitoring(on_connect=on_connect, on_disconnect=on_disconnect)
+monitor.start_monitoring(on_connect=new_dev_on_connect, on_disconnect=new_dev_on_disconnect)
 
 
 # Run server

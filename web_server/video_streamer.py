@@ -36,7 +36,9 @@ class VideoStreamer:
     def __init__(self):
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
+        self.cam_device_connected()
 
+    def cam_device_connected(self):
         device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
         df = subprocess.check_output("lsusb")
         devices = []
@@ -47,34 +49,44 @@ class VideoStreamer:
                     dinfo = info.groupdict()
                     dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
                     devices.append(dinfo)
+
         if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1:
             logging.info("USB Camera not found")
         else:
-            self.cam_device_connected()
+            logging.info("USB CAMERA CONNECTED")
 
+            self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=-1)
+            logging.info("Start read stdout from Gstreamer")
 
-    def cam_device_connected(self):
-        logging.info("USB CAMERA CONNECTED")
-
-        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=-1)
-        logging.info("Start read stdout from Gstreamer")
-
-        self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
-        self.thread.start()
-        self.is_stream_started_flag = True
-        self.is_stop_done_flag = False
-        self.is_stop_pending_flag = False
-        logging.info("Create new mjpg fetcher thread")
+            self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
+            self.thread.start()
+            self.is_stream_started_flag = True
+            self.is_stop_done_flag = False
+            self.is_stop_pending_flag = False
+            logging.info("Create new mjpg fetcher thread")
 
 
     def cam_device_disconnected(self):
-        logging.info("USB CAMERA DISCONNECTED")
+        device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
+        df = subprocess.check_output("lsusb")
+        devices = []
+        for i in df.split(b'\n'):
+            if i:
+                info = device_re.match(i)
+                if info:
+                    dinfo = info.groupdict()
+                    dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
+                    devices.append(dinfo)
 
-        self.request_to_stop_mjpg_fetcher()
-        self.wait_stopping()
-        sleep(0.1)
-        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-        sleep(0.1)
+        if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1:
+            logging.info("USB CAMERA HAS BEEN DISCONNECTED")
+            self.request_to_stop_mjpg_fetcher()
+            self.wait_stopping()
+            sleep(0.1)
+            subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
+            sleep(0.1)
+        else:
+            logging.info("USB camera is still connected")
 
 
     def mjpg_frames_fetcher(self):
