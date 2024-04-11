@@ -79,12 +79,10 @@ class VideoStreamer:
                     devices.append(dinfo)
 
         if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1:
-            logging.info("USB CAMERA HAS BEEN DISCONNECTED")
+            subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
             self.request_to_stop_mjpg_fetcher()
             self.wait_stopping()
-            sleep(0.1)
-            subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-            sleep(0.1)
+            logging.info("USB CAMERA HAS BEEN DISCONNECTED")
         else:
             logging.info("USB camera is still connected")
 
