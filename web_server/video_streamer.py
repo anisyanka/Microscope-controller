@@ -134,11 +134,9 @@ class VideoStreamer:
         else:
             logging.info("Video streamer obtained request to change stream resolution to " + resolution)
 
+        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         self.request_to_stop_mjpg_fetcher()
         self.wait_stopping()
-        sleep(0.1)
-        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-        sleep(0.1)
 
         if resolution == "1080p":
             subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
