@@ -3,6 +3,9 @@ var timeout_id = 0;
 var was_btn_released = 0;
 var new_req_started = 0;
 var polling_time_ms = 0;
+var focus_btn_interval_id = 0;
+var focus_plus_btn_continue_state = 0;
+var focus_minus_btn_continue_state = 0;
 
 function button_control_set_poll_time(poltime) {
     polling_time_ms = poltime;
@@ -49,6 +52,33 @@ function button_control(req, variable, value, is_retention) {
         request.send();
         new_req_started = 1;
     }
+}
+
+function button_control_focus(req, variable, value, is_retention) {
+    if (focus_btn_interval_id != 0) {
+        clearInterval(focus_btn_interval_id);
+        focus_btn_interval_id = 0;
+    }
+
+    if ((value == "upper") && (focus_plus_btn_continue_state == 1)) {
+        focus_plus_btn_continue_state = 0;
+        return;
+    }
+
+    if ((value == "lower") && (focus_minus_btn_continue_state == 1)) {
+        focus_minus_btn_continue_state = 0;
+        return;
+    }
+
+    if (value == "upper") {
+        focus_plus_btn_continue_state = 1;
+        focus_minus_btn_continue_state = 0;
+    } else {
+        focus_plus_btn_continue_state = 0;
+        focus_minus_btn_continue_state = 1;
+    }
+
+    focus_btn_interval_id = window.setInterval(function() {button_control(req, variable, value, is_retention);}, 200);
 }
 
 function button_control_change_repeatedly(req, variable, value) {

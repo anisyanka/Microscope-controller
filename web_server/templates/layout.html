@@ -38,8 +38,10 @@
                 document.getElementById("stream").width = window.innerWidth;
                 document.getElementById("stream").height = (window.innerHeight * 0.62);
 
-                plus = document.getElementById("focus-plus-btn");
-                minus = document.getElementById("focus-minus-btn");
+                plus_step = document.getElementById("focus-plus-btn-step");
+                minus_step = document.getElementById("focus-minus-btn-step");
+                plus_continue = document.getElementById("focus-plus-btn-continue");
+                minus_continue = document.getElementById("focus-minus-btn-continue");
                 up = document.getElementById("arrow-up-btn");
                 left = document.getElementById("arrow-left-btn");
                 right = document.getElementById("arrow-right-btn");
@@ -55,8 +57,12 @@
                 home_btn = document.getElementById("home-btn");
                 work_btn = document.getElementById("work-btn");
 
-                plus.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper', 'no') });
-                minus.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower', 'no') });
+                plus_step.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper', 'no') });
+                minus_step.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower', 'no') });
+
+                plus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'upper', 'yes') });
+                minus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'lower', 'yes') });
+
                 up.addEventListener('click', () => { button_control('motor_control', 'position', 'up', 'no') });
                 left.addEventListener('click', () => { button_control('motor_control', 'position', 'left', 'no') });
                 right.addEventListener('click', () => { button_control('motor_control', 'position', 'right', 'no') });
@@ -109,13 +115,13 @@
                     work_btn.addEventListener('touchend', () => { work_btn.classList.add("FixMobileHover"); });
                     work_btn.addEventListener('touchcancel', () => { work_btn.classList.add("FixMobileHover"); });
 
-                    plus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus.classList.remove("FixMobileHover"); });
-                    plus.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'upper'); plus.classList.add("FixMobileHover"); });
-                    plus.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'upper'); plus.classList.add("FixMobileHover"); });
+                    // plus_step.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus_step.classList.remove("FixMobileHover"); });
+                    // plus_step.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'upper'); plus_step.classList.add("FixMobileHover"); });
+                    // plus_step.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'upper'); plus_step.classList.add("FixMobileHover"); });
 
-                    minus.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus.classList.remove("FixMobileHover"); });
-                    minus.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'lower'); minus.classList.add("FixMobileHover"); });
-                    minus.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'lower'); minus.classList.add("FixMobileHover"); });
+                    // minus_step.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus_step.classList.remove("FixMobileHover"); });
+                    // minus_step.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'lower'); minus_step.classList.add("FixMobileHover"); });
+                    // minus_step.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'lower'); minus_step.classList.add("FixMobileHover"); });
 
                     up.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'up'); up.classList.remove("FixMobileHover"); });
                     up.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'up'); up.classList.add("FixMobileHover"); });
@@ -135,13 +141,13 @@
                 } else {
                     console.log("Desktop browser detected")
 
-                    plus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
-                    plus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
-                    plus.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'upper') });
+                    // plus_step.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
+                    // plus_step.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
+                    // plus_step.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'upper') });
 
-                    minus.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
-                    minus.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
-                    minus.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'lower') });
+                    // minus_step.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
+                    // minus_step.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
+                    // minus_step.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'lower') });
 
                     up.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'up') });
                     up.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'up') });
@@ -174,16 +180,19 @@
                         document.querySelector(".light-alarm-container").style.justifyContent = "center"
                         document.querySelector(".light-controls-container").style.marginRight = "50px"
                         document.querySelector(".alarm-controls-btn").style.marginLeft = "50px"
-                        document.getElementById("focus-plus-btn").style.marginRight = "50px"
-                        document.getElementById("focus-minus-btn").style.marginLeft = "50px"
+                        document.getElementById("focus-plus-btn-continue").style.marginRight = "5px"
+                        document.getElementById("focus-minus-btn-continue").style.marginLeft = "5px"
                     } else {
                         document.querySelector(".stream-controls-btns").style.justifyContent = "space-between"
+                        document.querySelector(".focus-plus-btns").style.justifyContent = "space-between"
+                        document.querySelector(".video-resilution-btn").style.justifyContent = "space-between"
+                        document.querySelector(".focus-minus-btns").style.justifyContent = "space-between"
                         document.querySelector(".main-controls-container-layout").style.justifyContent = "space-between"
                         document.querySelector(".light-alarm-container").style.justifyContent = "space-between"
                         document.querySelector(".light-controls-container").style.marginRight = "0px"
                         document.querySelector(".alarm-controls-btn").style.marginLeft = "0px"
-                        document.getElementById("focus-plus-btn").style.marginRight = "0px"
-                        document.getElementById("focus-minus-btn").style.marginLeft = "0px"
+                        document.getElementById("focus-plus-btn-continue").style.marginRight = "0px"
+                        document.getElementById("focus-minus-btn-continue").style.marginLeft = "0px"
                     }
                 });
 
@@ -193,16 +202,19 @@
                     document.querySelector(".light-alarm-container").style.justifyContent = "center"
                     document.querySelector(".light-controls-container").style.marginRight = "50px"
                     document.querySelector(".alarm-controls-btn").style.marginLeft = "50px"
-                    document.getElementById("focus-plus-btn").style.marginRight = "50px"
-                    document.getElementById("focus-minus-btn").style.marginLeft = "50px"
+                    document.getElementById("focus-plus-btn-continue").style.marginRight = "5px"
+                    document.getElementById("focus-minus-btn-continue").style.marginLeft = "5px"
                 } else {
                     document.querySelector(".stream-controls-btns").style.justifyContent = "space-between"
+                    document.querySelector(".focus-plus-btns").style.justifyContent = "space-between"
+                    document.querySelector(".video-resilution-btn").style.justifyContent = "space-between"
+                    document.querySelector(".focus-minus-btns").style.justifyContent = "space-between"
                     document.querySelector(".main-controls-container-layout").style.justifyContent = "space-between"
                     document.querySelector(".light-alarm-container").style.justifyContent = "space-between"
                     document.querySelector(".light-controls-container").style.marginRight = "0px"
                     document.querySelector(".alarm-controls-btn").style.marginLeft = "0px"
-                    document.getElementById("focus-plus-btn").style.marginRight = "0px"
-                    document.getElementById("focus-minus-btn").style.marginLeft = "0px"
+                    document.getElementById("focus-plus-btn-continue").style.marginRight = "0px"
+                    document.getElementById("focus-minus-btn-continue").style.marginLeft = "0px"
                 }
 
                 // Get config from server

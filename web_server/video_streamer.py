@@ -35,7 +35,7 @@ class VideoStreamer:
 
     def __init__(self):
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-        subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
+        #subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
         self.cam_device_connected()
 
     def cam_device_connected(self):

@@ -125,13 +125,13 @@ th, td {
 }
 
 #video-4k-btn {
-    width: 70px;
-    margin-right: 16px;
+    width: 60px;
+    margin-right: 0px;
 }
 
 #video-1080p-btn {
-    width: 70px;
-    margin-left: 16px;
+    width: 60px;
+    margin-left: 0px;
 }
 
 #arrow-up-btn {
@@ -171,12 +171,32 @@ th, td {
     line-height: 0px;
 }
 
-#focus-plus-btn {
+#focus-plus-btn-step {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    align-items: center;
+    padding: 0px;
+    line-height: 0px;
+    font-size: 12px;
+}
+
+#focus-plus-btn-continue {
     width: 50px;
     height: 50px;
 }
 
-#focus-minus-btn {
+#focus-minus-btn-step {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    align-items: center;
+    padding: 0px;
+    line-height: 0px;
+    font-size: 12px;
+}
+
+#focus-minus-btn-continue {
     width: 50px;
     height: 50px;
 }
