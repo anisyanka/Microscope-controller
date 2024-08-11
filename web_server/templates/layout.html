@@ -60,8 +60,8 @@
                 plus_step.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper', 'no') });
                 minus_step.addEventListener('click', () => { button_control('focus_control', 'sign', 'lower', 'no') });
 
-                plus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'upper', 'yes') });
-                minus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'lower', 'yes') });
+                // plus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'upper', 'yes') });
+                // minus_continue.addEventListener('click', () => { button_control_focus('focus_control', 'sign', 'lower', 'yes') });
 
                 up.addEventListener('click', () => { button_control('motor_control', 'position', 'up', 'no') });
                 left.addEventListener('click', () => { button_control('motor_control', 'position', 'left', 'no') });
@@ -115,13 +115,13 @@
                     work_btn.addEventListener('touchend', () => { work_btn.classList.add("FixMobileHover"); });
                     work_btn.addEventListener('touchcancel', () => { work_btn.classList.add("FixMobileHover"); });
 
-                    // plus_step.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus_step.classList.remove("FixMobileHover"); });
-                    // plus_step.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'upper'); plus_step.classList.add("FixMobileHover"); });
-                    // plus_step.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'upper'); plus_step.classList.add("FixMobileHover"); });
+                    plus_continue.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'upper'); plus_continue.classList.remove("FixMobileHover"); });
+                    plus_continue.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'upper'); plus_continue.classList.add("FixMobileHover"); });
+                    plus_continue.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'upper'); plus_continue.classList.add("FixMobileHover"); });
 
-                    // minus_step.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus_step.classList.remove("FixMobileHover"); });
-                    // minus_step.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'lower'); minus_step.classList.add("FixMobileHover"); });
-                    // minus_step.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'lower'); minus_step.classList.add("FixMobileHover"); });
+                    minus_continue.addEventListener('touchstart', () => { button_control_pressed('focus_control', 'sign', 'lower'); minus_continue.classList.remove("FixMobileHover"); });
+                    minus_continue.addEventListener('touchend', () => { button_control_released('focus_control', 'sign', 'lower'); minus_continue.classList.add("FixMobileHover"); });
+                    minus_continue.addEventListener('touchcancel', () => { button_control_stop('focus_control', 'sign', 'lower'); minus_continue.classList.add("FixMobileHover"); });
 
                     up.addEventListener('touchstart', () => { button_control_pressed('motor_control', 'position', 'up'); up.classList.remove("FixMobileHover"); });
                     up.addEventListener('touchend', () => { button_control_released('motor_control', 'position', 'up'); up.classList.add("FixMobileHover"); });
@@ -141,13 +141,13 @@
                 } else {
                     console.log("Desktop browser detected")
 
-                    // plus_step.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
-                    // plus_step.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
-                    // plus_step.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'upper') });
+                    plus_continue.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'upper') });
+                    plus_continue.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'upper') });
+                    plus_continue.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'upper') });
 
-                    // minus_step.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
-                    // minus_step.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
-                    // minus_step.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'lower') });
+                    minus_continue.addEventListener('mousedown', () => { button_control_pressed('focus_control', 'sign', 'lower') });
+                    minus_continue.addEventListener('mouseup', () => { button_control_released('focus_control', 'sign', 'lower') });
+                    minus_continue.addEventListener('mouseleave', () => { button_control_stop('focus_control', 'sign', 'lower') });
 
                     up.addEventListener('mousedown', () => { button_control_pressed('motor_control', 'position', 'up') });
                     up.addEventListener('mouseup', () => { button_control_released('motor_control', 'position', 'up') });
