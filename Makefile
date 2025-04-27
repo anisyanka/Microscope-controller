@@ -98,6 +98,12 @@ install_web_server:
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_set_resolution_1920x1080.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_one_image_frame.sh
 	chmod +x $(TARGET_DIR)/web_server/stream_scripts/camera_capture_frames_continuously.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/check_conn.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/create_dir_on_server.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/does_file_exist_on_server_in_dir.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/does_file_exist_on_server.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/stop_ftp_transfer.sh
+	chmod +x $(TARGET_DIR)/web_server/ftp_scripts/upload_to_server.sh
 	chmod +x $(TARGET_DIR)/web_server/microscope_server.py
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(WEB_SERV_TARGET)
 	sudo cp $(WEB_DIR)/microscope_server.service /etc/systemd/system/

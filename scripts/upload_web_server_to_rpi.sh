@@ -11,7 +11,7 @@ rpi_web_dir=$rpi_src_path/web_server
 # Create environment on RPI before copying
 cd ..
 ssh $rpi_user@$rpi_ip "mkdir -p $rpi_web_dir; mkdir -p $rpi_web_dir/templates;" 
-ssh $rpi_user@$rpi_ip "mkdir -p $rpi_web_dir/static; mkdir -p $rpi_web_dir/static/css; mkdir -p $rpi_web_dir/static/images; mkdir -p $rpi_web_dir/static/scripts; mkdir -p $rpi_web_dir/stream_scripts;" 
+ssh $rpi_user@$rpi_ip "mkdir -p $rpi_web_dir/static; mkdir -p $rpi_web_dir/static/css; mkdir -p $rpi_web_dir/static/images; mkdir -p $rpi_web_dir/static/scripts; mkdir -p $rpi_web_dir/stream_scripts; mkdir -p $rpi_web_dir/ftp_scripts;" 
 
 # Send css
 scp $local_sources_web_dir/static/css/styles.css \
@@ -33,6 +33,15 @@ scp $local_sources_web_dir/stream_scripts/camera_set_resolution_4k.sh \
     $local_sources_web_dir/stream_scripts/camera_capture_one_image_frame.sh \
     $local_sources_web_dir/stream_scripts/camera_capture_frames_continuously.sh \
         $rpi_user@$rpi_ip:$rpi_web_dir/stream_scripts
+
+# Send FTP scripts
+scp $local_sources_web_dir/ftp_scripts/check_conn.sh \
+    $local_sources_web_dir/ftp_scripts/create_dir_on_server.sh \
+    $local_sources_web_dir/ftp_scripts/does_file_exist_on_server_in_dir.sh \
+    $local_sources_web_dir/ftp_scripts/does_file_exist_on_server.sh \
+    $local_sources_web_dir/ftp_scripts/stop_ftp_transfer.sh \
+    $local_sources_web_dir/ftp_scripts/upload_to_server.sh \
+        $rpi_user@$rpi_ip:$rpi_web_dir/ftp_scripts
 
 # Send Flask web-server
 scp $local_sources_web_dir/templates/index.html \
