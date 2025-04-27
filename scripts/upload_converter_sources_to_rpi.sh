@@ -1,29 +1,32 @@
 #!/bin/sh
-microscope_contoller_scr_dir=Microscope-controller
-modbus_src_dir=$microscope_contoller_scr_dir/modbus_tcp_rtu_converter
 
-rpi_user=pi
-rpi_ip=192.168.1.55
+local_sources_dir=`pwd`
+local_sources_script_dir=$local_sources_dir/scripts
+local_sources_modbus_dir=$local_sources_dir/modbus_tcp_rtu_converter
+
+source $local_sources_script_dir/rpi_ip.sh
+
+rpi_modbus_src_dir=$rpi_src_path/modbus_tcp_rtu_converter
 
 # Create environment on RPI before copying
 cd ..
-ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $modbus_src_dir; mkdir -p $modbus_src_dir/jsmn;" 
+ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $rpi_modbus_src_dir; mkdir -p $rpi_modbus_src_dir/jsmn;" 
 
 # Send sources
-scp $modbus_src_dir/main.c \
-    $modbus_src_dir/modbus_converter_config.c \
-    $modbus_src_dir/modbus_converter_config.h \
-    $modbus_src_dir/logger.c \
-    $modbus_src_dir/logger.h \
-    $modbus_src_dir/modbus_converter.conf \
-    $modbus_src_dir/modbus_converter.service \
-    $modbus_src_dir/camera_api.c \
-    $modbus_src_dir/camera_api.h \
-        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir
+scp $local_sources_modbus_dir/main.c \
+    $local_sources_modbus_dir/modbus_converter_config.c \
+    $local_sources_modbus_dir/modbus_converter_config.h \
+    $local_sources_modbus_dir/logger.c \
+    $local_sources_modbus_dir/logger.h \
+    $local_sources_modbus_dir/modbus_converter.conf \
+    $local_sources_modbus_dir/modbus_converter.service \
+    $local_sources_modbus_dir/camera_api.c \
+    $local_sources_modbus_dir/camera_api.h \
+        $rpi_user@$rpi_ip:$rpi_modbus_src_dir
 
-scp $modbus_src_dir/jsmn/jsmn.h \
-        $rpi_user@$rpi_ip:/home/pi/$modbus_src_dir/jsmn
+scp $local_sources_modbus_dir/jsmn/jsmn.h \
+        $rpi_user@$rpi_ip:$rpi_modbus_src_dir/jsmn
 
 # Send Makefile
-scp $microscope_contoller_scr_dir/Makefile \
-        $rpi_user@$rpi_ip:/home/pi/$microscope_contoller_scr_dir
+scp $local_sources_dir/Makefile \
+        $rpi_user@$rpi_ip:$rpi_src_path

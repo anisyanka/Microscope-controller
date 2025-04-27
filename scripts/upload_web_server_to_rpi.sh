@@ -1,52 +1,55 @@
 #!/bin/sh
-microscope_contoller_scr_dir=Microscope-controller
-web_dir=$microscope_contoller_scr_dir/web_server
 
+local_sources_dir=`pwd`
+local_sources_script_dir=$local_sources_dir/scripts
+local_sources_web_dir=$local_sources_dir/web_server
 
-rpi_user=pi
-rpi_ip=192.168.1.55
+source $local_sources_script_dir/rpi_ip.sh
+
+rpi_web_dir=$rpi_src_path/web_server
 
 # Create environment on RPI before copying
 cd ..
-ssh $rpi_user@$rpi_ip "mkdir -p $web_dir; mkdir -p $web_dir/templates;" 
-ssh $rpi_user@$rpi_ip "mkdir -p $web_dir/static; mkdir -p $web_dir/static/css; mkdir -p $web_dir/static/images; mkdir -p $web_dir/static/scripts; mkdir -p $web_dir/stream_scripts;" 
+ssh $rpi_user@$rpi_ip "mkdir -p $rpi_web_dir; mkdir -p $rpi_web_dir/templates;" 
+ssh $rpi_user@$rpi_ip "mkdir -p $rpi_web_dir/static; mkdir -p $rpi_web_dir/static/css; mkdir -p $rpi_web_dir/static/images; mkdir -p $rpi_web_dir/static/scripts; mkdir -p $rpi_web_dir/stream_scripts;" 
 
 # Send css
-scp $web_dir/static/css/styles.css \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/static/css
+scp $local_sources_web_dir/static/css/styles.css \
+        $rpi_user@$rpi_ip:$rpi_web_dir/static/css
 
 # Send images
-scp $web_dir/static/images/favicon.ico \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/static/images
+scp $local_sources_web_dir/static/images/favicon.ico \
+        $rpi_user@$rpi_ip:$rpi_web_dir/static/images
 
 # Send js scripts
-scp $web_dir/static/scripts/video_control.js \
-    $web_dir/static/scripts/buttons_control.js \
-    $web_dir/static/scripts/get_battery_level.js \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/static/scripts
+scp $local_sources_web_dir/static/scripts/video_control.js \
+    $local_sources_web_dir/static/scripts/buttons_control.js \
+    $local_sources_web_dir/static/scripts/get_battery_level.js \
+        $rpi_user@$rpi_ip:$rpi_web_dir/static/scripts
 
 # Send stream scripts
-scp $web_dir/stream_scripts/camera_set_resolution_4k.sh \
-    $web_dir/stream_scripts/camera_set_resolution_1920x1080.sh \
-    $web_dir/stream_scripts/camera_capture_one_image_frame.sh \
-    $web_dir/stream_scripts/camera_capture_frames_continuously.sh \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/stream_scripts
+scp $local_sources_web_dir/stream_scripts/camera_set_resolution_4k.sh \
+    $local_sources_web_dir/stream_scripts/camera_set_resolution_1920x1080.sh \
+    $local_sources_web_dir/stream_scripts/camera_capture_one_image_frame.sh \
+    $local_sources_web_dir/stream_scripts/camera_capture_frames_continuously.sh \
+        $rpi_user@$rpi_ip:$rpi_web_dir/stream_scripts
 
 # Send Flask web-server
-scp $web_dir/templates/index.html \
-    $web_dir/templates/layout.html \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/templates
-scp $web_dir/microscope_server.py \
-    $web_dir/helpers.py \
-    $web_dir/video_streamer.py \
-    $web_dir/config_reader.py \
-    $web_dir/microscope_modbus.py \
-    $web_dir/microscope_server.service \
-    $web_dir/requirements.txt \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/
+scp $local_sources_web_dir/templates/index.html \
+    $local_sources_web_dir/templates/layout.html \
+        $rpi_user@$rpi_ip:$rpi_web_dir/templates
+
+scp $local_sources_web_dir/microscope_server.py \
+    $local_sources_web_dir/helpers.py \
+    $local_sources_web_dir/video_streamer.py \
+    $local_sources_web_dir/config_reader.py \
+    $local_sources_web_dir/microscope_modbus.py \
+    $local_sources_web_dir/microscope_server.service \
+    $local_sources_web_dir/requirements.txt \
+        $rpi_user@$rpi_ip:$rpi_web_dir/
 
 # Send config
-scp $web_dir/microscope_server.conf \
-        $rpi_user@$rpi_ip:/home/pi/$web_dir/
+scp $local_sources_web_dir/microscope_server.conf \
+        $rpi_user@$rpi_ip:$rpi_web_dir/
 
-ssh $rpi_user@$rpi_ip "chmod +x $web_dir/microscope_server.py"
+ssh $rpi_user@$rpi_ip "chmod +x $rpi_web_dir/microscope_server.py"
