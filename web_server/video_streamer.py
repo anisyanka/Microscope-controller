@@ -50,7 +50,7 @@ class VideoStreamer:
                     dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
                     devices.append(dinfo)
 
-        if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1:
+        if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1 and str(devices).find("YGTek Webcam") == -1:
             logging.info("USB Camera not found")
         else:
             logging.info("USB CAMERA CONNECTED")

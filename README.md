@@ -42,9 +42,9 @@ sudo reboot
 
 ## Пользовательский интерфейс управления <a name="UI"></a>
 После успешного подключения устройства к сети необходимо узнать его ip-адрес, если он ещё вам неизвестен.
-**Например**, это будет **192.168.1.55**.
-Веб-интерфейс управления доступен на порту 5000.
-То есть, чтобы открыть UI, нужно в браузере зайти на страницу: `http://192.168.1.55:5000/`.
+**Например**, это будет **192.168.1.102**.
+Веб-интерфейс управления доступен на порту 8000.
+То есть, чтобы открыть UI, нужно в браузере зайти на страницу: `http://192.168.1.102:8000/`.
 
 <img src="./Images/UI%20Macbook%20Google%20Chrome.png" style="width:600px;"/>
 <p>UI с устройств Mac/Windows/Linux с использованием Google Chrome (Firefox аналогично)</p>
@@ -386,8 +386,8 @@ python3 -m venv /home/pi/.microscope/.venv
 pip install -r /home/pi/.microscope/web_server/requirements.txt
 deactivate
 
-# Run server at <ip>:5000
+# Run server at <ip>:8000
 . .venv/bin/activate
 cd /home/pi/Microscope-controller/web_server
-flask run --host=0.0.0.0 --debug --app microscope_server.py
+flask run --host=0.0.0.0 --debug --app microscope_server.py -p 8000
 ```
