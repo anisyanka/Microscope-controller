@@ -381,12 +381,9 @@ sudo apt-get install v4l-conf
 **Flask**
 ```bash
 # Install Flask itself
-cd ~
-python3 -m venv .venv
-. .venv/bin/activate
-
-cd /home/pi/Microscope-controller/web_server
-pip install -r requirements.txt
+python3 -m venv /home/pi/.microscope/.venv
+. /home/pi/.microscope/.venv/bin/activate
+pip install -r /home/pi/.microscope/web_server/requirements.txt
 deactivate
 
 # Run server at <ip>:5000

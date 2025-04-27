@@ -2,7 +2,7 @@ Flask
 Flask-Session
 requests
 httpserver
-pymodbus
+pymodbus==3.6.1
 git+https://github.com/systemd/python-systemd.git#egg=systemd-python
 opencv-python
 numpy

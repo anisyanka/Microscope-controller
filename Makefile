@@ -114,6 +114,9 @@ uninstall:
 	@echo "---> UNINSTALL ALL (remove web server, scripts and tcp/rtu converter)<---"
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(TARGET)
 	$(SCRIPTS_DIR)/stop_service_if_running.sh $(WEB_SERV_TARGET)
+	sudo systemctl disable $(TARGET)
+	sudo systemctl disable $(WEB_SERV_TARGET)
 	sudo rm -rf /etc/systemd/system/modbus_converter.service
 	sudo rm -rf /etc/systemd/system/microscope_server.service
 	sudo rm -rf $(TARGET_DIR)
+	sudo systemctl daemon-reload
