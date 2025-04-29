@@ -1,0 +1,1 @@
+sudo v4l2-ctl -d /dev/video0 --set-fmt-video=width=4656,height=3496,pixelformat=MJPG --stream-mmap --stream-to=./4k_stream.mkv --stream-count=200
