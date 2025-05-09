@@ -9,17 +9,17 @@ rpi_scripts_dir=$rpi_src_path/scripts
 
 # Create environment on RPI before copying
 cd ..
-ssh $rpi_user@$rpi_ip "cd ~;mkdir -p $rpi_scripts_dir;" 
+ssh $ssh_arg $rpi_user@$rpi_ip "cd ~;mkdir -p $rpi_scripts_dir;" 
 
 # Send scripts for make install/uninstall targets
-scp -r $local_sources_script_dir/*.sh $rpi_user@$rpi_ip:$rpi_scripts_dir
-scp $local_sources_script_dir/../update.sh $rpi_user@$rpi_ip:$rpi_scripts_dir/../
+scp $scp_arg -r $local_sources_script_dir/*.sh $rpi_user@$rpi_ip:$rpi_scripts_dir
+scp $scp_arg $local_sources_script_dir/../update.sh $rpi_user@$rpi_ip:$rpi_scripts_dir/../
 
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_get_throttling_state.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/stop_service_if_running.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/update_host_ip_for_video_streaming.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_launch_udp_4k_soft_h264.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_launch_udp_1080p_mjpg.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_stop_video_stream.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/check_config_exists.sh"
-ssh $rpi_user@$rpi_ip "chmod +x $rpi_src_path/update.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_get_throttling_state.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/stop_service_if_running.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/update_host_ip_for_video_streaming.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_launch_udp_4k_soft_h264.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_launch_udp_1080p_mjpg.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/rpi_stop_video_stream.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_scripts_dir/check_config_exists.sh"
+ssh $ssh_arg $rpi_user@$rpi_ip "chmod +x $rpi_src_path/update.sh"
