@@ -133,7 +133,13 @@ sudo reboot
     "modbus_repeat_cmd_period_ms": "100",
     "modbus_soc_polling_period_ms": "60000",
     "modbus_led_max_pwm_percentage": "20",
-    "modbus_debug_mode": "Off"
+    "modbus_debug_mode": "Off",
+  
+    "ftp_ip": "YOUR-FTP-SERVER-IP",
+    "ftp_port": "YOUR-FTP-SERVER-PORT",
+    "ftp_user": "YOUR-USER-NAME",
+    "ftp_pass": "YOUR-USER-PASS",
+    "ftp_video_file_duration_sec": "120"
 }
 ```
 `home_steps_*` - это количество шагов, которые будут посылаться сервисом в нижестоящий

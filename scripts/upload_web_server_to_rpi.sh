@@ -52,6 +52,7 @@ scp $scp_arg $local_sources_web_dir/microscope_server.py \
     $local_sources_web_dir/helpers.py \
     $local_sources_web_dir/video_streamer.py \
     $local_sources_web_dir/config_reader.py \
+    $local_sources_web_dir/ftp_uploader.py \
     $local_sources_web_dir/microscope_modbus.py \
     $local_sources_web_dir/microscope_server.service \
     $local_sources_web_dir/requirements.txt \

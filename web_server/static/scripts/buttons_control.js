@@ -2,6 +2,7 @@ var interval_id = 0;
 var timeout_id = 0;
 var was_btn_released = 0;
 var new_req_started = 0;
+var new_ftp_req_started = 0;
 var polling_time_ms = 0;
 var focus_btn_interval_id = 0;
 var focus_plus_btn_continue_state = 0;
@@ -100,5 +101,33 @@ function button_control_stop(req, variable, value) {
         interval_id = 0;
         console.log("Repeat proccess stoped");
         setTimeout(function() { new_req_started = 0; button_control(req, variable, value, "released"); }, 150);
+    }
+}
+
+function ftp_button_control(req) {
+    var request = new XMLHttpRequest();
+
+    request.onload = function() {
+        if (request.response == "enabled") {
+            console.log("FTP enabled");
+            document.querySelector(".control-ftp-state-text").style.color = "green"
+            document.querySelector(".control-ftp-state-text").innerHTML = "FTP enabled"
+        } else if (request.response == "disabled") {
+            console.log("FTP disabled");
+            document.querySelector(".control-ftp-state-text").style.color = "black"
+            document.querySelector(".control-ftp-state-text").innerHTML = "FTP disabled"
+        } else {
+            console.log("FTP error");
+        }
+
+        new_ftp_req_started = 0;
+    }
+
+    // Send a request
+    if (new_ftp_req_started == 0) {
+        request.responseType = 'json';
+        request.open("GET", "/" + req, true);
+        request.send();
+        new_ftp_req_started = 1;
     }
 }

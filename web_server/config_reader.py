@@ -94,3 +94,23 @@ def get_step_size_for_updown_stepper():
 def get_step_size_for_leftright_stepper():
     global microscope_data
     return int(microscope_data['retention_step_size_leftright_stepper'])
+
+def get_ftp_ip():
+    global microscope_data
+    return str(microscope_data['ftp_ip'])
+
+def get_ftp_port():
+    global microscope_data
+    return str(microscope_data['ftp_port'])
+
+def get_ftp_user():
+    global microscope_data
+    return str(microscope_data['ftp_user'])
+
+def get_ftp_pass():
+    global microscope_data
+    return str(microscope_data['ftp_pass'])
+
+def get_ftp_file_duration():
+    global microscope_data
+    return str(microscope_data['ftp_video_file_duration_sec'])

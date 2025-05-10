@@ -3,6 +3,7 @@ import subprocess
 import logging
 from time import sleep
 import threading
+import config_reader as conf_reader
 
 
 class VideoStreamer:
@@ -16,7 +17,7 @@ class VideoStreamer:
     # Get exactly one frame
     GET_JPEG_IMG_FRAME_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_capture_one_image_frame.sh"
     
-    # Get frames in continuously mode (for threading)
+    # Get frames in continuously mode (for threading) and save to file (for ftp) simultaneously
     START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH="/home/pi/.microscope/web_server/stream_scripts/camera_capture_frames_continuously.sh"
 
     is_stream_started_flag = False
@@ -29,6 +30,9 @@ class VideoStreamer:
     current_height = "1080"
     current_framerate = "30"
 
+    use_writting_to_file=str()
+    current_file_duration_sec=str()
+
     # Lock to access self.last_captured_frame
     mutex = threading.Lock()
 
@@ -36,7 +40,18 @@ class VideoStreamer:
     def __init__(self):
         subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
         #subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
+        self.use_writting_to_file = "0"
+        self.current_file_duration_sec=conf_reader.get_ftp_file_duration()
         self.cam_device_connected()
+
+
+    def enable_writting_to_file_and_udp_simultaneously(self):
+        self.use_writting_to_file = "1"
+
+
+    def disable_writting_to_file_and_udp_simultaneously(self):
+        self.use_writting_to_file = "0"
+
 
     def cam_device_connected(self):
         device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
@@ -55,7 +70,7 @@ class VideoStreamer:
         else:
             logging.info("USB CAMERA CONNECTED")
 
-            self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=-1)
+            self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate, self.use_writting_to_file, self.current_file_duration_sec], stdout=subprocess.PIPE, bufsize=-1)
             logging.info("Start read stdout from Gstreamer")
 
             self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
@@ -78,10 +93,8 @@ class VideoStreamer:
                     dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
                     devices.append(dinfo)
 
-        if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1:
-            subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-            self.request_to_stop_mjpg_fetcher()
-            self.wait_stopping()
+        if str(devices).find("16MP Camera Mamufacture 16MP USB Camera") == -1 and str(devices).find("YGTek Webcam") == -1:
+            self.stop_video()
             logging.info("USB CAMERA HAS BEEN DISCONNECTED")
         else:
             logging.info("USB camera is still connected")
@@ -134,9 +147,7 @@ class VideoStreamer:
         else:
             logging.info("Video streamer obtained request to change stream resolution to " + resolution)
 
-        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
-        self.request_to_stop_mjpg_fetcher()
-        self.wait_stopping()
+        self.stop_video()
 
         if resolution == "1080p":
             subprocess.call(self.SET_RES_1920X1080_SCRIPT_FILE_PATH)
@@ -153,13 +164,31 @@ class VideoStreamer:
             return
 
         # Create pipe and thread again
-        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate], stdout=subprocess.PIPE, bufsize=10**8)
+        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate, self.use_writting_to_file, self.current_file_duration_sec], stdout=subprocess.PIPE, bufsize=10**8)
         self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
         self.thread.start()
         logging.info("Start video fetching and streaming")
         self.is_stream_started_flag = True
         self.is_stop_done_flag = False
         self.is_stop_pending_flag = False
+
+
+    def restart_video_capturing(self):
+        self.stop_video()
+        self.pipe = subprocess.Popen([self.START_JPEG_IMG_FRAME_CONTINUOUSLY_SCRIPT_FILE_PATH, self.current_width, self.current_height, self.current_framerate, self.use_writting_to_file, self.current_file_duration_sec], stdout=subprocess.PIPE, bufsize=10**8)
+        self.thread = threading.Thread(target=self.mjpg_frames_fetcher, args=())
+        self.thread.start()
+        logging.info("Start video fetching and streaming")
+        self.is_stream_started_flag = True
+        self.is_stop_done_flag = False
+        self.is_stop_pending_flag = False
+
+
+    def stop_video(self):
+        subprocess.call(self.STOP_STREAM_SCRIPT_FILE_PATH)
+        self.request_to_stop_mjpg_fetcher()
+        self.wait_stopping()
+
 
     def capture_frame(self):
         self.mutex.acquire()

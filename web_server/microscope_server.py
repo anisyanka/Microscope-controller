@@ -5,6 +5,7 @@ from flask import Flask, Response, render_template, request, json, jsonify, stre
 from werkzeug.exceptions import HTTPException
 from microscope_modbus import ModbusMicroscope
 from video_streamer import VideoStreamer
+from ftp_uploader import FtpUploader
 import helpers as helper
 import config_reader as conf_reader
 import signal
@@ -41,6 +42,10 @@ microscope_mb = ModbusMicroscope()
 
 # Streamer class
 streamer = VideoStreamer()
+
+
+# FTP
+ftp_uploader = FtpUploader()
 
 
 # Create the USBMonitor instance and start the daemon
@@ -106,7 +111,7 @@ def light_control_request():
     return jsonify("OK")
 
 
-# AJAX: up/left/right/down + WORK/STOP/HOME control via Modbus #
+# AJAX: up/left/right/down + WORK/STOP control via Modbus #
 ###########################################################
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():
@@ -114,6 +119,47 @@ def motor_control_request():
     if ignore_modbus_communication == False:
         microscope_mb.main_motors_control(request.args.get("position"), request.args.get("retention"))
     return jsonify("OK")
+
+
+# AJAX: ftp button #
+####################
+@app.route("/ftp_control", methods=["GET", "POST"])
+def ftp_control_request():
+    ftp_state = ftp_uploader.is_ftp_transferring_enabled()
+    if ftp_state == 1:
+        streamer.disable_writting_to_file_and_udp_simultaneously()
+        ftp_uploader.disable_ftp_transferring()
+    else:
+        streamer.enable_writting_to_file_and_udp_simultaneously()
+        ftp_uploader.enable_ftp_transferring()
+
+    # Start video with the same resolution
+    streamer.restart_video_capturing()
+
+    ftp_state = ftp_uploader.is_ftp_transferring_enabled()
+    if ftp_state == 1:
+        ret = "enabled"
+    elif ftp_state == 0:
+        ret = "disabled"
+    else:
+        ret = "Error"
+
+    return jsonify(ret)
+
+
+# AJAX: ftp state #
+###################
+@app.route("/ftp_get_state", methods=["GET", "POST"])
+def ftp_control_get_state():
+    ftp_state = ftp_uploader.is_ftp_transferring_enabled()
+    if ftp_state == 1:
+        ret = "enabled"
+    elif ftp_state == 0:
+        ret = "disabled"
+    else:
+        ret = "Error"
+
+    return jsonify(ret)
 
 
 # AJAX: Get battery level via Modbus #

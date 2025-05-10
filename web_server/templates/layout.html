@@ -54,7 +54,7 @@
                 video_4k_btn = document.getElementById("video-4k-btn");
 
                 stop_btn = document.getElementById("alarm-btn");
-                home_btn = document.getElementById("home-btn");
+                ftp_btn = document.getElementById("ftp-btn");
                 work_btn = document.getElementById("work-btn");
 
                 plus_step.addEventListener('click', () => { button_control('focus_control', 'sign', 'upper', 'no') });
@@ -68,10 +68,10 @@
                 right.addEventListener('click', () => { button_control('motor_control', 'position', 'right', 'no') });
                 down.addEventListener('click', () => { button_control('motor_control', 'position', 'down', 'no') });
                 work_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'WORK', 'no') });
-                home_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'HOME', 'no') });
                 stop_btn.addEventListener('click', () => { button_control('motor_control', 'position', 'STOP', 'no') });
                 light_up.addEventListener('click', () => { button_control('light_control', 'level', 'upper', 'no') });
                 light_down.addEventListener('click', () => { button_control('light_control', 'level', 'lower', 'no') });
+                ftp_btn.addEventListener('click', () => { ftp_button_control('ftp_control') });
 
                 // Debug purpose
                 // But still don't know how to fix this https://stackoverflow.com/questions/15305914/bootstrap-buttons-get-stuck-down-on-mobile-devices
@@ -108,9 +108,9 @@
                     stop_btn.addEventListener('touchstart', () => { stop_btn.classList.remove("FixMobileHover"); });
                     stop_btn.addEventListener('touchend', () => { stop_btn.classList.add("FixMobileHover"); });
                     stop_btn.addEventListener('touchcancel', () => { stop_btn.classList.add("FixMobileHover"); });
-                    home_btn.addEventListener('touchstart', () => { home_btn.classList.remove("FixMobileHover"); });
-                    home_btn.addEventListener('touchend', () => { home_btn.classList.add("FixMobileHover"); });
-                    home_btn.addEventListener('touchcancel', () => { home_btn.classList.add("FixMobileHover"); });
+                    ftp_btn.addEventListener('touchstart', () => { ftp_btn.classList.remove("FixMobileHover"); });
+                    ftp_btn.addEventListener('touchend', () => { ftp_btn.classList.add("FixMobileHover"); });
+                    ftp_btn.addEventListener('touchcancel', () => { ftp_btn.classList.add("FixMobileHover"); });
                     work_btn.addEventListener('touchstart', () => { work_btn.classList.remove("FixMobileHover"); });
                     work_btn.addEventListener('touchend', () => { work_btn.classList.add("FixMobileHover"); });
                     work_btn.addEventListener('touchcancel', () => { work_btn.classList.add("FixMobileHover"); });
@@ -250,6 +250,26 @@
                 request.responseType = 'json';
                 request.open("GET", "/get_conf", true);
                 request.send();
+
+                // Get FTP state
+                var ftp_state_req = new XMLHttpRequest()
+                ftp_state_req.onload = function() {
+                    if (ftp_state_req.response == "enabled") {
+                        console.log("FTP enabled");
+                        document.querySelector(".control-ftp-state-text").style.color = "green"
+                        document.querySelector(".control-ftp-state-text").innerHTML = "FTP enabled"
+                    } else if (ftp_state_req.response == "disabled") {
+                        console.log("FTP disabled");
+                        document.querySelector(".control-ftp-state-text").style.color = "black"
+                        document.querySelector(".control-ftp-state-text").innerHTML = "FTP disabled"
+                    } else {
+                        console.log("FTP error");
+                    }
+                }
+
+                ftp_state_req.responseType = 'json';
+                ftp_state_req.open("GET", "/ftp_get_state", true);
+                ftp_state_req.send();
             });
         </script>
     </head>
@@ -262,7 +282,7 @@
         </main>
         <footer hidden>
             <i>
-                &copy; 2024
+                &copy; 2025
                 Microscope Modbus controller
             </i>
         </footer>
