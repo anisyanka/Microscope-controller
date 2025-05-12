@@ -13,7 +13,9 @@
 testdir=`curl -s --list-only --user "$1:$2" ftp://$3:$4 | grep $5`
 
 if [ "$5" = "$testdir" ]; then
+    echo -n "0"
     exit 0
 fi
 
+echo -n "1"
 exit 1

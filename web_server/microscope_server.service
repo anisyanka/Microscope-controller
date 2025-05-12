@@ -7,7 +7,6 @@ PartOf=modbus_converter.service
 Type=simple
 
 Environment=VIRTUAL_ENV=/home/pi/.microscope/.venv
-Environment=PYTHONPATH=/home/pi/.microscope/web_server
 Environment=FLASK_APP=/home/pi/.microscope/web_server/microscope_server.py
 
 ExecStart=/home/pi/.microscope/.venv/bin/python3 -m flask run --host=0.0.0.0 -p 8000

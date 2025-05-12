@@ -10,5 +10,7 @@
 # $5 - filename
 # $6 - whereto (если директории нет, то вроде как возвращает число 9)
 
-ret=`curl -s --user "$1:$2" -T $5 ftp://$3:$4/$6/`
-exit $exit
+curl -s --user "$1:$2" -T $5 ftp://$3:$4/$6/
+ok=$?
+echo -n $ok
+exit $ok

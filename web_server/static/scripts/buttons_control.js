@@ -108,16 +108,18 @@ function ftp_button_control(req) {
     var request = new XMLHttpRequest();
 
     request.onload = function() {
-        if (request.response == "enabled") {
+        if (request.response["ftp_state"] == "enabled") {
             console.log("FTP enabled");
             document.querySelector(".control-ftp-state-text").style.color = "green"
             document.querySelector(".control-ftp-state-text").innerHTML = "FTP enabled"
-        } else if (request.response == "disabled") {
+        } else if (request.response["ftp_state"] == "disabled") {
             console.log("FTP disabled");
             document.querySelector(".control-ftp-state-text").style.color = "black"
             document.querySelector(".control-ftp-state-text").innerHTML = "FTP disabled"
-        } else {
-            console.log("FTP error");
+        } else if (request.response["ftp_state"] == "error") {
+            console.log("FTP error - " + request.response["err_code"]);
+            document.querySelector(".control-ftp-state-text").style.color = "red"
+            document.querySelector(".control-ftp-state-text").innerHTML = "FTP error (" + request.response["err_code"] + ")"
         }
 
         new_ftp_req_started = 0;

@@ -6,6 +6,7 @@ from werkzeug.exceptions import HTTPException
 from microscope_modbus import ModbusMicroscope
 from video_streamer import VideoStreamer
 from ftp_uploader import FtpUploader
+from ftp_uploader import FtpUploaderErrors as ftp_err
 import helpers as helper
 import config_reader as conf_reader
 import signal
@@ -128,21 +129,17 @@ def ftp_control_request():
     ftp_state = ftp_uploader.is_ftp_transferring_enabled()
     if ftp_state == 1:
         streamer.disable_writting_to_file_and_udp_simultaneously()
+        streamer.restart_video_capturing()
         ftp_uploader.disable_ftp_transferring()
+        ret = {"ftp_state": "disabled", "err_code": ftp_err.SUCCESS.value}
     else:
-        streamer.enable_writting_to_file_and_udp_simultaneously()
-        ftp_uploader.enable_ftp_transferring()
-
-    # Start video with the same resolution
-    streamer.restart_video_capturing()
-
-    ftp_state = ftp_uploader.is_ftp_transferring_enabled()
-    if ftp_state == 1:
-        ret = "enabled"
-    elif ftp_state == 0:
-        ret = "disabled"
-    else:
-        ret = "Error"
+        if ftp_uploader.enable_ftp_transferring() == 1:
+            streamer.enable_writting_to_file_and_udp_simultaneously()
+            streamer.restart_video_capturing()
+            ret = {"ftp_state": "enabled", "err_code": ftp_err.SUCCESS.value}
+        else:
+            last_err = ftp_uploader.get_last_err()
+            ret = {"ftp_state": "error", "err_code": last_err.value}
 
     return jsonify(ret)
 

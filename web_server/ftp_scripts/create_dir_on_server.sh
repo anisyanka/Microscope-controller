@@ -10,3 +10,7 @@
 # $5 - dir to create
 
 curl -s --user "$1:$2" ftp://$3:$4 --quote "MKD $5" > /dev/null
+ok=$?
+echo -n $ok
+exit $ok
+
