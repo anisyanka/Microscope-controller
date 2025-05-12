@@ -90,6 +90,7 @@ install_web_server:
 	@echo
 	@echo "---> INSTALL WEB SERVER <---"
 	mkdir -p $(TARGET_DIR)
+	mkdir -p $(TARGET_DIR)/videos
 	sudo rm -rf $(WEB_DIR)/__pycache__ 2>/dev/null
 	cp -r $(WEB_DIR) $(TARGET_DIR)
 	$(SCRIPTS_DIR)/check_config_exists.sh $(TARGET_DIR)/microscope_server.conf $(WEB_DIR)/microscope_server.conf $(TARGET_DIR) "MICROSCOPE"

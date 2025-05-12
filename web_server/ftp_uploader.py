@@ -6,14 +6,15 @@ import config_reader as conf_reader
 from enum import IntEnum
 
 # On FTP server side the folder "Microscope_videos" will
-# be created in ~/ directory. Inside that directories with <date_time>
-# will ve created. Inside those the videos will be saved.
+# be created in ~/ directory. Inside that directories other directories named with <date_time>
+# will be created. Inside those the videos will be saved.
 
 # On the RPI side the same directories will be placed in
-# "/home/pi/Videos" directory. After a video has been transferred, it will be removed from RPI.
+# "/home/pi/.microscope/videos" directory. After a video has been transferred, it will be removed from RPI.
 
 video_root_dir_on_serv = "Microscope_videos"
-video_root_dir_on_rpi = "~/Videos"
+video_root_dir_on_rpi = "/home/pi/.microscope/videos"
+
 
 class FtpUploaderErrors(IntEnum):
     SUCCESS = 0,

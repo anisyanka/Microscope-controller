@@ -10,7 +10,7 @@
 video=$(ls /sys/class/video4linux -1 | head -n1)
 v4l2-ctl -d /dev/$video --set-fmt-video=width=$1,height=$2,pixelformat=MJPG -p $3
 
-video_root_dir="/home/pi/Videos"
+video_root_dir="/home/pi/.microscope/videos"
 new_dir_name=`date +%d.%m.%y_%H.%M.%S`
 
 if [ $4 -eq 0 ] ; then
