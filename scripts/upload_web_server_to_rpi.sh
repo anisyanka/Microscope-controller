@@ -39,6 +39,7 @@ scp $scp_arg $local_sources_web_dir/ftp_scripts/check_conn.sh \
     $local_sources_web_dir/ftp_scripts/create_dir_on_server.sh \
     $local_sources_web_dir/ftp_scripts/does_file_exist_on_server_in_dir.sh \
     $local_sources_web_dir/ftp_scripts/does_file_exist_on_server.sh \
+    $local_sources_web_dir/ftp_scripts/find_video_to_tx.sh \
     $local_sources_web_dir/ftp_scripts/stop_ftp_transfer.sh \
     $local_sources_web_dir/ftp_scripts/upload_to_server.sh \
         $rpi_user@$rpi_ip:$rpi_web_dir/ftp_scripts

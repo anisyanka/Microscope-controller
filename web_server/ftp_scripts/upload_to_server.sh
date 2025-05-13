@@ -12,5 +12,10 @@
 
 curl -s --user "$1:$2" -T $5 ftp://$3:$4/$6/
 ok=$?
+
+if [ $ok -eq 0 ]; then
+    rm -rf $5
+fi
+
 echo -n $ok
 exit $ok

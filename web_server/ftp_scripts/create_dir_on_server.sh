@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ret = 0 ==> created
-# ret = !0 ==> failed to create (might ve already exists)
+# ret = !0 ==> failed to create (might be already exists)
 
 # $1 - username
 # $2 - userpass

@@ -30,19 +30,19 @@ class FtpUploader:
     FTP_STOP_UPLOADING = "/home/pi/.microscope/web_server/ftp_scripts/stop_ftp_transfer.sh"
     FTP_CHECK_CONN = "/home/pi/.microscope/web_server/ftp_scripts/check_conn.sh"
     FTP_CREATE_DIR_ON_SERV = "/home/pi/.microscope/web_server/ftp_scripts/create_dir_on_server.sh"
-    IS_FILE_EXISTS_ON_SERV = "/home/pi/.microscope/web_server/ftp_scripts/does_file_exist_on_server.sh"
-    IS_FILE_EXISTS_ON_SERV_IN_DIR = "/home/pi/.microscope/web_server/ftp_scripts/does_file_exist_on_server_in_dir.sh"
+    FTP_IS_FILE_EXISTS_ON_SERV = "/home/pi/.microscope/web_server/ftp_scripts/does_file_exist_on_server.sh"
+    FTP_IS_FILE_EXISTS_ON_SERV_IN_DIR = "/home/pi/.microscope/web_server/ftp_scripts/does_file_exist_on_server_in_dir.sh"
+    FTP_UPLOAD_FILE = "/home/pi/.microscope/web_server/ftp_scripts/upload_to_server.sh"
+    FTP_FIND_VIDEO_TO_TX = "/home/pi/.microscope/web_server/ftp_scripts/find_video_to_tx.sh"
 
     # FTP current state
     is_ftp_enabled = 0
     is_ftp_server_exists = 0
     is_ftp_root_dir_exists = 0
+    is_ftp_thread_duty_started = 0
 
     # Global error state to pass to users
     uploader_error = FtpUploaderErrors.SUCCESS
-
-    # Lock to freeze uploader thread
-    thr_mutex = threading.Lock()
 
     # FTP data
     ftp_ip = str()
@@ -54,8 +54,10 @@ class FtpUploader:
 
     def __init__(self):
         # FTP initial state
+        self.is_ftp_enabled = 0
         self.is_ftp_server_exists = 0
         self.is_ftp_root_dir_exists = 0
+        self.is_ftp_thread_duty_started = 0
 
         # Kill all curl instances
         self.stop_any_ftp_trasferring()
@@ -78,14 +80,16 @@ class FtpUploader:
         # After server was running - 5 sec
         self.ftp_timeout = 5
 
-        self.thr_mutex.acquire()
         self.thread = threading.Thread(target=self.ftp_uploader_thread, args=())
         self.thread.start()
+        logging.info("Create new FTP uploader thread")
 
 
     def stop_any_ftp_trasferring(self):
-        subprocess.run(self.FTP_STOP_UPLOADING)
         self.is_ftp_enabled = 0
+        subprocess.run(self.FTP_STOP_UPLOADING)
+        sleep(1)
+        subprocess.run(self.FTP_STOP_UPLOADING)
 
 
     def check_does_ftp_server_exist(self):
@@ -133,7 +137,7 @@ class FtpUploader:
 
         self.is_ftp_root_dir_exists = 0
         try:
-            out = subprocess.run([self.IS_FILE_EXISTS_ON_SERV,
+            out = subprocess.run([self.FTP_IS_FILE_EXISTS_ON_SERV,
                                   self.ftp_user, self.ftp_pass,
                                   self.ftp_ip, self.ftp_port,
                                   video_root_dir_on_serv],
@@ -166,6 +170,7 @@ class FtpUploader:
 
         return -2
 
+
     def get_last_err(self):
         return self.uploader_error
 
@@ -174,6 +179,9 @@ class FtpUploader:
         """
         1 - success
         """
+
+        logging.info("FTP enable request...")
+
         if self.is_ftp_enabled == 1:
             logging.info("FTP enabled")
             return 1
@@ -189,13 +197,12 @@ class FtpUploader:
                 return -1
 
         self.is_ftp_enabled = 1
-        logging.info("FTP enabled")
         return 1
 
 
     def disable_ftp_transferring(self):
+        logging.info("FTP disabled request...")
         self.is_ftp_enabled = 0
-        logging.info("FTP disabled")
 
 
     def is_ftp_transferring_enabled(self):
@@ -205,6 +212,63 @@ class FtpUploader:
     def ftp_uploader_thread(self):
         while True:
             # Sleep here untill enable_ftp_transferring() call
-            self.thr_mutex.acquire()
+            while self.is_ftp_enabled == 0:
+                sleep(1)
+
+            logging.info("[uploader] FTP start files uploading")
             while True:
-                pass
+                if self.is_ftp_enabled == 1:
+                    # Find local dir with not yet uploaded videos and get video file and dir name
+                    out = subprocess.run([self.FTP_FIND_VIDEO_TO_TX], capture_output=True)
+                    dir_to_create = out.stdout.split()[0]
+                    file_to_tx = out.stdout.split()[1]
+
+                    logging.debug(f"[uploader] dir_to_create - {dir_to_create}, file_to_tx - {file_to_tx}")
+
+                    if dir_to_create != b"null" and file_to_tx != b"null":
+                        newdir_abs_path = video_root_dir_on_serv + "/" + dir_to_create.decode("utf-8")
+
+                        # Does directory exist on server? CWD to video_root_dir_on_serv
+                        out = subprocess.run([self.FTP_IS_FILE_EXISTS_ON_SERV_IN_DIR,
+                                              self.ftp_user, self.ftp_pass,
+                                              self.ftp_ip, self.ftp_port,
+                                              dir_to_create.decode("utf-8"),
+                                              video_root_dir_on_serv], capture_output=True)
+                        if out.stdout != b"0":
+                            logging.debug(f"[uploader] dir <{dir_to_create}> doesn't exist on server, so try to create it")
+
+                            # Create due to not exists
+                            out = subprocess.run([self.FTP_CREATE_DIR_ON_SERV,
+                                                  self.ftp_user, self.ftp_pass,
+                                                  self.ftp_ip, self.ftp_port,
+                                                  newdir_abs_path], capture_output=True)
+                            if out.stdout == b"0":
+                                logging.info(f"[uploader] dir <{newdir_abs_path}> created on FTP server successfully")
+                            else:
+                                logging.error(f"[uploader] failed to create dir <{newdir_abs_path}> on FTP server")
+                        else:
+                            logging.debug(f"[uploader] dir <{dir_to_create}> already exists on FTP server")
+                            pass
+                    else:
+                        # Local storage is fully empty or only the first file is being recording
+                        sleep(5)
+                        continue
+
+                    # Upload video file
+                    logging.info(f"[uploader] try to upload file <{file_to_tx}> to <{newdir_abs_path}> to FTP server")
+                    out = subprocess.run([self.FTP_UPLOAD_FILE,
+                                          self.ftp_user, self.ftp_pass,
+                                          self.ftp_ip, self.ftp_port,
+                                          video_root_dir_on_rpi + "/" + dir_to_create.decode("utf-8") + "/" + file_to_tx.decode("utf-8"),
+                                          newdir_abs_path],
+                                          capture_output=True)
+                    if out.stdout == b"0":
+                        logging.info(f"[uploader] file uploaded successfully and removed locally")
+                    else:
+                        logging.error(f"[uploader] uploading failed")
+                        sleep(5)
+                        continue
+                else:
+                    self.stop_any_ftp_trasferring()
+                    logging.info("[uploader] FTP stop files uploading")
+                    break

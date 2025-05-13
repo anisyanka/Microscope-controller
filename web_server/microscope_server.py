@@ -134,6 +134,7 @@ def ftp_control_request():
         ret = {"ftp_state": "disabled", "err_code": ftp_err.SUCCESS.value}
     else:
         if ftp_uploader.enable_ftp_transferring() == 1:
+            sleep(0.1)
             streamer.enable_writting_to_file_and_udp_simultaneously()
             streamer.restart_video_capturing()
             ret = {"ftp_state": "enabled", "err_code": ftp_err.SUCCESS.value}
