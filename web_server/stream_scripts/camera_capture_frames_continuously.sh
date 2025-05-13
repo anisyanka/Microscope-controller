@@ -21,5 +21,5 @@ else
 
     gst-launch-1.0 -v --eos-on-shutdown v4l2src device=/dev/$video io-mode=4 ! image/jpeg,width=$1,height=$2,type=video,framerate=$3/1 ! tee name=t \
     t. ! queue ! filesink location=/dev/stdout \
-    t. ! queue ! jpegdec ! videoconvert ! x264enc key-int-max=10 tune=zerolatency ! h264parse ! splitmuxsink location="$video_root_dir/$new_dir_name/%04d.mp4" max-size-time="$5"000000000
+    t. ! queue ! jpegdec ! videoconvert ! x264enc key-int-max=10 tune=zerolatency ! h264parse ! splitmuxsink location="$video_root_dir/$new_dir_name/%010d.mp4" max-size-time="$5"000000000
 fi
