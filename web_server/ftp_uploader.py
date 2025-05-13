@@ -93,7 +93,6 @@ class FtpUploader:
 
 
     def stop_any_ftp_trasferring(self):
-        self.is_ftp_enabled = 0
         subprocess.run(self.FTP_STOP_UPLOADING)
         sleep(1)
         subprocess.run(self.FTP_STOP_UPLOADING)
@@ -208,8 +207,9 @@ class FtpUploader:
 
 
     def disable_ftp_transferring(self):
-        logging.info("FTP disabled request...")
         self.is_ftp_enabled = 0
+        logging.info("FTP disabled request...")
+        self.stop_any_ftp_trasferring()
 
 
     def is_ftp_transferring_enabled(self):
@@ -225,12 +225,20 @@ class FtpUploader:
             logging.info("[uploader] FTP start files uploading")
             while True:
                 if self.is_ftp_enabled == 1:
+                    sleep(1)
+
+                    if self.is_ftp_enabled == 0:
+                        break
+
                     # Find local dir with not yet uploaded videos and get video file and dir name
                     out = subprocess.run([self.FTP_FIND_VIDEO_TO_TX], capture_output=True)
                     dir_to_create = out.stdout.split()[0]
                     file_to_tx = out.stdout.split()[1]
 
                     logging.debug(f"[uploader] dir_to_create - {dir_to_create}, file_to_tx - {file_to_tx}")
+
+                    if self.is_ftp_enabled == 0:
+                        break
 
                     if dir_to_create != b"null" and file_to_tx != b"null":
                         newdir_abs_path = video_root_dir_on_serv + "/" + dir_to_create.decode("utf-8")
@@ -241,6 +249,10 @@ class FtpUploader:
                                               self.ftp_ip, self.ftp_port,
                                               dir_to_create.decode("utf-8"),
                                               video_root_dir_on_serv], capture_output=True)
+
+                        if self.is_ftp_enabled == 0:
+                            break
+
                         if out.stdout != b"0":
                             logging.debug(f"[uploader] dir <{dir_to_create}> doesn't exist on server, so try to create it")
 
@@ -258,8 +270,10 @@ class FtpUploader:
                             pass
                     else:
                         # Local storage is fully empty or only the first file is being recording
-                        sleep(5)
                         continue
+
+                    if self.is_ftp_enabled == 0:
+                        break
 
                     # Upload video file
                     logging.info(f"[uploader] try to upload file <{file_to_tx}> to <{newdir_abs_path}> to FTP server")
@@ -273,9 +287,7 @@ class FtpUploader:
                         logging.info(f"[uploader] file uploaded successfully and removed locally")
                     else:
                         logging.error(f"[uploader] uploading failed")
-                        sleep(5)
                         continue
                 else:
-                    self.stop_any_ftp_trasferring()
                     logging.info("[uploader] FTP stop files uploading")
                     break
