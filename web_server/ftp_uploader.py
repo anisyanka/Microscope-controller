@@ -85,6 +85,13 @@ class FtpUploader:
         logging.info("Create new FTP uploader thread")
 
 
+    def update_configs(self):
+        self.ftp_ip = conf_reader.get_ftp_ip()
+        self.ftp_port = conf_reader.get_ftp_port()
+        self.ftp_user = conf_reader.get_ftp_user()
+        self.ftp_pass = conf_reader.get_ftp_pass()
+
+
     def stop_any_ftp_trasferring(self):
         self.is_ftp_enabled = 0
         subprocess.run(self.FTP_STOP_UPLOADING)

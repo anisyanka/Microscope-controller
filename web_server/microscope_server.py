@@ -70,6 +70,7 @@ app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def index():
     conf_reader.read_all_configs()
+    ftp_uploader.update_configs()
     return render_template('index.html')
 
 
