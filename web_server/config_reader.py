@@ -75,9 +75,9 @@ def get_soc_polling_period_ms():
     global microscope_data
     return microscope_data['modbus_soc_polling_period_ms']
 
-def is_modbus_debug_enabled():
+def get_modbus_ignore_communication_str():
     global microscope_data
-    return microscope_data['modbus_debug_mode']
+    return str(microscope_data['modbus_ignore_communication'])
 
 def get_led_pwm_max_power():
     global microscope_data

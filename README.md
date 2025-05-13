@@ -133,7 +133,7 @@ sudo reboot
     "modbus_repeat_cmd_period_ms": "100",
     "modbus_soc_polling_period_ms": "60000",
     "modbus_led_max_pwm_percentage": "20",
-    "modbus_debug_mode": "Off",
+    "modbus_ignore_communication": "False",
   
     "ftp_ip": "YOUR-FTP-SERVER-IP",
     "ftp_port": "YOUR-FTP-SERVER-PORT",

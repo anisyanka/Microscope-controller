@@ -16,8 +16,6 @@ from systemd.journal import JournalHandler
 from usbmonitor import USBMonitor
 from usbmonitor.attributes import ID_MODEL, ID_MODEL_ID, ID_VENDOR_ID
 
-# Just debug option to test server without external modbus device
-ignore_modbus_communication = True
 
 # Ignore SIGCHLD to avoid zombi-proccesses
 signal.signal(signal.SIGCHLD, signal.SIG_IGN)
@@ -98,7 +96,7 @@ def video_feed():
 @app.route("/focus_control", methods=["GET", "POST"])
 def focus_control_request():
     # Call Modbus TCP/RTU converter to send focus cmd and wait for reply
-    if ignore_modbus_communication == False:
+    if conf_reader.get_modbus_ignore_communication_str() == "False":
         microscope_mb.focus_motor_control(request.args.get("sign"), request.args.get("retention"))
     return jsonify("OK")
 
@@ -107,7 +105,7 @@ def focus_control_request():
 ##################################
 @app.route("/light_control", methods=["GET", "POST"])
 def light_control_request():
-    if ignore_modbus_communication == False:
+    if conf_reader.get_modbus_ignore_communication_str() == "False":
         microscope_mb.light_control(request.args.get("level"))
     return jsonify("OK")
 
@@ -117,7 +115,7 @@ def light_control_request():
 @app.route("/motor_control", methods=["GET", "POST"])
 def motor_control_request():
     # Call Modbus TCP/RTU converter to send position cmd and wait for reply
-    if ignore_modbus_communication == False:
+    if conf_reader.get_modbus_ignore_communication_str() == "False":
         microscope_mb.main_motors_control(request.args.get("position"), request.args.get("retention"))
     return jsonify("OK")
 
@@ -165,7 +163,7 @@ def ftp_control_get_state():
 @app.route("/get_battery_level", methods=["GET", "POST"])
 def get_battery_level_request():
     # Call Modbus TCP/RTU converter and wait for reply
-    if ignore_modbus_communication == False:
+    if conf_reader.get_modbus_ignore_communication_str() == "False":
         level = microscope_mb.get_bat_level()
     else:
         level = 50
@@ -178,7 +176,7 @@ def get_battery_level_request():
 def send_config_data_to_client():
     soc_pol_time = conf_reader.get_soc_polling_period_ms()
     repeat_cmds = conf_reader.get_repeat_cmd_perid_ms()
-    if ignore_modbus_communication == False:
+    if conf_reader.get_modbus_ignore_communication_str() == "False":
         initial_bat_level = microscope_mb.get_bat_level()
     else:
         initial_bat_level = 50
